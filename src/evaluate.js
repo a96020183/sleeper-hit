@@ -50,9 +50,10 @@ export function backtestVerdict(t, positives) {
   return { verdict: 'qloo-not-ahead', why: `Qloo ${q} vs LLM ${t.llm.hits} vs popularity ${t.popularity.hits} hits in the top ${TOP_K}` };
 }
 
-// Settlement verdict for the sealed forecast (fixed in the spec, section 9): pooled AUC of Qloo
-// excess affinity must reach 0.65 and beat all three baselines; 0.55 or lower, or losing to
-// popularity or the LLM, fails. Fewer than 10 positives: too few to count.
+// Settlement verdict for the sealed forecast (thresholds fixed in the spec, section 9): pooled AUC
+// of the sealed Qloo ranking must reach 0.65 and beat all three baselines; 0.55 or lower, or losing
+// to popularity or the LLM, fails. Fewer than 10 positives: too few to count. The sealed Qloo
+// ranking was excess affinity until 2026-10-23 and is the affinity + popularity rank blend since.
 export function settleVerdict({ positives, qloo, popularity, llm, similarTitles }) {
   if (positives < 10) return { verdict: 'too-few', why: `${positives} positives so far; the bar is 10` };
   if (qloo === null) return { verdict: 'no-data', why: 'no Qloo score' };

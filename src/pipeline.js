@@ -3,7 +3,8 @@
 import { ARTISTS } from './data/artists.js';
 import { WINDOWS, RECIPIENTS } from './data/windows.js';
 import { ARTIST } from './qloo/client.js';
-import { percentileOf, topPercent, audienceOverlap } from './scoring.js';
+import { blendRanks, topPercent, audienceOverlap } from './scoring.js';
+import { config } from './config.js';
 import { classifyClearance } from './clearance.js';
 import { evaluateTiming } from './timing.js';
 import path from 'node:path';
@@ -19,13 +20,34 @@ const publicWindow = (w) => ({
   sceneHint: w.sceneHint || '', animation: !!w.animation,
 });
 
+// Whole-pool affinity for one earlier title, shared by every artist (cached on the client).
+// The first live run costs about 60 calls per title (3,000 artists in chunks of 50); later runs hit the cache.
+async function poolAffinity(client, signalId, pool) {
+  client.poolAffinity ??= new Map();
+  if (!client.poolAffinity.has(signalId)) {
+    const p = client.scoreArtists(signalId, pool.map((a) => a.id)).then((m) => new Map([...m].map(([id, v]) => [id, v.affinity])));
+    p.catch(() => client.poolAffinity.delete(signalId));
+    client.poolAffinity.set(signalId, p);
+  }
+  return client.poolAffinity.get(signalId);
+}
+
+async function sharedPool(client) {
+  client.pool ??= client.buildPool(config.poolN);
+  client.pool.catch(() => { client.pool = null; });
+  return client.pool;
+}
+
 // Qloo part: slow, cached per artist and day. Contains raw values; never sent to the browser.
+// Card score: the artist's rank on the affinity + popularity rank blend among the pool (see
+// blendRanks in src/scoring.js). An artist outside the pool is scored and ranked with it.
 export async function scoreArtist(client, artistKey, today) {
   const artist = ARTISTS[artistKey];
   if (!artist) throw new Error(`Unknown artist ${artistKey}`);
   const entity = await client.resolve({ query: artist.name, type: ARTIST });
-  const band = await client.peerBand(entity);
-  const bandIds = band.map((b) => b.id);
+  const pool = await sharedPool(client);
+  const inPool = pool.some((a) => a.id === entity.id);
+  const universe = inPool ? pool : [...pool, { id: entity.id, name: entity.name, popularity: entity.popularity }];
   const clearance = null; // set per request in decideArtist
   const warnings = [];
 
@@ -33,18 +55,23 @@ export async function scoreArtist(client, artistKey, today) {
   const signals = [];
   for (const w of WINDOWS.filter((x) => x.card)) {
     const timing = evaluateTiming(w, today);
-    let pct = null, scored = 0, signalId = null;
+    let pct = null, signalId = null, blend = null;
     try {
       const sig = await client.resolve({ query: w.earlier.query, type: w.earlier.type, name: w.earlier.name || w.earlier.query, year: w.earlier.year });
       signalId = sig.id;
       signals.push(sig.id);
-      const aff = await client.scoreArtists(sig.id, bandIds);
-      scored = aff.size;
-      if (aff.has(entity.id)) pct = percentileOf(aff.get(entity.id).affinity, [...aff.values()].map((v) => v.affinity));
+      let aff = await poolAffinity(client, sig.id, pool);
+      if (!inPool) {
+        const own = await client.scoreArtists(sig.id, [entity.id]);
+        aff = new Map(aff);
+        if (own.has(entity.id)) aff.set(entity.id, own.get(entity.id).affinity);
+      }
+      const b = blendRanks(universe, aff).get(entity.id);
+      if (b) { pct = b.pct; blend = { rank: b.rank, affinityRank: b.affinityRank, popularityRank: b.popularityRank, of: b.n }; }
     } catch (e) {
       warnings.push(`${w.title}: ${e.message}`);
     }
-    doors.push({ id: w.id, window: publicWindow(w), signalId, recipient: RECIPIENTS[w.kind], timing, clearance, pct, topPct: topPercent(pct), bandScored: scored, overlap: null });
+    doors.push({ id: w.id, window: publicWindow(w), signalId, recipient: RECIPIENTS[w.kind], timing, clearance, pct, topPct: topPercent(pct), blend, overlap: null });
   }
 
   // Second signal: demographics of each earlier title vs the artist (one request).
@@ -72,7 +99,7 @@ export async function scoreArtist(client, artistKey, today) {
   return {
     artistKey,
     today,
-    bandSize: band.length,
+    poolSize: universe.length,
     quiet: { quiet: quiet.quiet, basis: quiet.basis, detail: quiet.detail, page: quiet.page || null, ratio: quiet.ratio ?? null, peakRatio: quiet.peakRatio ?? null, peakMonth: quiet.peakMonth || null, window: quiet.window || null, noWake: quiet.noWake ?? null, notRising: quiet.notRising ?? null },
     demographicsOk,
     doors,
@@ -122,7 +149,7 @@ export function decideArtist(scored, { overrides = new Set(), manual = null } = 
   return {
     artist: { key: artist.key, name: artist.name, songs: artist.songs, persona: record.manual?.persona || null, manualPct: record.manual?.publishingPct ?? null, clearanceNote: artist.clearanceNote || '', sources: artist.sources || [] },
     today: scored.today,
-    bandSize: scored.bandSize,
+    poolSize: scored.poolSize,
     quiet: scored.quiet,
     demographicsOk: scored.demographicsOk,
     doors: decided.map(({ signalId, pct, ...d }) => ({ ...d, pctRounded: pct === null ? null : Math.round(pct) })),

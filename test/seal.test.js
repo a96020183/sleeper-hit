@@ -34,7 +34,7 @@ test('encrypted seal: hash is over the plaintext, wrong password fails', () => {
 });
 
 test('unseal view drops raw Qloo values and ids', () => {
-  const v = unsealView({ sealedAt: 'x', titles: { t: [{ name: 'A', id: 'ID', rank: 1, bandPct: 99.5, affinity: 0.8, popularity: 0.99 }] } });
-  assert.deepEqual(v.titles.t[0], { artist: 'A', rank: 1, bandPercentile: 99.5 });
+  const v = unsealView({ sealedAt: 'x', titles: { t: [{ name: 'A', id: 'ID', rank: 1, affinityRank: 3, popularityRank: 2, bandPct: 99.5, excessRank: 4, affinity: 0.8, popularity: 0.99 }] } });
+  assert.deepEqual(v.titles.t[0], { artist: 'A', rank: 1, affinityRank: 3, popularityRank: 2, bandPercentile: 99.5, excessRank: 4 });
   assert.equal(JSON.stringify(v).includes('ID'), false);
 });

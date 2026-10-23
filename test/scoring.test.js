@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { percentileOf, assignBands, bandPercentiles, topPercent, spearman, kendallTau, auc, median, premiseVerdict, audienceOverlap } from '../src/scoring.js';
+import { percentileOf, assignBands, bandPercentiles, blendRanks, topPercent, spearman, kendallTau, auc, median, premiseVerdict, audienceOverlap } from '../src/scoring.js';
 
 test('percentileOf counts ties as half', () => {
   assert.equal(percentileOf(3, [1, 2, 3, 4]), 62.5);
@@ -70,4 +70,18 @@ test('audience overlap: identical = 1, opposite skews < identical, missing = nul
   const o = audienceOverlap(young, old);
   assert.ok(o > 0 && o < 0.8);
   assert.equal(audienceOverlap(young, null), null);
+});
+
+test('card score: average of affinity rank and popularity rank, ties by affinity (backtest qlooBlend)', () => {
+  const artists = [
+    { id: 'a', popularity: 0.99 }, { id: 'b', popularity: 0.98 }, { id: 'c', popularity: 0.97 }, { id: 'd', popularity: 0.96 }, { id: 'x', popularity: 0.95 },
+  ];
+  // affinity order: c, d, a, b ; x not scored
+  const aff = new Map([['a', 0.5], ['b', 0.4], ['c', 0.9], ['d', 0.8]]);
+  const r = blendRanks(artists, aff);
+  assert.equal(r.has('x'), false);
+  // rank sums (0-based): a 2+0=2, b 3+1=4, c 0+2=2, d 1+3=4 -> c before a (higher affinity), d before b
+  assert.deepEqual(['a', 'b', 'c', 'd'].map((id) => r.get(id).rank), [2, 4, 1, 3]);
+  assert.deepEqual(r.get('c'), { rank: 1, affinityRank: 1, popularityRank: 3, n: 4, pct: 87.5 });
+  assert.equal(topPercent(r.get('c').pct), 13);
 });

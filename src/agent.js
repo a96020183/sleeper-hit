@@ -2,7 +2,8 @@
 // Ranking rules (fixed, compared in order):
 //   1. Clearance: one-stop > cover clearable > needs consent > unconfirmed (unconfirmed gets no letter)
 //   2. Timing: inside the 14-60 day window first; announced dates before estimated ones
-//   3. Excess affinity: higher percentile within the artist's popularity band first; below top 50% = skip
+//   3. Audience score: higher percentile on the affinity + popularity rank blend among the pool
+//      first (excess affinity until 2026-10-23); below top 50% = skip
 //   4. Tie-break: audience overlap (demographics)
 // Output: at most DAILY_CAP letters per artist per day; every other door gets a one-line reason.
 import { CATEGORY_RANK } from './clearance.js';
@@ -35,7 +36,7 @@ export function skipReason(d) {
     return r.charAt(0).toUpperCase() + r.slice(1) + '.';
   }
   if (d.pct === null || d.pct === undefined) return 'Qloo has too little data on this audience to score the artist.';
-  if (d.pct < MIN_PERCENTILE) return `Top ${topPercent(d.pct)}% among artists of similar popularity, below the top-50% bar.`;
+  if (d.pct < MIN_PERCENTILE) return `Top ${topPercent(d.pct)}% of the pool for this audience, below the top-50% bar.`;
   return null;
 }
 

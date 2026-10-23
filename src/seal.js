@@ -1,6 +1,7 @@
 // Sealed forecast. Three files are written privately and only their SHA-256 hashes are published:
 //   pool.json      the artist pool (names + Qloo ids) -> counts as Qloo response data, so private
-//   ranks.json     every title's full ranking of the pool (excess-affinity percentile)
+//   ranks.json     every title's full ranking of the pool (affinity + popularity rank blend since
+//                  2026-10-23; the original excess-affinity ranking is kept in the same file)
 //   baselines.json the comparison predictions (popularity, an LLM, what similar titles used)
 // With SEAL_PASSWORD set, files are stored encrypted (scrypt + AES-256-GCM). After winners are
 // announced, ranks are unsealed with names, ranks and band percentiles only; raw affinity,
@@ -55,10 +56,14 @@ export function verifySealFile(dir, name, expectedHash, { password } = {}) {
 }
 
 // What may be published after winners are announced: names, ranks, band percentiles.
+// Seals written before 2026-10-23 have no blend fields; those come out as null.
 export function unsealView(ranks) {
   const out = {};
   for (const [title, rows] of Object.entries(ranks.titles || {})) {
-    out[title] = rows.map((r) => ({ artist: r.name, rank: r.rank, bandPercentile: r.bandPct }));
+    out[title] = rows.map((r) => ({
+      artist: r.name, rank: r.rank, affinityRank: r.affinityRank ?? null, popularityRank: r.popularityRank ?? null,
+      bandPercentile: r.bandPct, excessRank: r.excessRank ?? null,
+    }));
   }
-  return { sealedAt: ranks.sealedAt, titles: out };
+  return { sealedAt: ranks.sealedAt, score: ranks.score || null, titles: out };
 }

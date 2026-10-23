@@ -1,7 +1,7 @@
 {
   "name": "sleeper-hit",
   "version": "0.1.0",
-  "description": "An agent for music rights holders: finds sequels whose audience loves a quiet artist more than popularity predicts, checks clearance, and drafts the pitch letter.",
+  "description": "An agent for music rights holders: finds upcoming sequels whose audience ranks a quiet artist near the top, checks clearance, and drafts the pitch letter.",
   "type": "module",
   "license": "MIT",
   "engines": {

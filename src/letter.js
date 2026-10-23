@@ -51,7 +51,7 @@ export function templateLetter(f) {
     '',
     `${song} by ${f.artist} could sit under [scene] in ${f.title}.${f.sceneHint ? ' ' + f.sceneHint : ''}`,
     '',
-    `Why ${f.artist}: among artists of similar popularity, they rank in the top ${f.topPct}% with the ${f.earlier} audience.` +
+    `Why ${f.artist}: of about 3,000 well-known artists, they rank in the top ${f.topPct}% for the ${f.earlier} audience, weighing how much that audience likes them and how widely they are known.` +
       (f.overlapStrong ? ` Their listeners also match that audience closely by age and gender.` : ''),
     '',
     f.clearanceLine + ' We can confirm terms within [time frame].',

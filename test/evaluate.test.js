@@ -47,3 +47,26 @@ test('settle: excludes earlier-title and pre-seal artists, pools AUC by positive
   assert.equal(r.pooledAuc.popularity, 0);
   assert.equal(r.verdict, 'too-few');
 });
+
+test('settle: the sealed rank decides; the original excess ranking is reported, not used for the verdict', () => {
+  const names = Array.from({ length: 12 }, (_, i) => 'N' + i);
+  const sealPool = names.map((name) => ({ name }));
+  // blend puts the 10 positives first; excess puts them last
+  const ranks = { titles: { t: names.map((name, i) => ({ name, rank: i + 1, excessRank: 12 - i, bandPct: i })) } };
+  const baselines = { popularity: { ranking: [...names].reverse() }, llm: { byTitle: { t: ['N11'] } }, similarTitles: { byTitle: {} } };
+  const r = settle({ pool: sealPool, ranks, baselines, lists: { t: { artists: names.slice(0, 10), source: 'x' } } });
+  assert.equal(r.pooledAuc.qloo, 1);
+  assert.equal(r.pooledAuc.qlooExcess, 0);
+  assert.equal(r.verdict, 'pass');
+});
+
+test('seal ranks file: rows ordered by the blend, original excess rank kept', async () => {
+  const { ranksFile } = await import('../src/forecast.js');
+  const { bandPercentiles, blendRanks } = await import('../src/scoring.js');
+  const pool = [{ id: 'a', name: 'A', popularity: 0.99 }, { id: 'b', name: 'B', popularity: 0.98 }, { id: 'c', name: 'C', popularity: 0.5 }, { id: 'd', name: 'D', popularity: 0.4 }];
+  const affinity = new Map([['a', 0.5], ['b', 0.4], ['c', 0.3], ['d', 0.1]]);
+  const t = { affinity, bands: bandPercentiles(pool, affinity, 2), blend: blendRanks(pool, affinity) };
+  const out = ranksFile({ pool, titles: { t } }, 'x');
+  assert.deepEqual(out.titles.t.map((r) => [r.name, r.rank, r.excessRank]), [['A', 1, 1], ['B', 2, 3], ['C', 3, 2], ['D', 4, 4]]);
+  assert.match(out.score, /blend/);
+});

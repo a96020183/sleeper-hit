@@ -59,6 +59,16 @@ function overlapLine(d) {
   return `${Math.round(d.overlap * 100)}% <span class="src">age and gender overlap with ${esc(d.window.earlier.label)} fans</span>`;
 }
 
+const num = (v) => Number(v).toLocaleString('en-US');
+
+// "Qloo says" = Qloo's own numbers, as ranks. "Our read" = the score we compute from them.
+function scoreRows(d, state) {
+  const b = d.blend;
+  if (!b) return `<div><dt>Audience score</dt><dd><span class="src">Qloo has too little data on ${esc(d.window.earlier.label)} fans to rank ${esc(state.artist.name)}.</span></dd></div>`;
+  return `<div><dt>Qloo says</dt><dd>${esc(d.window.earlier.label)} fans: No. ${num(b.affinityRank)} of ${num(b.of)} artists by affinity. No. ${num(b.popularityRank)} by popularity.</dd></div>
+    <div><dt>Our read</dt><dd><span class="big">Top ${d.topPct}%</span><div class="src">No. ${num(b.rank)} of ${num(b.of)} when the two ranks are averaged. On 26 past sequels this ranking beat popularity alone and an LLM (Trust tab). A reason to knock, not a promise.</div></dd></div>`;
+}
+
 function renderModes() {
   const m = ui.data?.mode || ui.trust?.mode;
   if (!m) return;
@@ -128,7 +138,7 @@ function renderToday() {
           <h2>${esc(titleOf(door.window))}</h2>
           <p class="kind">${esc(kindLabel[door.window.kind] || '')}${door.window.platform ? `, ${esc(door.window.platform)}` : ''}</p>
           <dl>
-            <div><dt>Loves ${esc(state.artist.name)} beyond popularity</dt><dd><span class="big">Top ${door.topPct}%</span><div class="src">among ${state.bandSize} artists of similar popularity, for ${esc(door.window.earlier.label)} fans</div></dd></div>
+            ${scoreRows(door, state)}
             <div><dt>Audience overlap</dt><dd>${overlapLine(door)}</dd></div>
             <div><dt>Clearance</dt><dd>${clearanceBlock(door.clearance)}<details class="notes"><summary>Notes and sources</summary>${state.artist.clearanceNote ? `<div class="src">${esc(state.artist.clearanceNote)}</div>` : ''}${state.artist.sources?.length ? `<div class="src">${state.artist.sources.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">Source ${i + 1}</a>`).join(', ')}</div>` : ''}<div class="src">For setting priorities, not legal advice.</div></details></dd></div>
             <div><dt>Date</dt><dd>${dateLine(door.timing)}</dd></div>
@@ -328,13 +338,13 @@ function renderTrust() {
     <ol class="steps">
       <li><strong>By Oct 30.</strong> Seal and publish the hashes.</li>
       <li><strong>Judging, ${fmtDate(j.start)} to ${fmtDate(j.end)}.</strong> Almost nothing can be checked yet. Black Doves season 2 is the only sealed title out by then (Nov 5, the last judging day), and its first season's list suggests about one new pool artist. That is too few to count, and we say so instead of reporting a number. What you can check now is the backtest below and the code that will do the settling.</li>
-      <li><strong>After release.</strong> Each title is settled as its songs become public: a person adds the public list, <code>npm run settle</code> checks the hashes and scores the forecast with the same scorer as the backtest. Sonic 4's first trailer (estimated mid-November), GTA VI's launch (Nov 19) and Yellowjackets season 4 (Nov 20) come next. Names, ranks and band percentiles are unsealed at the first settlement.</li>
+      <li><strong>After release.</strong> Each title is settled as its songs become public: a person adds the public list, <code>npm run settle</code> checks the hashes and scores the forecast with the same scorer as the backtest. Sonic 4's first trailer (estimated mid-November), GTA VI's launch (Nov 19) and Yellowjackets season 4 (Nov 20) come next. Names and ranks are unsealed at the first settlement.</li>
       <li><strong>${fmtDate(j.finalSettle)}.</strong> Final settlement. Fewer than 10 new artists by then means no result, reported as such.</li>
     </ol>
-    <p>Pass, fixed before the seal: pooled AUC 0.65 or higher and above popularity, the LLM and what similar titles used. 0.55 or lower, or not above popularity or the LLM, is a fail.</p>`;
+    <p>Pass, fixed before the seal: pooled AUC 0.65 or higher and above popularity, the LLM and what similar titles used. 0.55 or lower, or not above popularity or the LLM, is a fail. The sealed Qloo ranking is the card score, the affinity + popularity rank blend. We switched to it after the backtest (see below); the original excess-affinity ranking is sealed too and will be reported next to it, but does not decide the verdict.</p>`;
 
   const b = t.backtest;
-  const names = { popularity: 'Popularity', llm: 'LLM only', similarTitles: 'What similar titles used', qlooRaw: 'Qloo raw affinity', qlooExcess: 'Qloo excess affinity (card score)', qlooTimesPop: 'Qloo affinity x popularity', qlooBlend: 'Qloo affinity + popularity rank blend', llmTail: 'LLM, lower third only' };
+  const names = { popularity: 'Popularity', llm: 'LLM only', similarTitles: 'What similar titles used', qlooRaw: 'Qloo raw affinity', qlooExcess: 'Qloo excess affinity (card score until Oct 23)', qlooTimesPop: 'Qloo affinity x popularity', qlooBlend: 'Qloo affinity + popularity rank blend (card score)', llmTail: 'LLM, lower third only' };
   const iv = (o, f = pct) => (o ? `${f(o.value)} <span class="src">[${f(o.lo)}, ${f(o.hi)}]</span>` : '–');
   const n0 = (v) => (v === null || v === undefined ? '–' : String(Math.round(v)));
   const sgn = (v) => (v === null || v === undefined ? '–' : `${v > 0 ? '+' : ''}${v.toFixed(2)}`);
@@ -342,22 +352,50 @@ function renderTrust() {
   const methodTable = (s) => `<table><tr><th>Method</th><th>Pooled AUC</th><th>Hits in top 50</th></tr>${Object.keys(s.pooledAuc).map((k) => `<tr><td>${esc(names[k] || k)}</td><td>${iv(s.pooledAuc[k])}</td><td>${iv(s.hits[k], n0)}</td></tr>`).join('')}</table>`;
   const h1 = b?.hypotheses?.H1 || {};
   const passed = Object.entries(h1).filter(([, v]) => v?.holds).map(([k]) => names[k] || k);
+  const thirdName = (k) => (k === 'high' ? 'Most popular third' : k === 'mid' ? 'Middle third' : 'Least popular third');
   const tert = b ? ['high', 'mid', 'low'].map((k) => {
     const s = b.byTertile[k];
-    const best = s.qlooVs?.qlooExcess;
-    return `<tr><td>${k === 'high' ? 'Most popular third' : k === 'mid' ? 'Middle third' : 'Least popular third'}</td><td>${s.positives}</td><td>${iv(s.pooledAuc?.popularity)}</td><td>${iv(s.pooledAuc?.qlooExcess)}</td><td>${best ? `${sgn(best.aucMinusPopularity.value)} <span class="src">[${sgn(best.aucMinusPopularity.lo)}, ${sgn(best.aucMinusPopularity.hi)}]</span>` : '–'}</td><td>${best ? `${sgn0(best.hitsMinusLlm.value)} <span class="src">[${sgn0(best.hitsMinusLlm.lo)}, ${sgn0(best.hitsMinusLlm.hi)}]</span> vs ${esc(names[s.llmComparedWith])}` : '–'}</td></tr>`;
+    const best = s.qlooVs?.qlooBlend;
+    return `<tr><td>${thirdName(k)}</td><td>${s.positives}</td><td>${iv(s.pooledAuc?.qlooBlend)}</td><td>${iv(s.pooledAuc?.popularity)}</td><td>${best ? `${sgn(best.aucMinusPopularity.value)} <span class="src">[${sgn(best.aucMinusPopularity.lo)}, ${sgn(best.aucMinusPopularity.hi)}]</span>` : '–'}</td><td>${n0(s.hits?.qlooBlend?.value)} vs ${n0(s.hits?.llm?.value)}</td></tr>`;
   }).join('') : '';
   const sc = t.siblingCheck;
-  const sib = sc ? `<p>Second registered check: do close sibling titles (${sc.siblingPairs} pairs, such as consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) get more similar artist rankings than unrelated pairs (${sc.randomPairs})? Bar set beforehand: top-50 overlap at least 3x random with p below 0.01. ${['qlooRaw', 'qlooExcess', 'llm'].map((k) => { const r = sc.results[k]; return `${esc(names[k])}: ${r.ratio}x, p ${r.p < 0.001 ? '< 0.001' : r.p}, ${r.pass ? 'passed' : 'not passed'}`; }).join('; ')}. The LLM names the same famous artists for most titles, so its unrelated lists already overlap a lot.</p>` : '';
+  const sib = sc ? `<p>Close sibling titles (${sc.siblingPairs} pairs, such as consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) against ${sc.randomPairs} unrelated pairs, registered before it ran. Bar: top-50 overlap at least 3x random with p below 0.01. ${['qlooRaw', 'qlooExcess', 'llm'].map((k) => { const r = sc.results[k]; return `${esc(names[k].replace(/ \(card score.*\)/, ''))}: ${r.ratio}x, p ${r.p < 0.001 ? '< 0.001' : r.p}, ${r.pass ? 'passed' : 'not passed'}`; }).join('; ')}. The link to release-year distance is weak, so the overlap reflects the audience, not just when the data was collected.</p>` : '';
+  const ov = b?.overall, bl = ov?.qlooVs?.qlooBlend, ex = ov?.qlooVs?.qlooExcess;
+  const midLow = b ? ['mid', 'low'].map((k) => b.byTertile[k].qlooVs.qlooBlend.aucMinusPopularity) : [];
+  const llmHigh = b?.byTertile.high.hits.llm.value, llmMidLow = b ? b.byTertile.mid.hits.llm.value + b.byTertile.low.hits.llm.value : 0;
+  const blendMidLow = b ? b.byTertile.mid.hits.qlooBlend.value + b.byTertile.low.hits.qlooBlend.value : 0;
+  const sch = t.scoreChange;
   const backtest = b ? `
-    <p>${b.candidates} past sequels were listed and the whole method was committed (commit <span class="hash">${esc(t.backtestMethod?.commit || b.registeredCommit)}</span>) before any song list was collected or any number computed. Song lists come only from MusicBrainz soundtrack releases and Netflix Tudum; albums can differ from what is on screen. ${b.pairsScored} pairs had sequel artists in the pool who were not on the earlier title's list: ${b.positives} of them. Question: does the earlier title's Qloo audience rank those artists above the rest of the ${Number(b.pool).toLocaleString('en-US')}-artist pool? Intervals: 95%, resampling franchises.</p>
+    <p class="claim">Ranking artists by the earlier title's Qloo audience affinity plus popularity, on ${b.pairsScored} sequels already out, put the artists each sequel went on to use higher more often than popularity alone or an LLM. The method was committed before any song list was collected (commit <span class="hash">${esc(t.backtestMethod?.commit || b.registeredCommit)}</span>), and <code>npm run backtest</code> re-runs it.</p>
+    <h3>Where Qloo helps most</h3>
+    <ul class="wins">
+      <li><strong>Less famous artists.</strong> In the middle and least popular thirds of the pool, the Qloo ranking beats popularity by ${sgn(midLow[0]?.value)} and ${sgn(midLow[1]?.value)} AUC (lower ends ${sgn(midLow[0]?.lo)} and ${sgn(midLow[1]?.lo)}). These are the catalogue artists a rights holder most needs help with.</li>
+      <li><strong>The LLM sticks to stars.</strong> All ${n0(llmHigh)} of the LLM's top-50 hits were in the most popular third; it found ${n0(llmMidLow)} in the other two. The Qloo ranking found ${n0(blendMidLow)} there.</li>
+      <li><strong>The audience signal is steady.</strong> Close sibling titles get similar Qloo artist lists, ${sc ? sc.results.qlooRaw.ratio : '–'}x more overlap than unrelated pairs. The LLM reaches ${sc ? sc.results.llm.ratio : '–'}x, because it names the same famous artists for most titles.</li>
+    </ul>
+    <h3>All methods</h3>
+    <p>${b.candidates} past sequels listed; ${b.pairsScored} had sequel artists in the ${num(b.pool)}-artist pool who were not on the earlier title's list, ${b.positives} in all (${b.films.pairs} films and games, ${b.series.pairs} series). Pooled AUC: 0.5 is chance. Intervals: 95%, resampling franchises.</p>
     ${methodTable(b.overall)}
-    <p>Registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. <strong>${passed.length ? `Cleared by: ${passed.map(esc).join(', ')}` : 'No Qloo use cleared it'}.</strong> The card's own excess-affinity score did not. Four Qloo uses were tested without correcting for that, so treat a single pass as narrow.</p>
-    <table><tr><th>Pool third</th><th>Sequel artists</th><th>Popularity AUC</th><th>Excess affinity AUC</th><th>Excess minus popularity</th><th>Excess minus LLM, top-50 hits</th></tr>${tert}</table>
-    <p>In the middle and least popular thirds Qloo clearly beats popularity. In the least popular third an LLM shown only those names found as many sequel artists as Qloo. Titles released after the LLM's training cutoff (${b.afterCutoff.pairs} pairs) and the ${b.series.pairs} series did not show Qloo ahead of popularity.</p>
-    <p>Known biases, written down before scoring: ${(t.backtestMethod?.knownBiases || []).map(esc).join(' ')}</p>
-    ${sib}`
+    <p>Registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. <strong>${passed.length ? `Cleared by: ${passed.map(esc).join(', ')}` : 'No Qloo use cleared it'}</strong> (AUC ${sgn(bl?.aucMinusPopularity.value)} [${sgn(bl?.aucMinusPopularity.lo)}, ${sgn(bl?.aucMinusPopularity.hi)}] over popularity; ${sgn0(bl?.hitsMinusLlm.value)} [${sgn0(bl?.hitsMinusLlm.lo)}, ${sgn0(bl?.hitsMinusLlm.hi)}] hits over the LLM).</p>
+    <table><tr><th>Pool third</th><th>Sequel artists</th><th>Card score AUC</th><th>Popularity AUC</th><th>Difference</th><th>Top-50 hits, card score vs LLM (whole pool)</th></tr>${tert}</table>
+    <div class="change"><h3>We changed the card score after this test</h3>
+      <p>${esc(sch?.text || '')}</p>
+      <p>Original score, excess affinity: pooled AUC ${iv(ov?.pooledAuc.qlooExcess)}, ${sgn(ex?.aucMinusPopularity.value)} [${sgn(ex?.aucMinusPopularity.lo)}, ${sgn(ex?.aucMinusPopularity.hi)}] over popularity, ${sgn0(ex?.hitsMinusLlm.value)} [${sgn0(ex?.hitsMinusLlm.lo)}, ${sgn0(ex?.hitsMinusLlm.hi)}] top-50 hits over the LLM. Not cleared.</p>
+    </div>
+    <h3>Sibling titles</h3>
+    ${sib}
+    <h3>Limits</h3>
+    <ul>
+      <li>Series (${b.series.pairs}) and titles released after the LLM's training cutoff (${b.afterCutoff.pairs} pairs) did not show Qloo ahead of popularity. Most sealed titles are one or the other.</li>
+      <li>In the least popular third, an LLM shown only those ${num(b.pool / 3)} names found as many sequel artists as Qloo (${n0(b.byTertile.low.hits.llmTail?.value)} vs ${n0(b.byTertile.low.hits.qlooBlend.value)}).</li>
+      <li>Four Qloo uses were tested without correcting for that, so one pass is a narrow pass.</li>
+      <li>Known biases, written down before scoring: ${(t.backtestMethod?.knownBiases || []).map(esc).join(' ')}</li>
+    </ul>`
     : '<p>Not run yet.</p>';
+
+  const ds = (t.dataSources || []).map((d) => `<li><strong>${d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` : esc(d.name)}.</strong> ${esc(d.use)}</li>`).join('');
+  const qu = t.qlooUse;
+  const usage = qu ? `<p>${num(qu.liveCalls)} live Qloo calls while building and testing, on ${qu.endpoints.length} endpoints (${qu.endpoints.map((e) => `<code>${esc(e)}</code>`).join(', ')}). Insights for ${qu.insightTypes.map((e) => `<code>${esc(e)}</code>`).join(' and ')}; search across ${qu.searchTypes.length} entity types. ${qu.rejected} request was rejected (a trending query over a full year). After a restart the app re-scores the pool once, about ${num(qu.coldStart)} calls, then serves from its private cache.</p>` : '';
 
   const p = t.premise;
   const premise = p ? `
@@ -382,18 +420,31 @@ function renderTrust() {
     </tr>`).join('');
   const rr = t.rules;
   el.innerHTML = `<div class="trust">
-    <section><h2>Sealed forecast</h2>${seal}${results}${timeline}</section>
+    <p class="roles">Qloo measures the audience. Our code ranks the doors and decides. The language model drafts the letter and stands in as the baseline in the tests. A person sends.</p>
     <section><h2>Backtest on past sequels</h2>${backtest}</section>
+    <section><h2>Sealed forecast</h2>${seal}${results}${timeline}</section>
     <section><h2>Does Qloo add something popularity cannot?</h2>${premise}</section>
+    <section><h2>What we learned about Qloo's data</h2>
+      <ul>
+        <li>Affinity depends on the signal, not on the other artists in the request: the same artist scored inside two different candidate lists got the same value. So 3,000 artists can be scored in chunks of 50 and stay on one scale.</li>
+        <li>Affinity is not popularity in disguise: across 3,000 artists and 12 titles, the median rank correlation was ${p?.medianSpearman?.toFixed(2) ?? '–'}, and each title's audience picks its own artists.</li>
+        <li>Paging <code>filter.popularity.min=0.9</code> returns artists most popular first but skips some of the most popular (Drake is missing), so our pool is "the first 3,000 returned", not the top 3,000.</li>
+        <li>A returning series is one Qloo entity across seasons, so its audience already includes the new season. That is why series are reported apart in the backtest.</li>
+        <li><code>/v2/trending</code> has held one repeated value per artist since mid-October 2025, matching its early-2025 order, so we use Wikipedia page views for "quiet" instead.</li>
+        <li><code>urn:demographics</code> returns relative scores per age band and gender, not shares; we convert them against an even baseline (our assumption).</li>
+      </ul>
+    </section>
+    <section><h2>How much Qloo we used</h2>${usage}</section>
     <section><h2>How "quiet" is decided</h2>${quiet}</section>
+    <section><h2>Data sources</h2><ul>${ds}</ul></section>
     <section><h2>Candidate titles</h2>
       <table><tr><th>Title</th><th>Earlier title used as the Qloo signal</th><th>Window</th><th>Out during judging (${fmtDate(j.start)}–${fmtDate(j.end)})</th><th>Role</th><th>Sources</th></tr>${rows}</table>
     </section>
     <section><h2>Rules, fixed before the test</h2>
       <p>Pool: ${esc(t.pool.rule)} N = ${Number(t.pool.n).toLocaleString('en-US')}.</p>
-      <p>Excess affinity: an artist's affinity percentile inside its own popularity band. Cards show it as "top X%". Doors below the top ${rr.minPercentile}% are not knocked.</p>
+      <p>Card score (since Oct 23, after the backtest): with the earlier title as the Qloo signal, rank the pool by affinity and by popularity, average the two ranks, break ties by affinity. Cards show the result as "top X%" of the pool. Doors below the top ${rr.minPercentile}% are not knocked. Until Oct 23 the card showed excess affinity, the affinity percentile among the 100 artists closest in popularity.</p>
       <p>Timing: first trailers are estimated ${rr.trailerLead.live} days before release for live action and ${rr.trailerLead.animation} for animation (Stephen Follows' averages). ${rr.minDays} to ${rr.maxDays} days out is the best window. Series show production status instead of a countdown.</p>
-      <p>Order: clearance first, then timing (announced dates before estimates), then excess affinity, then audience overlap. At most ${rr.dailyCap} letters a day per artist. Letters mention audience overlap only at ${Math.round(rr.overlapStrong * 100)}% or more.</p>
+      <p>Order: clearance first, then timing (announced dates before estimates), then the card score, then audience overlap. At most ${rr.dailyCap} letters a day per artist. Letters mention audience overlap only at ${Math.round(rr.overlapStrong * 100)}% or more.</p>
     </section>
     <section><h2>Data handling</h2>
       <p>Following Qloo's developer guide, no Qloo response data (affinity or popularity values, entity IDs, raw responses) is stored in the public repository. Responses are cached privately on the server. The files under <code>seal/</code> hold only hashes, counts, scores we computed and artist names.</p>

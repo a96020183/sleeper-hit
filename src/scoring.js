@@ -17,6 +17,7 @@ export function assignBands(pool, n = 10) {
 }
 
 // "Excess affinity": each artist's affinity percentile inside its own popularity band.
+// The card and seal score until 2026-10-23; still sealed alongside the blend for comparison.
 // affinities: Map id -> number. Unscored artists get null.
 export function bandPercentiles(pool, affinities, n = 10) {
   const bands = assignBands(pool, n);
@@ -27,6 +28,25 @@ export function bandPercentiles(pool, affinities, n = 10) {
     const b = bands.get(a.id);
     out.set(a.id, { band: b, pct: affinities.has(a.id) ? percentileOf(affinities.get(a.id), members[b]) : null });
   }
+  return out;
+}
+
+// Card and seal score since 2026-10-23 (chosen after the backtest; see README): the average of an
+// artist's rank by raw affinity and its rank by popularity, among the artists Qloo scored. Ties by
+// raw affinity. Same definition as "qlooBlend" in seal/backtest-v2-method.json.
+// artists: [{ id, popularity }]; affinities: Map id -> number. Unscored artists are left out.
+// Returns Map id -> { rank, affinityRank, popularityRank, n, pct } (ranks 1 = best, pct 0-100).
+export function blendRanks(artists, affinities) {
+  const s = artists.filter((a) => affinities.has(a.id));
+  const n = s.length;
+  const aff = (a) => affinities.get(a.id);
+  const affRank = new Map([...s].sort((x, y) => aff(y) - aff(x)).map((a, i) => [a.id, i]));
+  const popRank = new Map([...s].sort((x, y) => y.popularity - x.popularity).map((a, i) => [a.id, i]));
+  const order = [...s].sort((x, y) => (affRank.get(x.id) + popRank.get(x.id)) - (affRank.get(y.id) + popRank.get(y.id)) || aff(y) - aff(x));
+  const out = new Map();
+  order.forEach((a, i) => out.set(a.id, {
+    rank: i + 1, affinityRank: affRank.get(a.id) + 1, popularityRank: popRank.get(a.id) + 1, n, pct: (100 * (n - i - 0.5)) / n,
+  }));
   return out;
 }
 

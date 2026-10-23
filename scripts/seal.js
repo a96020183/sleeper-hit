@@ -12,6 +12,14 @@ import { llmBaseline, similarTitlesBaseline } from '../src/baselines.js';
 import { JUDGING } from '../src/data/windows.js';
 import { TOP_K } from '../src/evaluate.js';
 
+// Stated in the seal itself: the score was changed after the backtest, not before.
+const SCORE_CHANGE = {
+  now: "Qloo affinity + popularity rank blend: the average of each artist's rank by raw affinity (earlier title as signal) and its rank by Qloo popularity, ties by affinity. Decides the verdict.",
+  before: 'Qloo excess affinity: affinity percentile inside 10 equal popularity bands. Still sealed in ranks.json (excessRank) and reported next to the blend, never used for the verdict.',
+  changedOn: '2026-10-23',
+  why: 'This score was changed after we saw the backtest (seal/backtest-v2.json). Of four registered Qloo uses, only the rank blend cleared the registered bar: pooled AUC 0.768 [0.700, 0.816] vs popularity 0.686, +10 [+3, +19] top-50 hits vs the LLM. The original score, excess affinity, reached 0.714 [0.635, 0.793] and did not clear it (+0.028 [-0.047, +0.141] vs popularity). Choosing the winner after the fact favours the blend; the settlement after release is the test it has not seen.',
+};
+
 const final = process.argv.includes('--final');
 const allowPending = process.argv.includes('--allow-pending');
 const client = new QlooClient();
@@ -43,9 +51,11 @@ const password = process.env.SEAL_PASSWORD || '';
 const hashes = writeSeal(dir, files, { password });
 const labels = { 'pool.json': 'Pool list', 'ranks.json': 'Per-title ranks', 'baselines.json': 'Baseline predictions' };
 const settlement = {
-  how: 'npm run settle, after a person adds each released title's public song list to src/data/new_soundtracks.js',
+  how: "npm run settle, after a person adds each released title's public song list to src/data/new_soundtracks.js",
   positives: 'pool artists in the new list, minus artists the earlier title used and artists in trailers released before the seal',
   score: `per-title AUC over the pool and hits@${TOP_K}; pooled AUC = per-title AUC weighted by positives`,
+  qlooScore: SCORE_CHANGE.now,
+  scoreChange: SCORE_CHANGE,
   verdict: 'pass: pooled AUC >= 0.65 and above popularity, the LLM and similar titles; fail: <= 0.55 or not above popularity or the LLM; fewer than 10 positives: too few to count',
   unseal: 'names, ranks and band percentiles are published at the first settlement after winners are announced',
   finalSettle: JUDGING.finalSettle,

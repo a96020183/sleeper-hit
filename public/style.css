@@ -144,6 +144,15 @@ main { max-width: 1180px; margin: 0 auto; padding: 32px 32px 48px; }
 .trust table { width: 100%; border-collapse: collapse; background: var(--paper); border-radius: var(--r-sheet); overflow: hidden; font-size: 14px; }
 .trust th, .trust td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .trust th { font-weight: 500; color: var(--muted); font-size: 13px; }
+.trust h3 { font-size: 14px; font-weight: 600; margin: 24px 0 6px; }
+.trust ul { max-width: 70ch; color: var(--muted); padding-left: 20px; }
+.trust li { margin-bottom: 6px; }
+.trust .roles { color: var(--ink); font-size: 14px; margin: 0 0 28px; }
+.trust .claim { font: 400 19px/1.5 var(--serif); color: var(--ink); max-width: 62ch; }
+.trust .wins strong { color: var(--ink); font-weight: 600; }
+.trust .change { border-left: 3px solid var(--est); background: var(--est-soft); padding: 4px 18px 6px; margin: 24px 0; max-width: 70ch; }
+.trust .change h3 { margin-top: 12px; color: var(--est); }
+.trust .change p { color: var(--ink); }
 .hash { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; word-break: break-all; }
 .verdict { display: inline-block; font-weight: 600; padding: 2px 10px; border-radius: 99px; background: #e3efe8; color: var(--ok); }
 .verdict.fail { background: #f6dede; color: #8b1d1d; }

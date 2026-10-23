@@ -5,7 +5,7 @@
 // - The server keeps no user data. The outbox, "knock anyway" choices and the viewer's own rights
 //   share live in the viewer's browser and are sent with each request.
 // - The Qloo cache in .private/ is only a speed-up. If it is gone after a restart, the first request
-//   re-scores with Qloo (about 20 calls, throttled) and fills it again.
+//   re-scores the pool with Qloo (about 370 calls, throttled to 4 a second) and fills it again.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -81,6 +81,32 @@ function sealFile(name) {
   return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : null;
 }
 
+// The card and seal score changed after the backtest. Said plainly on the Trust tab.
+const SCORE_CHANGE = {
+  changedOn: '2026-10-23',
+  now: 'qlooBlend',
+  before: 'qlooExcess',
+  text: 'We changed this score after seeing the backtest. Until Oct 23 the card and the seal used excess affinity (the artist’s affinity percentile among artists of similar popularity). It did not clear the registered bar. Of the four Qloo uses registered before the backtest, only the rank blend did, so the card and the seal now use it. Picking the winner after the fact favours it; the sealed forecast, settled after release, is the test it has not seen. The original score stays in the seal and will be reported next to it.',
+};
+
+// Where song lists and attention data come from, and how each is used.
+const DATA_SOURCES = [
+  { name: 'Netflix Tudum', url: 'https://www.netflix.com/tudum', use: 'Song lists for the 6 series in the backtest and for Black Doves season 1 in the seal (12 articles), each read once, 3 seconds apart. netflix.com/robots.txt allows our crawler. Only artist names are kept; some lists are highlights, not every song.' },
+  { name: 'MusicBrainz', url: 'https://musicbrainz.org/doc/MusicBrainz_API', use: 'Soundtrack albums for the 20 films and games in the backtest, and the earlier titles’ lists for the seal. Official /ws/2 web service, about 300 targeted lookups, one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0. Albums can differ from what is used on screen.' },
+  { name: 'Wikimedia Pageviews and Wikidata', url: 'https://wikimedia.org/api/rest_v1/', use: 'Monthly English Wikipedia views for the quiet check (known bots excluded), one request per artist, cached.' },
+  { name: 'Not used', url: '', use: 'Tunefind (its robots.txt blocks our crawler) and the iTunes Search API (robots.txt disallows /search).' },
+];
+
+// How much Qloo this build used (our own call log, counts only).
+const QLOO_USE = {
+  liveCalls: 6365,
+  endpoints: ['/search', '/v2/insights', '/v2/trending'],
+  insightTypes: ['urn:entity:artist', 'urn:demographics'],
+  searchTypes: ['urn:entity:artist', 'urn:entity:movie', 'urn:entity:tv_show', 'urn:entity:videogame'],
+  rejected: 1,
+  coldStart: 370,
+};
+
 function trustPayload() {
   const today = todayISO();
   const method = sealFile('backtest-v2-method.json');
@@ -106,6 +132,9 @@ function trustPayload() {
     premise: sealFile('premise.json'),
     backtest: sealFile('backtest-v2.json'),
     backtestMethod: method ? { commit: '034f21e', knownBiases: method.knownBiases || [] } : null,
+    scoreChange: SCORE_CHANGE,
+    dataSources: DATA_SOURCES,
+    qlooUse: QLOO_USE,
     siblingCheck: sealFile('sibling-check.json'),
     trending: sealFile('trending-check.json'),
     quietCheck: sealFile('quiet-check.json'),

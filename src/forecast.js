@@ -1,8 +1,11 @@
-// Whole-pool forecast: every sealed title ranks the full artist pool by excess affinity.
+// Whole-pool forecast: every sealed title ranks the full artist pool.
 // Used by scripts/premise.js (key-day checks) and scripts/seal.js (the sealed forecast).
+// Seal score since 2026-10-23: the affinity + popularity rank blend (blendRanks), chosen after the
+// backtest because it was the only Qloo use that cleared the registered bar. The original score,
+// excess affinity (band percentile), is sealed in the same file and reported next to it.
 import { config } from './config.js';
 import { WINDOWS } from './data/windows.js';
-import { bandPercentiles, spearman, kendallTau, premiseVerdict, median } from './scoring.js';
+import { bandPercentiles, blendRanks, spearman, kendallTau, premiseVerdict, median } from './scoring.js';
 
 export async function scorePool(client, { n = config.poolN, windows = WINDOWS.filter((w) => w.sealed), log = () => {} } = {}) {
   const pool = await client.buildPool(n);
@@ -15,9 +18,10 @@ export async function scorePool(client, { n = config.poolN, windows = WINDOWS.fi
       const aff = await client.scoreArtists(sig.id, pool.map((a) => a.id));
       const affMap = new Map([...aff].map(([id, v]) => [id, v.affinity]));
       const bp = bandPercentiles(pool, affMap, config.poolBands);
+      const blend = blendRanks(pool, affMap);
       const scoredIds = pool.filter((a) => affMap.has(a.id));
       const rho = spearman(scoredIds.map((a) => affMap.get(a.id)), scoredIds.map((a) => a.popularity));
-      titles[w.id] = { title: w.title, signal: w.earlier.label, signalId: sig.id, affinity: affMap, bands: bp, scored: scoredIds.length, spearman: rho };
+      titles[w.id] = { title: w.title, signal: w.earlier.label, signalId: sig.id, affinity: affMap, bands: bp, blend, scored: scoredIds.length, spearman: rho };
       log(`${w.id}: scored ${scoredIds.length}/${pool.length}, spearman(affinity, popularity) = ${rho?.toFixed(3)}`);
     } catch (e) {
       failures.push({ id: w.id, error: e.message });
@@ -43,14 +47,24 @@ export function premise({ pool, titles }) {
   return { perTitle: ids.map((id) => ({ id, spearman: titles[id].spearman, scored: titles[id].scored })), pairs, medianTau: median(taus), ...premiseVerdict(spearmans, taus) };
 }
 
-// Ranks file for the seal: per title, every pool artist with rank and band percentile.
+// Ranks file for the seal: per title, every pool artist with its blend rank (the scored ranking),
+// the two ranks it averages, and the original excess-affinity score (band percentile and its rank).
 export function ranksFile({ pool, titles }, sealedAt) {
-  const out = { sealedAt, titles: {} };
+  const out = { sealedAt, score: 'rank = affinity + popularity rank blend (since 2026-10-23); excessRank = original excess-affinity ranking, reported alongside', titles: {} };
   for (const [id, t] of Object.entries(titles)) {
-    const rows = pool
-      .map((a) => ({ name: a.name, id: a.id, bandPct: t.bands.get(a.id)?.pct ?? null, affinity: t.affinity.get(a.id) ?? null, popularity: a.popularity }))
-      .sort((x, y) => (y.bandPct ?? -1) - (x.bandPct ?? -1));
-    rows.forEach((r, i) => { r.rank = r.bandPct === null ? null : i + 1; r.bandPct = r.bandPct === null ? null : +r.bandPct.toFixed(2); });
+    const rows = pool.map((a) => {
+      const b = t.blend.get(a.id);
+      const pct = t.bands.get(a.id)?.pct ?? null;
+      return {
+        name: a.name, id: a.id, rank: b?.rank ?? null, affinityRank: b?.affinityRank ?? null, popularityRank: b?.popularityRank ?? null,
+        bandPct: pct === null ? null : +pct.toFixed(2), affinity: t.affinity.get(a.id) ?? null, popularity: a.popularity,
+      };
+    });
+    const byExcess = rows.filter((r) => r.bandPct !== null)
+      .sort((x, y) => y.bandPct - x.bandPct || (t.affinity.get(y.id) ?? 0) - (t.affinity.get(x.id) ?? 0));
+    const excessRank = new Map(byExcess.map((r, i) => [r.id, i + 1]));
+    for (const r of rows) r.excessRank = excessRank.get(r.id) ?? null;
+    rows.sort((x, y) => (x.rank ?? Infinity) - (y.rank ?? Infinity));
     out.titles[id] = rows;
   }
   return out;
