@@ -14,7 +14,41 @@
 //   quiet =  A and B. Months are compared as views per day, so month length does not matter.
 //
 // Fallback basis, the owner's royalty statements: rule A on monthly streams or royalties.
+//
+// Catalogue condition (added 2026-10-23, after the rank-blend score let current stars such as
+// Taylor Swift and Lana Del Rey through): no new studio album in the last 5 years. Studio album =
+// a MusicBrainz release group with primary type Album and no secondary type (so compilations,
+// live albums, soundtracks, remixes, demos and the like do not count), leaving out groups that hold
+// only bootleg, promotional or pseudo-releases. An artist we cannot find on
+// MusicBrainz, or with no dated studio album there, is "unknown" and is not treated as quiet.
+// The page-view rule only compares an artist with its own past; this part asks whether the artist
+// is a catalogue act at all.
 import { addMonths } from './wiki.js';
+
+export const CATALOGUE_RULE = { years: 5, source: 'MusicBrainz release groups: primary type Album, no secondary type, not bootleg-only' };
+
+// albums: [{ title, date, primary, secondary }] or null when the artist was not found.
+// Returns { old: true | false | null, latest: { title, date } | null, cutoff }.
+export function catalogueFromAlbums(albums, asOf, rule = CATALOGUE_RULE) {
+  const cutoff = `${Number(asOf.slice(0, 4)) - rule.years}${asOf.slice(4, 10)}`;
+  if (!albums) return { old: null, latest: null, cutoff, why: 'not found on MusicBrainz' };
+  const studio = albums.filter((a) => a.primary === 'Album' && !(a.secondary || []).length && /^\d{4}/.test(a.date || ''));
+  if (!studio.length) return { old: null, latest: null, cutoff, why: 'no dated studio album on MusicBrainz' };
+  const latest = studio.reduce((x, y) => (y.date > x.date ? y : x));
+  // A partial date counts from the end of its year or month (the cautious side); a future date counts as recent.
+  const full = latest.date.length === 4 ? `${latest.date}-12-31` : latest.date.length === 7 ? `${latest.date}-31` : latest.date;
+  return { old: full < cutoff, latest: { title: latest.title, date: latest.date }, cutoff };
+}
+
+// quiet = page-view rule (A and B) and the catalogue condition. Unknown catalogue: not quiet.
+export function withCatalogue(q, cat) {
+  if (!q || q.basis !== 'Wikipedia page views') return q;
+  const year = cat?.latest?.date?.slice(0, 4);
+  const catalogueText = cat?.old === true ? `Latest studio album: ${cat.latest.title} (${year}).`
+    : cat?.old === false ? `New studio album in the last 5 years: ${cat.latest.title} (${year}).`
+    : `Catalogue check unknown (${cat?.why || 'not checked'}), so not counted as quiet.`;
+  return { ...q, pageviewsQuiet: q.quiet, catalogue: cat ? { old: cat.old, latest: cat.latest, why: cat.why || null } : { old: null, latest: null, why: 'not checked' }, quiet: q.quiet && cat?.old === true, detail: `${q.detail} ${catalogueText}` };
+}
 
 export const QUIET_RULE = { months: 36, noSpikeMonths: 24, spikeX: 1.5, recentMonths: 3, recentMaxX: 1, minMonths: 33 };
 

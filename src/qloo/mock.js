@@ -165,6 +165,27 @@ export function makeMockFetch(world = new MockWorld()) {
   };
 }
 
+// MOCK MusicBrainz: the Wikidata -> artist lookup and the album browse, with deterministic dates
+// (about half the mock artists released a studio album in the last 5 years). Offline only.
+export function makeMockMbFetch() {
+  const ok = (body) => ({ ok: true, status: 200, json: async () => body });
+  return async (url) => {
+    const u = new URL(url);
+    if (u.pathname.endsWith('/url')) {
+      const qid = (u.searchParams.get('resource') || '').split('/').pop();
+      return ok({ relations: [{ type: 'wikidata', 'target-type': 'artist', artist: { id: `mock-${qid}`, name: `Mock ${qid}` } }] });
+    }
+    const artist = u.searchParams.get('artist') || '';
+    const last = 1975 + Math.floor(h(artist, 'last') * 52);
+    const groups = [
+      { title: 'Mock debut', 'first-release-date': `${last - 10}-03-01`, 'primary-type': 'Album', 'secondary-types': [] },
+      { title: 'Mock latest', 'first-release-date': `${last}-06-01`, 'primary-type': 'Album', 'secondary-types': [] },
+      { title: 'Mock hits', 'first-release-date': '2025-01-01', 'primary-type': 'Album', 'secondary-types': ['Compilation'] },
+    ];
+    return ok({ 'release-group-count': groups.length, 'release-groups': groups });
+  };
+}
+
 // MOCK Wikimedia: answers the Wikidata title lookup and the monthly page-view endpoint with a
 // synthetic, deterministic series. Used only with the Qloo mock, so tests never touch the network.
 export function makeMockWikiFetch() {

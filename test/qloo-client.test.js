@@ -63,6 +63,8 @@ test('agent run on mock data returns derived values only', async () => {
   assert.ok(!/"affinity"|"popularity"|"signalId"|"entity_id"|"wikidata"/.test(json));
   assert.equal(s.quiet.basis, 'Wikipedia page views'); // mock Wikimedia, no network
   assert.equal(typeof s.quiet.quiet, 'boolean');
+  assert.ok(s.quiet.catalogue && 'old' in s.quiet.catalogue); // mock MusicBrainz, no network
+  if (s.quiet.quiet) assert.equal(s.quiet.catalogue.old, true);
   const cc = await runArtist(c, 'culture-club', '2026-10-22');
   assert.ok(cc.doors.every((d) => d.action === 'skip' && /unconfirmed/i.test(d.reason)));
 });

@@ -17,7 +17,7 @@ import { scoreArtist, decideArtist } from './src/pipeline.js';
 import { draftLetter, letterFacts, OVERLAP_STRONG } from './src/letter.js';
 import { evaluateTiming, TRAILER_LEAD_DAYS, MIN_DAYS, MAX_DAYS } from './src/timing.js';
 import { DAILY_CAP, MIN_PERCENTILE } from './src/agent.js';
-import { QUIET_RULE } from './src/quiet.js';
+import { QUIET_RULE, CATALOGUE_RULE } from './src/quiet.js';
 import { TOP_K } from './src/evaluate.js';
 
 const client = new QlooClient();
@@ -93,9 +93,20 @@ const SCORE_CHANGE = {
 const DATA_SOURCES = [
   { name: 'Netflix Tudum', url: 'https://www.netflix.com/tudum', use: 'Song lists for the 6 series in the backtest and for Black Doves season 1 in the seal (12 articles), each read once, 3 seconds apart. netflix.com/robots.txt allows our crawler. Only artist names are kept; some lists are highlights, not every song.' },
   { name: 'MusicBrainz', url: 'https://musicbrainz.org/doc/MusicBrainz_API', use: 'Soundtrack albums for the 20 films and games in the backtest, and the earlier titles’ lists for the seal. Official /ws/2 web service, about 300 targeted lookups, one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0. Albums can differ from what is used on screen.' },
+  { name: 'MusicBrainz (catalogue check)', url: 'https://musicbrainz.org/doc/MusicBrainz_API', use: 'Latest studio album for the quiet check: the artist linked to the Wikidata id Qloo carries, then its release groups with primary type Album and no secondary type, leaving out bootleg-only groups. About 830 lookups on Oct 23. Same /ws/2 rules: 1.1 seconds apart, descriptive User-Agent, cached. Entries can be wrong, and one bad entry can drop an artist.' },
   { name: 'Wikimedia Pageviews and Wikidata', url: 'https://wikimedia.org/api/rest_v1/', use: 'Monthly English Wikipedia views for the quiet check (known bots excluded), one request per artist, cached.' },
   { name: 'Not used', url: '', use: 'Tunefind (its robots.txt blocks our crawler) and the iTunes Search API (robots.txt disallows /search).' },
 ];
+
+// The demo artist is chosen by us, not by the selection rule. Only claims with a public source.
+const DEMO_PICK = {
+  artist: 'The Clash',
+  text: 'The Clash is the default demo because we chose it, not because the rule ranked it first. On Oct 23, npm run find-sleepers (the pool’s 500 most popular, best open door in the top 20%, quiet by page views and catalogue) put it 8th of 54. We picked it because its original recordings have been licensed for the screen, so a pitch letter for them is believable. Some acts ranked near it, such as The Beatles, have licensed their original recordings to TV very rarely, which would make the demo letter less realistic.',
+  sources: [
+    { claim: 'Stranger Things season 1, episode 2, uses The Clash’s “Should I Stay or Should I Go”.', label: 'Netflix Tudum, every song in Stranger Things', url: 'https://www.netflix.com/tudum/articles/stranger-things-every-song' },
+    { claim: 'Mad Men’s use of “Tomorrow Never Knows” (2012) was reported as the first time a Beatles master recording was licensed for a TV show (about $250,000, per the Wall Street Journal).', label: 'The World (PRX), May 2012', url: 'https://theworld.org/stories/2012-05-07/mad-men-spends-big-beatles-song' },
+  ],
+};
 
 // How much Qloo this build used (our own call log, counts only).
 const QLOO_USE = {
@@ -125,7 +136,7 @@ function trustPayload() {
     pool: { n: config.poolN, bands: config.poolBands, rule: 'The first N artists Qloo returns for popularity 0.9 or higher, most popular first, split into 10 equal popularity bands. Qloo paging skips some very popular artists (Drake, for one), so this is not the complete top N.' },
     rules: {
       trailerLead: TRAILER_LEAD_DAYS, minDays: MIN_DAYS, maxDays: MAX_DAYS, dailyCap: DAILY_CAP,
-      minPercentile: MIN_PERCENTILE, quiet: QUIET_RULE, overlapStrong: OVERLAP_STRONG, topK: TOP_K,
+      minPercentile: MIN_PERCENTILE, quiet: QUIET_RULE, catalogue: CATALOGUE_RULE, overlapStrong: OVERLAP_STRONG, topK: TOP_K,
     },
     seal: sealFile('hashes.json'),
     results: sealFile('results.json'),
@@ -138,6 +149,7 @@ function trustPayload() {
     siblingCheck: sealFile('sibling-check.json'),
     trending: sealFile('trending-check.json'),
     quietCheck: sealFile('quiet-check.json'),
+    demoPick: DEMO_PICK,
   };
 }
 

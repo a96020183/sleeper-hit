@@ -10,7 +10,7 @@ Built for the Qloo Agentic Hackathon 2026.
 
 ## What it does
 
-Pick an artist. The page first says whether the artist is quiet right now (English Wikipedia page views, see below). Then, for every open sync window on a sequel (a returning series, a sequel film's trailer, a game sequel), the agent:
+Pick an artist. The page first says whether the artist is quiet right now (English Wikipedia page views and no new studio album in 5 years, see below). Then, for every open sync window on a sequel (a returning series, a sequel film's trailer, a game sequel), the agent:
 
 1. **Scores** the window with Qloo. The earlier title is the signal. Qloo ranks about 3,000 well-known artists by that audience's affinity; the card shows the artist's affinity rank and popularity rank ("Qloo says"), and our score: the two ranks averaged, as "top X%" of the pool ("Our read").
 2. **Adds a second signal**: the age and gender overlap between the earlier title's audience and the artist's listeners (Qloo demographics).
@@ -21,7 +21,7 @@ Pick an artist. The page first says whether the artist is quiet right now (Engli
 
 Nothing is emailed. "Copy and mark sent" puts the letter on the clipboard and records it in the outbox, where the outcome can be filled in later.
 
-The **Trust** tab holds the backtest, the sealed forecast and how it gets settled, the check that Qloo affinity is not just popularity, what we learned about Qloo's data, how much Qloo we used, how "quiet" is decided, the data sources, the candidate titles and the fixed rules.
+The **Trust** tab holds the backtest, the sealed forecast and how it gets settled, the check that Qloo affinity is not just popularity, what we learned about Qloo's data, how much Qloo we used, how we define quiet, the data sources, the candidate titles and the fixed rules.
 
 ## How Qloo is used
 
@@ -61,15 +61,17 @@ About 6,400 live Qloo calls while building and testing (our own call log), on th
 - `/v2/trending` (Oct 23, `npm run check:trending`, 25 artists): the weekly series moves from Sep 2023 to Feb 2025, returns nothing from March to mid-October 2025, and since Oct 17 2025 every series holds one repeated value. That value keeps the early-2025 order (rank correlation 0.98 with Dec 2024), so it says nothing about the last 90 days. In the moving period it also missed a known wake-up: Tom Petty's best week came 80 days after his GTA VI trailer. We do not use trending.
 - `urn:demographics` returns relative scores per age band and gender, not shares. We convert them to shares against an even baseline (our assumption) before computing overlap.
 
-### Quiet, from Wikipedia page views
+### Quiet, from Wikipedia page views and the catalogue
 
 Rule, fixed before the demo artist was re-checked: in the 36 complete months before today, no month in the last 24 above 1.5 times the 36-month average (no recent wake-up), and the last 3 months at or below that average (not rising now). Months are compared as views per day. `npm run check:quiet` runs it on the demo artists and on three known wake-ups: Kate Bush after Stranger Things (May 2022, caught at 9.6x) and Tom Petty after the first GTA VI trailer (Dec 2023, caught at 1.8x). The Pointer Sisters after GTA VI trailer 2 (May 2025) were flagged for a different month; the trailer month itself reached only 1.26x, so the rule can miss smaller wake-ups.
 
+Catalogue condition, added after the rank-blend score let current stars through: the page-view rule only compares an artist with its own past, so a quiet artist must also have released no new studio album in the last 5 years. A studio album is a [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API) release group with primary type Album and no secondary type (no compilations, live albums, soundtracks or remixes), leaving out groups that hold only bootlegs. The artist is found through the Wikidata id Qloo carries. Not found, or no dated studio album: marked unknown and not counted as quiet. A posthumous or reunion studio album counts as new. MusicBrainz is volunteer-edited and can be wrong; on Oct 23 The Beatles were dropped for an album dated November 2026 that we could not find anywhere else, and we report it rather than override the rule by hand.
+
 Limits: page views measure reading attention, not listening, and lean English-speaking. Without contact details in the User-Agent, Wikimedia allows about 10 page-view requests a minute, so the app makes one request per artist and caches it. A rights holder can use its own royalty statements instead, and the card then says so.
 
-`npm run find-sleepers` applies the selection rule: the best open door in the top 20% of the pool on the card score, among the pool's 500 most popular, and quiet by the rule above, best door first. On Oct 23, with the card score changed to the rank blend, 491 of the 500 passed the door filter (the blend favours well-known artists, so the quiet rule does most of the narrowing), and 140 of the 463 with enough Wikipedia history were quiet. The Verve, the earlier demo, is not quiet: July 2025 reached 2.32x its 3-year average.
+`npm run find-sleepers` applies the selection rule: the best open door in the top 20% of the pool on the card score, among the pool's 500 most popular, and quiet by the rules above, best door first. On Oct 23, with the card score changed to the rank blend, 491 of the 500 passed the door filter (the blend favours well-known artists, so this filter barely narrows anything; the quiet rules do the work). 140 of the 463 with enough Wikipedia history were quiet by page views; of those, 54 had no studio album in 5 years, 84 had one (Taylor Swift, Lana Del Rey, Adele and Paramore among them) and 2 were unknown. The Verve, the earlier demo, is not quiet: July 2025 reached 2.32x its 3-year average.
 
-The default demo is **The Clash**: quiet (last 3 months 0.93x, busiest month 1.17x), and the GTA V audience's top artist by affinity among 2,992 scored (No. 109 by popularity; No. 28 on the blend, top 1%). It is 25th on the quiet list. Ahead of it are current stars such as Taylor Swift and Lana Del Rey and other catalogue acts such as The Beatles and Pink Floyd. The rule measures attention against the artist's own past, not whether the artist is a catalogue act, so the demo artist is our choice, not the rule's. Under the earlier score, The Clash was tied first.
+The default demo is **The Clash**, and it is our pick, not the rule's. It is quiet (last 3 months 0.93x, busiest month 1.17x, last studio album 1985) and the GTA V audience's top artist by affinity among 2,992 scored (No. 109 by popularity; No. 28 on the blend, top 1%). It is 8th of the 54; Pink Floyd, Queen and The Smiths are among those ahead. We chose it because its original recordings have been licensed for the screen, which makes the pitch letter believable: Stranger Things season 1 used "Should I Stay or Should I Go" ([Netflix Tudum](https://www.netflix.com/tudum/articles/stranger-things-every-song)). The Beatles, by contrast, licensed a master recording to a TV show for the first time only in 2012, for Mad Men ([The World, citing the Wall Street Journal](https://theworld.org/stories/2012-05-07/mad-men-spends-big-beatles-song)).
 
 ## Backtest on past sequels
 
@@ -114,7 +116,7 @@ The registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hit
 ## Data sources
 
 - **[Netflix Tudum](https://www.netflix.com/tudum):** song lists for the 6 series in the backtest and for Black Doves season 1 in the seal (12 articles), each read once, 3 seconds apart. netflix.com/robots.txt allows our crawler. Only artist names are kept; some lists are highlights, not every song.
-- **[MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API):** soundtrack albums for the 20 films and games in the backtest, and the earlier titles' lists for the seal (`npm run collect-lists`). Official `/ws/2` web service, about 300 targeted lookups, one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0. Soundtrack albums can differ from what is used on screen.
+- **[MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API):** soundtrack albums for the 20 films and games in the backtest, and the earlier titles' lists for the seal (`npm run collect-lists`); the latest studio album of each artist for the quiet check (about 830 lookups on Oct 23). Official `/ws/2` web service (about 300 soundtrack lookups), one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0. Soundtrack albums can differ from what is used on screen.
 - **[Wikimedia Pageviews](https://wikimedia.org/api/rest_v1/) and Wikidata:** monthly English Wikipedia views for the quiet check, one request per artist, cached.
 - **Not used:** Tunefind (its robots.txt blocks our crawler) and the iTunes Search API (robots.txt disallows `/search`).
 
@@ -148,7 +150,7 @@ Other commands:
 
 ```sh
 npm run premise                  # key-day checks: is affinity more than popularity? is the sample big enough?
-npm run find-sleepers            # scan the pool for famous artists that are quiet now (Qloo + Wikipedia)
+npm run find-sleepers            # scan the pool for famous artists that are quiet now (Qloo + Wikipedia + MusicBrainz)
 npm run check:trending           # what /v2/trending returns for the demo artists and their peers
 npm run check:quiet              # the Wikipedia quiet rule on the demo artists and three known wake-ups
 npm run backtest                 # past sequels: Qloo vs an LLM vs popularity (method hashed first)
@@ -180,7 +182,7 @@ Any other host that runs a long-lived Node process works the same way. Qloo call
 - Qloo results describe aggregate audiences. A high score does not mean a supervisor will pick the artist.
 - Qloo stops at the artist; a person picks the song.
 - Clearance categories help set priorities. They are not legal advice. Public rights data is incomplete; when in doubt the card says "Unconfirmed" and asks a person.
-- The quiet rule (1.5x, 24 and 36 months, 3 months) and the overlap threshold are our choices, shown in the Trust tab. Wikipedia page views are a proxy for attention, not plays.
+- The quiet rule (1.5x, 24 and 36 months, 3 months, no studio album in 5 years) and the overlap threshold are our choices, shown in the Trust tab. Wikipedia page views are a proxy for attention, not plays.
 - The card score was chosen after the backtest, and its pass was narrow. The backtest showed no advantage for series or for titles newer than the LLM. Audience rank is a reason to knock, not a prediction that the song will be picked.
 - The pool is not the complete top 3,000 (Qloo paging skips some very popular artists).
 - Song lists come from MusicBrainz soundtrack releases and Netflix Tudum articles. Albums can differ from what is used on screen; some Tudum lists are highlights.

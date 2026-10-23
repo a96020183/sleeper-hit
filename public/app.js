@@ -91,7 +91,11 @@ function quietLine(q, name) {
     return `${esc(name)} is ${q.quiet ? '' : 'not '}quiet. ${esc(q.detail || '')} Basis: ${esc(q.basis)}.`;
   }
   const facts = `English Wikipedia views, last 3 months: ${q.ratio}x its 3-year average.`;
-  if (q.quiet) return `${esc(name)} is quiet. ${facts} No month in 2 years above 1.5x (busiest: ${q.peakRatio}x, ${monthLabel(q.peakMonth)}).${pageviewsLink(q)}`;
+  const cat = q.catalogue;
+  const year = cat?.latest?.date ? cat.latest.date.slice(0, 4) : '';
+  if (q.quiet) return `${esc(name)} is quiet. ${facts} No month in 2 years above 1.5x (busiest: ${q.peakRatio}x, ${monthLabel(q.peakMonth)}). Latest studio album: ${esc(cat?.latest?.title || '')} (${year}), per MusicBrainz.${pageviewsLink(q)}`;
+  if (q.pageviewsQuiet && cat?.old === false) return `${esc(name)} is not a catalogue act right now: a new studio album, ${esc(cat.latest.title)}, came out in ${year} (MusicBrainz). Page views alone look quiet (${q.ratio}x over the last 3 months).${pageviewsLink(q)}`;
+  if (q.pageviewsQuiet) return `${esc(name)}: page views look quiet (${q.ratio}x over the last 3 months), but we could not confirm the catalogue on MusicBrainz (${esc(cat?.why || 'not checked')}), so we do not count it as quiet.${pageviewsLink(q)}`;
   const why = q.noWake === false
     ? `${monthLabel(q.peakMonth)} reached ${q.peakRatio}x its 3-year average on English Wikipedia, above the 1.5x line for a wake-up.`
     : `English Wikipedia views over the last 3 months run at ${q.ratio}x its 3-year average, so attention is rising.`;
@@ -403,9 +407,15 @@ function renderTrust() {
     <p>Checked ${new Date(p.at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} on ${Number(p.poolSize).toLocaleString('en-US')} artists and ${p.titles} titles${p.mode !== 'live' ? ' (MOCK data, means nothing)' : ''}. Median rank correlation between Qloo affinity and popularity: ${p.medianSpearman?.toFixed(2)}. Median agreement between two titles' rankings: ${p.medianTau?.toFixed(2)}. Low numbers mean each title's audience picks its own artists instead of just the famous ones. The bar was set before the test: correlation 0.5 or lower passes, above 0.8 fails. This shows Qloo measures something popularity does not; the backtest above is where that meets real song choices.</p>`
     : '<p>Not run yet.</p>';
 
-  const tr = t.trending, qc = t.quietCheck, qr = t.rules.quiet;
+  const tr = t.trending, qc = t.quietCheck, qr = t.rules.quiet, cr = t.rules.catalogue, dp = t.demoPick;
+  const demo = dp ? `
+    <h3>The demo artist is our pick</h3>
+    <p>${esc(dp.text)}</p>
+    <ul>${dp.sources.map((s) => `<li>${esc(s.claim)} <a class="srclink" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a></li>`).join('')}</ul>` : '';
   const quiet = `
     <p>Rule, fixed on Oct 23 before the demo artist was re-checked: using English Wikipedia page views (Wikimedia's public API, known bots excluded), an artist is quiet when no month in the last ${qr.noSpikeMonths} rose above ${qr.spikeX} times the ${qr.months}-month average (no recent wake-up) and the last ${qr.recentMonths} months sit at or below that average (not rising now). Page views measure reading attention, not listening, and lean English-speaking. A rights holder can use its own royalty statements instead; the card then says so.</p>
+    ${cr ? `<p>Catalogue condition, added later on Oct 23: the page-view rule only compares an artist with its own past, so current stars with a steady audience passed it. A quiet artist must also have released no new studio album in the last ${cr.years} years. A studio album is a MusicBrainz release group with primary type Album and no secondary type, so compilations, live albums, soundtracks and remixes do not count, and groups holding only bootlegs are left out. We find the artist on MusicBrainz through the Wikidata id Qloo carries. An artist we cannot find, or with no dated studio album there, is marked unknown and is not counted as quiet. A posthumous or reunion studio album counts as new. MusicBrainz is edited by volunteers and can be wrong: on Oct 23 The Beatles were dropped for an album dated November 2026 that we could not find anywhere else. We report it instead of overriding the rule by hand.</p>` : ''}
+    ${demo}
     ${qc ? `<p>Sanity check on three known wake-ups, each as of a date just after the event: ${qc.knownWakeUps.map((k) => `${esc(k.page)}, ${esc(k.event)}: ${!k.caught ? 'missed' : k.peakIsEvent ? `caught (busiest month ${monthLabel(k.peakMonth)}, ${k.peakRatio}x)` : `not quiet, but for another reason (busiest month ${monthLabel(k.peakMonth)}, ${k.peakRatio}x; the trailer month itself stayed under 1.5x)`}`).join('; ')}.</p>` : ''}
     ${tr ? `<p>Why not Qloo trending: we pulled the weekly trending series for ${tr.artists} artists (the demo artists, five equally popular peers each, and Tom Petty). It moves from ${fmtDate(tr.windows[0].firstDate)} to ${fmtDate(tr.windows[2].lastDate)}, returns nothing from March to mid-October 2025, and since then all ${tr.flatNow.series} series hold one repeated value. That value keeps the early-2025 order (rank correlation ${tr.todayKeepsDec2024Order}), so it says nothing about the last 90 days.${tr.knownWakeUp?.found ? ` Even in the moving period, Tom Petty's GTA VI trailer (Dec 5 2023) did not show: his best week came ${tr.knownWakeUp.daysFromEvent} days later, ${tr.knownWakeUp.foldVsMedian}x his median rank.` : ''} We do not use it.</p>` : ''}`;
 
@@ -435,7 +445,7 @@ function renderTrust() {
       </ul>
     </section>
     <section><h2>How much Qloo we used</h2>${usage}</section>
-    <section><h2>How "quiet" is decided</h2>${quiet}</section>
+    <section><h2>How we define quiet</h2>${quiet}</section>
     <section><h2>Data sources</h2><ul>${ds}</ul></section>
     <section><h2>Candidate titles</h2>
       <table><tr><th>Title</th><th>Earlier title used as the Qloo signal</th><th>Window</th><th>Out during judging (${fmtDate(j.start)}–${fmtDate(j.end)})</th><th>Role</th><th>Sources</th></tr>${rows}</table>

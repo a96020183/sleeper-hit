@@ -8,9 +8,10 @@ import { config } from './config.js';
 import { classifyClearance } from './clearance.js';
 import { evaluateTiming } from './timing.js';
 import path from 'node:path';
-import { quietFromPageviews, quietFromRoyalty, ruleWindow } from './quiet.js';
+import { quietFromPageviews, quietFromRoyalty, ruleWindow, catalogueFromAlbums, withCatalogue } from './quiet.js';
 import { Wiki, addMonths } from './wiki.js';
-import { makeMockWikiFetch } from './qloo/mock.js';
+import { MusicBrainz } from './musicbrainz.js';
+import { makeMockWikiFetch, makeMockMbFetch } from './qloo/mock.js';
 import { decide } from './agent.js';
 
 const publicWindow = (w) => ({
@@ -87,12 +88,23 @@ export async function scoreArtist(client, artistKey, today) {
     warnings.push(`Demographics unavailable: ${e.message}`);
   }
 
-  // Quiet check: Wikipedia page views (rule in src/quiet.js). Qloo trending is not used.
+  // Quiet check: Wikipedia page views plus the catalogue condition (rules in src/quiet.js).
+  // Qloo trending is not used.
   let quiet = null;
   try {
     quiet = await quietCheck(wikiFor(client), { title: artist.wikipedia, qid: entity.wikidata }, today);
   } catch (e) {
     warnings.push(`Wikipedia page views unavailable: ${e.message}`);
+  }
+  if (quiet) {
+    let cat = null;
+    try {
+      cat = await catalogueCheck(mbFor(client), entity.wikidata, today);
+    } catch (e) {
+      warnings.push(`MusicBrainz unavailable: ${e.message}`);
+      cat = { old: null, latest: null, why: 'MusicBrainz unavailable' };
+    }
+    quiet = withCatalogue(quiet, cat);
   }
   if (!quiet) quiet = quietFromRoyalty(artist.royaltyStatements) || { quiet: null, basis: 'pending', detail: 'Add royalty statements to judge.' };
 
@@ -100,7 +112,7 @@ export async function scoreArtist(client, artistKey, today) {
     artistKey,
     today,
     poolSize: universe.length,
-    quiet: { quiet: quiet.quiet, basis: quiet.basis, detail: quiet.detail, page: quiet.page || null, ratio: quiet.ratio ?? null, peakRatio: quiet.peakRatio ?? null, peakMonth: quiet.peakMonth || null, window: quiet.window || null, noWake: quiet.noWake ?? null, notRising: quiet.notRising ?? null },
+    quiet: { quiet: quiet.quiet, basis: quiet.basis, detail: quiet.detail, page: quiet.page || null, ratio: quiet.ratio ?? null, peakRatio: quiet.peakRatio ?? null, peakMonth: quiet.peakMonth || null, window: quiet.window || null, noWake: quiet.noWake ?? null, notRising: quiet.notRising ?? null, pageviewsQuiet: quiet.pageviewsQuiet ?? null, catalogue: quiet.catalogue || null },
     demographicsOk,
     doors,
     warnings,
@@ -115,6 +127,22 @@ export function wikiFor(client) {
       : new Wiki({ cacheDir: path.join(client.cacheRoot, 'wikimedia') });
   }
   return client.wiki;
+}
+
+// One MusicBrainz client per Qloo client; the mock Qloo gets a mock MusicBrainz.
+export function mbFor(client) {
+  if (!client.mb) {
+    client.mb = client.mode === 'mock'
+      ? new MusicBrainz({ fetchImpl: makeMockMbFetch(), cacheDir: path.join(client.cacheRoot, 'musicbrainz-mock'), gapMs: 0 })
+      : new MusicBrainz({ cacheDir: path.join(client.cacheRoot, 'musicbrainz') });
+  }
+  return client.mb;
+}
+
+// Catalogue condition: latest studio album on MusicBrainz, found through the Wikidata id.
+export async function catalogueCheck(mb, qid, today) {
+  const artist = await mb.artistForWikidata(qid);
+  return catalogueFromAlbums(artist ? await mb.albumGroups(artist.id) : null, today);
 }
 
 // Monthly views for the 36-month window plus the current month (the rule ignores incomplete months).

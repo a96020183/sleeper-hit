@@ -5,7 +5,9 @@
 //   Wikipedia: one Wikidata lookup per 50 artists and one page-view request per checked artist (cached).
 // Rule: the best open door in the top 20% of the pool on the card score, well known = among the 500
 // most popular in the pool (FAMOUS) (written down instead of judged by hand), and quiet by the
-// Wikipedia rule in src/quiet.js (replaces Qloo trending). Ranked by best door.
+// Wikipedia rule in src/quiet.js (replaces Qloo trending), and a catalogue act: no new studio album
+// in the last 5 years on MusicBrainz (unknown = not quiet). Ranked by best door.
+//   MusicBrainz: one Wikidata link lookup and one album page per checked artist, 1.1 s apart (cached).
 // Card score since 2026-10-23: the affinity + popularity rank blend (src/scoring.js blendRanks),
 // changed after the backtest. Until then it was the affinity percentile among the 100
 // nearest-popularity pool artists; that number is still printed for comparison.
@@ -20,7 +22,7 @@ import { WINDOWS } from '../src/data/windows.js';
 import { percentileOf, blendRanks } from '../src/scoring.js';
 import { evaluateTiming } from '../src/timing.js';
 import { quietFromPageviews } from '../src/quiet.js';
-import { wikiFor, pageviewsFor } from '../src/pipeline.js';
+import { wikiFor, pageviewsFor, mbFor, catalogueCheck } from '../src/pipeline.js';
 
 const PEERS = 100; // nearest-popularity peers inside the pool (old score, printed for comparison)
 const DOOR_MIN = Number(process.env.DOOR_MIN || 80); // best open door at least this percentile (card score)
@@ -81,17 +83,39 @@ for (const r of shortlist) {
   if (++n % 25 === 0) log(`page views ${n}/${shortlist.length}`);
 }
 const checked = shortlist.filter((r) => typeof r.quiet === 'boolean');
-const picks = checked.filter((r) => r.quiet);
+const pvQuiet = checked.filter((r) => r.quiet);
+log(`${pvQuiet.length} quiet by page views. Checking the catalogue on MusicBrainz (one request every 1.1 s)...`);
+
+// Catalogue condition: no new studio album in the last 5 years (src/quiet.js). Unknown = not quiet.
+const mb = mbFor(client);
+n = 0;
+for (const r of pvQuiet) {
+  r.pageviewsQuiet = true;
+  let cat;
+  try { cat = await catalogueCheck(mb, r.wikidata, today); } catch (e) { cat = { old: null, latest: null, why: `error: ${e.message}` }; }
+  r.catalogue = cat.old === true ? 'old' : cat.old === false ? 'recent' : 'unknown';
+  r.latestAlbum = cat.latest;
+  r.catalogueWhy = cat.why || null;
+  r.quiet = cat.old === true;
+  if (++n % 25 === 0) log(`catalogue ${n}/${pvQuiet.length}`);
+}
+const picks = pvQuiet.filter((r) => r.quiet);
+const recent = pvQuiet.filter((r) => r.catalogue === 'recent');
+const unknown = pvQuiet.filter((r) => r.catalogue === 'unknown');
 fs.mkdirSync(config.privateDir, { recursive: true });
 const out = path.join(config.privateDir, `sleepers-wiki-${client.mode}-${today}.json`);
-fs.writeFileSync(out, JSON.stringify({ at: new Date().toISOString(), poolSize: pool.length, doorMin: DOOR_MIN, famous: FAMOUS, score: 'affinity + popularity rank blend', quietBasis: 'Wikipedia page views', shortlist: shortlist.map(({ wikidata, ...r }) => r) }, null, 1));
-log(`\nQuiet by the Wikipedia rule: ${picks.length} of ${checked.length} checked (${shortlist.length - checked.length} without an English article or enough history). Best door first:`);
+fs.writeFileSync(out, JSON.stringify({ at: new Date().toISOString(), poolSize: pool.length, doorMin: DOOR_MIN, famous: FAMOUS, score: 'affinity + popularity rank blend', quietBasis: 'Wikipedia page views + no studio album in 5 years (MusicBrainz)', counts: { shortlist: shortlist.length, checked: checked.length, pageviewsQuiet: pvQuiet.length, quiet: picks.length, recentAlbum: recent.length, catalogueUnknown: unknown.length }, shortlist: shortlist.map(({ wikidata, ...r }) => r) }, null, 1));
+log(`\nQuiet by page views: ${pvQuiet.length} of ${checked.length} checked (${shortlist.length - checked.length} without an English article or enough history).`);
+log(`Catalogue: ${picks.length} old (quiet), ${recent.length} with a studio album in the last 5 years, ${unknown.length} unknown. Best door first:`);
+const year = (r) => r.latestAlbum?.date?.slice(0, 4) || '-';
 picks.forEach((r, i) => {
-  if (i < 40 || r.name === 'The Clash') log(`${String(i + 1).padStart(3)}. pop ${String(r.popRank).padStart(4)}  ${r.name.padEnd(28)} 3m ${r.ratio}x  peak ${r.peakRatio}x ${r.peakMonth}  best ${r.bestDoor} #${r.bestRank} (${r.bestPct.toFixed(1)})  old ${r.oldBestPct === null ? '-' : Math.round(r.oldBestPct)}`);
+  if (i < 40 || r.name === 'The Clash') log(`${String(i + 1).padStart(3)}. pop ${String(r.popRank).padStart(4)}  ${r.name.padEnd(28)} 3m ${r.ratio}x  peak ${r.peakRatio}x ${r.peakMonth}  album ${year(r)}  best ${r.bestDoor} #${r.bestRank} (${r.bestPct.toFixed(1)})  old ${r.oldBestPct === null ? '-' : Math.round(r.oldBestPct)}`);
 });
+log(`\nDropped for a recent studio album (best door first): ${recent.slice(0, 30).map((r) => `${r.name} (${year(r)})`).join(', ')}${recent.length > 30 ? ', ...' : ''}`);
+log(`Catalogue unknown: ${unknown.map((r) => `${r.name} [${r.catalogueWhy}]`).join(', ') || 'none'}`);
 for (const name of ['The Verve', 'Iggy Pop', 'Air Supply', 'Culture Club']) {
   const r = shortlist.find((x) => x.name === name) || rows.find((x) => x.name === name);
-  if (r) log(`  ${name}: quiet ${r.quiet}, 3m ${r.ratio}x, peak ${r.peakRatio}x ${r.peakMonth}, best ${r.bestDoor} #${r.bestRank ?? '-'} (${r.bestPct === null ? '-' : r.bestPct.toFixed(1)})`);
+  if (r) log(`  ${name}: quiet ${r.quiet}, 3m ${r.ratio}x, peak ${r.peakRatio}x ${r.peakMonth}, catalogue ${r.catalogue ?? '-'}, best ${r.bestDoor} #${r.bestRank ?? '-'} (${r.bestPct === null ? '-' : r.bestPct.toFixed(1)})`);
 }
-log(`Qloo calls live ${client.http.stats.live}, cached ${client.http.stats.cached}; Wikimedia live ${wiki.stats.live}, cached ${wiki.stats.cached}`);
+log(`Qloo calls live ${client.http.stats.live}, cached ${client.http.stats.cached}; Wikimedia live ${wiki.stats.live}, cached ${wiki.stats.cached}; MusicBrainz live ${mb.stats.live}, cached ${mb.stats.cached}`);
 log(`Details (private): ${path.relative(process.cwd(), out)}`);
