@@ -61,3 +61,49 @@ export function settleVerdict({ positives, qloo, popularity, llm, similarTitles 
   if (qloo >= 0.65 && beatsAll) return { verdict: 'pass', why: 'AUC 0.65 or higher and above all three baselines' };
   return { verdict: 'unsteady', why: 'some signal, not enough to pass' };
 }
+
+// ---- Backtest v2 (seal/backtest-v2-method.json) ----
+
+// Positives-weighted mean of per-pair AUC (the settlement's "pooled AUC").
+export function pooledAuc(rows) {
+  const ok = rows.filter((r) => r && r.positives > 0 && r.auc !== null && r.auc !== undefined);
+  const w = ok.reduce((s, r) => s + r.positives, 0);
+  return w ? ok.reduce((s, r) => s + r.auc * r.positives, 0) / w : null;
+}
+
+export function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const quantile = (sorted, q) => {
+  if (!sorted.length) return null;
+  const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo);
+};
+
+// Cluster bootstrap: pairs grouped by franchise, franchises resampled with replacement.
+// pairs: [{ franchise, methods: { name: { auc, hits, positives } } }]
+// stats: { label: (pairs) => number|null }. Returns { label: { value, lo, hi } } (95% percentile).
+export function clusterBootstrap(pairs, stats, { reps = 10000, seed = 20261023 } = {}) {
+  const groups = [...new Set(pairs.map((p) => p.franchise))].map((f) => pairs.filter((p) => p.franchise === f));
+  const rand = mulberry32(seed);
+  const draws = Object.fromEntries(Object.keys(stats).map((k) => [k, []]));
+  for (let r = 0; r < reps; r++) {
+    const sample = [];
+    for (let i = 0; i < groups.length; i++) sample.push(...groups[Math.floor(rand() * groups.length)]);
+    for (const [k, f] of Object.entries(stats)) { const v = f(sample); if (v !== null && !Number.isNaN(v)) draws[k].push(v); }
+  }
+  const out = {};
+  for (const [k, f] of Object.entries(stats)) {
+    const s = draws[k].sort((a, b) => a - b);
+    out[k] = { value: f(pairs), lo: quantile(s, 0.025), hi: quantile(s, 0.975) };
+  }
+  return out;
+}
