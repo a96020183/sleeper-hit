@@ -1,0 +1,55 @@
+{
+  "name": "Sleeper Hit appendix: sibling-title consistency (pre-registered)",
+  "writtenAt": "2026-10-23",
+  "status": "Appendix to seal/backtest-v2-method.json, committed before this check was run. scripts/sibling-check.js refuses to run if this file differs from its registered commit.",
+  "why": "Another project found Qloo game-to-film lists barely overlap between close siblings (1.58x random, p=0.24), suggesting the lists track data-collection year more than the audience. If that holds for title-to-artist affinity, Sleeper Hit's 'this audience loves this artist' reading is in doubt.",
+  "question": "Do two closely related titles (consecutive entries of one franchise, or representative titles of the same genre) get more similar artist rankings from Qloo than unrelated title pairs? Same question for an LLM.",
+
+  "pool": "The same 3,000-artist pool as the backtest (cached).",
+  "signals": {
+    "films": ["Twilight (2008)", "The Twilight Saga: New Moon (2009)", "The Twilight Saga: Eclipse (2010)", "The Twilight Saga: Breaking Dawn - Part 1 (2011)", "The Hunger Games (2012)", "The Hunger Games: Catching Fire (2013)", "Fifty Shades of Grey (2015)", "Fifty Shades Darker (2017)", "Guardians of the Galaxy (2014)", "Guardians of the Galaxy Vol. 2 (2017)", "Deadpool (2016)", "Deadpool 2 (2018)", "Spider-Man: Into the Spider-Verse (2018)", "Spider-Man: Across the Spider-Verse (2023)", "Furious 7 (2015)", "F9 (2021)", "Fast X (2023)", "Sonic the Hedgehog 2 (2022)", "Sonic the Hedgehog 3 (2024)", "Godzilla vs. Kong (2021)", "Godzilla x Kong: The New Empire (2024)", "The Angry Birds Movie (2016)", "The Angry Birds Movie 2 (2019)", "Ice Age: Continental Drift (2012)", "Ice Age: Collision Course (2016)", "Bad Boys for Life (2020)", "Twister (1996)", "Black Panther (2018)", "Shrek (2001)", "How to Train Your Dragon (2025)"],
+    "games": ["Grand Theft Auto IV (2008)", "Grand Theft Auto V (2013)", "Red Dead Redemption 2 (2018)"],
+    "series": ["Stranger Things (2016)", "Wednesday (2022)", "Bridgerton (2020)", "The Empress (2022)", "The Gilded Age (2022)", "Outer Banks (2020)", "Nobody Wants This (2024)", "BEEF (2023)", "Black Doves (2024)", "Yellowjackets (2021)", "North of North (2025)"],
+    "cost": "All signals except Red Dead Redemption 2 and The Gilded Age are already cached (0 Qloo calls). Those two are scored only if this task's total live Qloo calls stay at or under 1,490; otherwise their pairs are dropped and reported."
+  },
+  "siblingPairs": [
+    ["Twilight (2008)", "The Twilight Saga: New Moon (2009)"],
+    ["The Twilight Saga: New Moon (2009)", "The Twilight Saga: Eclipse (2010)"],
+    ["The Twilight Saga: Eclipse (2010)", "The Twilight Saga: Breaking Dawn - Part 1 (2011)"],
+    ["The Hunger Games (2012)", "The Hunger Games: Catching Fire (2013)"],
+    ["Fifty Shades of Grey (2015)", "Fifty Shades Darker (2017)"],
+    ["Guardians of the Galaxy (2014)", "Guardians of the Galaxy Vol. 2 (2017)"],
+    ["Deadpool (2016)", "Deadpool 2 (2018)"],
+    ["Spider-Man: Into the Spider-Verse (2018)", "Spider-Man: Across the Spider-Verse (2023)"],
+    ["Furious 7 (2015)", "F9 (2021)"],
+    ["F9 (2021)", "Fast X (2023)"],
+    ["Sonic the Hedgehog 2 (2022)", "Sonic the Hedgehog 3 (2024)"],
+    ["Godzilla vs. Kong (2021)", "Godzilla x Kong: The New Empire (2024)"],
+    ["The Angry Birds Movie (2016)", "The Angry Birds Movie 2 (2019)"],
+    ["Ice Age: Continental Drift (2012)", "Ice Age: Collision Course (2016)"],
+    ["Grand Theft Auto IV (2008)", "Grand Theft Auto V (2013)"],
+    ["Grand Theft Auto V (2013)", "Red Dead Redemption 2 (2018)"],
+    ["Bridgerton (2020)", "The Gilded Age (2022)"],
+    ["Bridgerton (2020)", "The Empress (2022)"],
+    ["Stranger Things (2016)", "Wednesday (2022)"]
+  ],
+  "randomPairs": "Every other unordered pair of signals, except pairs from the same franchise (for example Twilight with Eclipse) that are not listed as siblings.",
+
+  "rankings": {
+    "qlooRaw": "Raw affinity, earlier title as signal, whole pool (the backtest's qlooRaw).",
+    "qlooExcess": "Affinity percentile inside 10 popularity bands (the sealed forecast's score).",
+    "llm": "gpt-4.1-mini, temperature 0, same system message as the sealed baseline; user message: 'Title: <title>. From this list, pick the 50 artists whose songs best fit this title's audience, most likely first.' followed by the 3,000 pool names."
+  },
+  "metrics": {
+    "primary": "Jaccard overlap of the top 50 artists of the two titles.",
+    "secondary": "Spearman rank correlation over the whole pool (Qloo rankings only; the LLM names 50).",
+    "test": "Ratio = mean sibling Jaccard / mean random-pair Jaccard. One-sided permutation p-value: 10,000 draws (seed 20261023) of as many random pairs as there are sibling pairs, without replacement; p = (draws with mean >= sibling mean + 1) / 10,001.",
+    "pass": "A ranking passes when ratio >= 3 AND p < 0.01 on top-50 Jaccard.",
+    "yearConfound": "Secondary: Spearman correlation between |release-year difference| and top-50 Jaccard over random pairs, for each ranking (negative = closer years overlap more)."
+  },
+  "readingOfResults": {
+    "qlooExcessFails": "If excess affinity fails, the card's 'this audience loves this artist more than popularity predicts' cannot be read as a stable property of the audience; the claims that rest on it are to be removed or softened in the write-up (listed in the report).",
+    "notChangedHere": "This check does not change public wording by itself; the user decides."
+  },
+  "exploratory": "Anything not written above is exploratory and labelled so."
+}
