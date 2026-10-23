@@ -13,9 +13,10 @@ import { config, todayISO, ROOT } from './src/config.js';
 import { QlooClient } from './src/qloo/client.js';
 import { ARTISTS, DEFAULT_ARTIST } from './src/data/artists.js';
 import { WINDOWS, JUDGING } from './src/data/windows.js';
-import { scoreArtist, decideArtist } from './src/pipeline.js';
+import { scoreArtist, decideArtist, windowRanks, popularityOnly, normName } from './src/pipeline.js';
+import { SCAN } from './src/data/sleepers.js';
 import { draftLetter, letterFacts, OVERLAP_STRONG } from './src/letter.js';
-import { evaluateTiming, TRAILER_LEAD_DAYS, MIN_DAYS, MAX_DAYS } from './src/timing.js';
+import { evaluateTiming, TRAILER_LEAD_DAYS, MIN_DAYS, MAX_DAYS, SERIES_LOCK_DAYS } from './src/timing.js';
 import { DAILY_CAP, MIN_PERCENTILE } from './src/agent.js';
 import { QUIET_RULE, CATALOGUE_RULE } from './src/quiet.js';
 import { TOP_K } from './src/evaluate.js';
@@ -64,7 +65,7 @@ async function draftFor(state, door, song) {
 async function statePayload(artistKey, opts) {
   const state = await decided(artistKey, opts);
   const letters = {};
-  for (const d of state.doors.filter((x) => x.action === 'letter')) letters[d.id] = await draftFor(state, d, null);
+  for (const d of state.doors.filter((x) => x.action === 'letter')) letters[d.id] = await draftFor(state, d, state.artist.songs[0] || null);
   return {
     mode: { qloo: client.label, letters: config.openaiKey ? 'OpenAI' : 'Template' },
     artists: Object.values(ARTISTS).map((a) => ({ key: a.key, name: a.name })),
@@ -73,6 +74,45 @@ async function statePayload(artistKey, opts) {
     letters,
     cap: DAILY_CAP,
   };
+}
+
+// Roster view: every open window, with the roster's artists ranked by that window's audience.
+// Uses the same per-artist runs as /api/state (cached), so it adds no Qloo calls once those are warm.
+async function rosterPayload() {
+  const states = [];
+  let changed = 0, decisions = 0;
+  const changes = [];
+  for (const key of Object.keys(ARTISTS)) {
+    const scored = await getScore(key, todayISO());
+    const st = decideArtist(scored, { overrides: new Set(), manual: null });
+    const pop = decideArtist(popularityOnly(scored), { overrides: new Set(), manual: null });
+    for (const d of st.doors) {
+      const p = pop.doors.find((x) => x.id === d.id);
+      decisions++;
+      if (p.action !== d.action) { changed++; changes.push(`${st.artist.name} / ${d.window.title}: ${d.action === 'letter' ? 'letter' : 'no letter'} with Qloo, ${p.action === 'letter' ? 'letter' : 'no letter'} on popularity alone`); }
+    }
+    states.push(st);
+  }
+  const scanRanks = {};
+  for (const d of states[0].doors) {
+    try {
+      const ranks = await windowRanks(client, d.id);
+      const rows = SCAN.artists.map((a) => ({ name: a.name, year: a.lastStudioAlbum?.year || '', r: ranks.get(normName(a.name)) })).filter((x) => x.r);
+      const byScore = [...rows].sort((a, b) => a.r.rank - b.r.rank).slice(0, 5).map((x) => ({ name: x.name, year: x.year, topPct: x.r.topPct, affinityRank: x.r.affinityRank }));
+      const byPop = [...rows].sort((a, b) => a.r.popularityRank - b.r.popularityRank).slice(0, 5).map((x) => x.name);
+      scanRanks[d.id] = { byScore, byPop };
+    } catch { /* window not scorable: leave it out */ }
+  }
+  const windows = states[0].doors.map((d0) => {
+    const rows = states.map((st) => {
+      const d = st.doors.find((x) => x.id === d0.id);
+      return { key: st.artist.key, name: st.artist.name, topPct: d.topPct, quiet: st.quiet.quiet, action: d.action, reason: st.quiet.quiet === false ? 'Not quiet' : (d.reason || '') };
+    }).sort((a, b) => (a.topPct ?? 999) - (b.topPct ?? 999));
+    return { id: d0.id, title: d0.window.title + (d0.window.season ? ` ${d0.window.season}` : ''), kind: d0.window.kind, earlier: d0.window.earlier.label, use: d0.timing.use || '', timing: { event: d0.timing.event, date: d0.timing.date, dateStatus: d0.timing.dateStatus, bucket: d0.timing.bucket, reason: d0.timing.reason || '' }, rows, scan: scanRanks[d0.id] || null };
+  });
+  const order = { 'in-window': 0, early: 1, unknown: 2, 'too-late': 3 };
+  windows.sort((a, b) => (order[a.timing.bucket] ?? 9) - (order[b.timing.bucket] ?? 9));
+  return { mode: { qloo: client.label }, letters: windows.reduce((n, w) => n + w.rows.filter((r) => r.action === 'letter').length, 0), artists: states.length, windows, withoutQloo: { changed, decisions, changes }, scan: { at: SCAN.at, famous: SCAN.famous, quiet: SCAN.quiet } };
 }
 
 // Public, aggregate-only files committed under seal/ (no Qloo response values or ids).
@@ -110,9 +150,9 @@ const DEMO_PICK = {
 
 // How much Qloo this build used (our own call log, counts only).
 const QLOO_USE = {
-  liveCalls: 6365,
+  liveCalls: 6369,
   endpoints: ['/search', '/v2/insights', '/v2/trending'],
-  insightTypes: ['urn:entity:artist', 'urn:demographics'],
+  insightTypes: ['urn:entity:artist', 'urn:demographics', 'urn:tag'],
   searchTypes: ['urn:entity:artist', 'urn:entity:movie', 'urn:entity:tv_show', 'urn:entity:videogame'],
   rejected: 1,
   coldStart: 370,
@@ -135,7 +175,7 @@ function trustPayload() {
     }),
     pool: { n: config.poolN, bands: config.poolBands, rule: 'The first N artists Qloo returns for popularity 0.9 or higher, most popular first, split into 10 equal popularity bands. Qloo paging skips some very popular artists (Drake, for one), so this is not the complete top N.' },
     rules: {
-      trailerLead: TRAILER_LEAD_DAYS, minDays: MIN_DAYS, maxDays: MAX_DAYS, dailyCap: DAILY_CAP,
+      trailerLead: TRAILER_LEAD_DAYS, minDays: MIN_DAYS, maxDays: MAX_DAYS, seriesLockDays: SERIES_LOCK_DAYS, dailyCap: DAILY_CAP,
       minPercentile: MIN_PERCENTILE, quiet: QUIET_RULE, catalogue: CATALOGUE_RULE, overlapStrong: OVERLAP_STRONG, topK: TOP_K,
     },
     seal: sealFile('hashes.json'),
@@ -174,6 +214,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, await statePayload(artistParam(url.searchParams.get('artist')), viewerOptions(url.searchParams)));
     }
     if (url.pathname === '/api/trust' && req.method === 'GET') return send(res, 200, trustPayload());
+    if (url.pathname === '/api/roster' && req.method === 'GET') return send(res, 200, await rosterPayload());
     if (url.pathname === '/api/draft' && req.method === 'POST') {
       const b = await readJSON(req);
       const state = await decided(artistParam(b.artist), viewerOptions(b));

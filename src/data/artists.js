@@ -37,7 +37,7 @@ export const ARTISTS = {
     pronoun: 'they',
     // Songs on UMPG's UK artist page. "Cut the Crap" (1985) is left out: Joe Strummer's share of it
     // went with his solo catalogue to Warner Chappell (Billboard).
-    songs: ['London Calling', 'Should I Stay or Should I Go', 'Rock the Casbah', 'The Magnificent Seven'],
+    songs: ['The Magnificent Seven', 'Rock the Casbah', 'London Calling', 'Should I Stay or Should I Go'],
     clearanceNote: 'Universal Music Publishing Group lists these songs on its UK artist page; the page does not say whether it controls every share, so confirm before quoting. Songs from "Cut the Crap" are excluded: Joe Strummer’s share went to Warner Chappell with his solo catalogue. The recordings were reissued by Sony’s Legacy Recordings; the current owner is inferred from that, not from a (P) line.',
     clearance: {
       publishing: {

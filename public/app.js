@@ -41,7 +41,7 @@ const kindLabel = { series: 'Returning series', film: 'Sequel film, trailer', ga
 
 function dateLine(t) {
   const tag = `<span class="tag ${t.dateStatus}">${t.dateStatus}</span>`;
-  const days = t.daysLeft !== null && t.daysLeft !== undefined && t.daysLeft >= 0 ? `<div class="src">${t.daysLeft} days left</div>` : '';
+  const days = t.daysLeft !== null && t.daysLeft !== undefined && t.daysLeft >= 0 ? `<div class="src">${t.daysLeft} days left${t.daysLeft < 30 ? '. Late: trailer music is often chosen weeks ahead, so this may only reach later spots.' : ''}</div>` : '';
   const prod = t.production ? `<div class="src">Production: ${esc(t.production)}. No countdown for series.</div>` : '';
   const rel = t.release ? `<div class="src">Release ${fmtDate(t.release)}, announced</div>` : '';
   return `${esc(t.event)} ${fmtDate(t.date)} ${tag}${days}${rel}${prod}`;
@@ -56,7 +56,7 @@ function clearanceBlock(c) {
 
 function overlapLine(d) {
   if (d.overlap === null || d.overlap === undefined) return '<span class="src">Qloo has no age and gender data for this audience.</span>';
-  return `${Math.round(d.overlap * 100)}% <span class="src">age and gender overlap with ${esc(d.window.earlier.label)} fans</span>`;
+  return `<span class="src">${Math.round(d.overlap * 100)}% age and gender overlap with ${esc(d.window.earlier.label)} fans. Used only to break ties.</span>`;
 }
 
 const num = (v) => Number(v).toLocaleString('en-US');
@@ -65,15 +65,18 @@ const num = (v) => Number(v).toLocaleString('en-US');
 function scoreRows(d, state) {
   const b = d.blend;
   if (!b) return `<div><dt>Audience score</dt><dd><span class="src">Qloo has too little data on ${esc(d.window.earlier.label)} fans to rank ${esc(state.artist.name)}.</span></dd></div>`;
+  const tested = d.window.kind === 'series'
+    ? 'Past series: not clearly ahead of popularity. Treat it as a lead.'
+    : 'Past film and game sequels: ahead of popularity; 23 sequel artists in the top 50 to the LLM’s 16 (difference +7, interval 0 to +16).';
   return `<div><dt>Qloo says</dt><dd>${esc(d.window.earlier.label)} fans: No. ${num(b.affinityRank)} of ${num(b.of)} artists by affinity. No. ${num(b.popularityRank)} by popularity.</dd></div>
-    <div><dt>Our read</dt><dd><span class="big">Top ${d.topPct}%</span><div class="src">No. ${num(b.rank)} of ${num(b.of)} when the two ranks are averaged. On 26 past sequels this ranking beat popularity alone and an LLM (Trust tab). A reason to knock, not a promise.</div></dd></div>`;
+    <div><dt>Our read</dt><dd><span class="big">Top ${d.topPct}%</span><div class="src">No. ${num(b.rank)} of ${num(b.of)} with the two ranks averaged, a score we chose after the backtest (Trust). ${tested}</div></dd></div>`;
 }
 
 function renderModes() {
   const m = ui.data?.mode || ui.trust?.mode;
   if (!m) return;
   $('#modes').innerHTML = `<span class="pill ${m.qloo === 'MOCK' ? 'mock' : ''}">Qloo ${m.qloo === 'MOCK' ? 'MOCK data' : 'live'}</span>` +
-    (m.letters ? `<span class="pill">Letters: ${m.letters === 'OpenAI' ? 'OpenAI' : 'template'}</span>` : '');
+    (m.letters ? `<span class="pill">Letters: ${m.letters === 'OpenAI' && !Object.values(ui.data?.letters || {}).some((l) => l.error) ? 'OpenAI' : 'template'}</span>` : '');
 }
 
 const monthLabel = (ym) => (ym ? new Date(ym + '-01T00:00:00Z').toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '');
@@ -93,7 +96,7 @@ function quietLine(q, name) {
   const facts = `English Wikipedia views, last 3 months: ${q.ratio}x its 3-year average.`;
   const cat = q.catalogue;
   const year = cat?.latest?.date ? cat.latest.date.slice(0, 4) : '';
-  if (q.quiet) return `${esc(name)} is quiet. ${facts} No month in 2 years above 1.5x (busiest: ${q.peakRatio}x, ${monthLabel(q.peakMonth)}). Latest studio album: ${esc(cat?.latest?.title || '')} (${year}), per MusicBrainz.${pageviewsLink(q)}`;
+  if (q.quiet) return `<strong>${esc(name)} is quiet.</strong> Wikipedia views are flat (${q.ratio}x their 3-year average, no spike in 2 years). Last studio album: ${esc(cat?.latest?.title || '')}, ${year}.${pageviewsLink(q)}`;
   if (q.pageviewsQuiet && cat?.old === false) return `${esc(name)} is not a catalogue act right now: a new studio album, ${esc(cat.latest.title)}, came out in ${year} (MusicBrainz). Page views alone look quiet (${q.ratio}x over the last 3 months).${pageviewsLink(q)}`;
   if (q.pageviewsQuiet) return `${esc(name)}: page views look quiet (${q.ratio}x over the last 3 months), but we could not confirm the catalogue on MusicBrainz (${esc(cat?.why || 'not checked')}), so we do not count it as quiet.${pageviewsLink(q)}`;
   const why = q.noWake === false
@@ -110,18 +113,22 @@ function renderToday() {
   if (!knock.find((d) => d.id === ui.selected)) ui.selected = knock[0]?.id || null;
   const door = knock.find((d) => d.id === ui.selected);
 
-  const lede = door
-    ? `<div class="lede"><h1>Today's first door for ${esc(state.artist.name)}: ${esc(titleOf(knock[0].window))}</h1></div>`
-    : `<div class="lede"><h1>No door to knock on today for ${esc(state.artist.name)}</h1></div>`;
-  const quiet = `<p class="lede quiet" style="margin-top:-12px">${quietLine(state.quiet, state.artist.name)}</p>`;
+  const lede = `<p class="kicker">For sync teams at music publishers and catalogue owners</p>` + (door
+    ? `<h1 class="headline">Pitch ${esc(state.artist.name)} for ${esc(titleOf(knock[0].window))}</h1>`
+    : `<h1 class="headline">No pitch today for ${esc(state.artist.name)}</h1>`) +
+    `<p class="what">Sleeper Hit checks that an artist has gone quiet, finds upcoming sequels whose audience already ranks them near the top in Qloo, checks clearance and drafts the letter. A person sends it.</p>`;
+  const quiet = `<p class="quietline">${quietLine(state.quiet, state.artist.name)}</p>`;
 
   let desk = '';
   if (door) {
     const saved = outbox().find((l) => l.doorId === door.id && l.artistKey === state.artist.key && l.status !== 'sent');
     if (saved && ui.edits[door.id] === undefined) { ui.edits[door.id] = saved.text; if (saved.song) ui.songs[door.id] = saved.song; }
     const text = ui.edits[door.id] ?? letters[door.id]?.text ?? '';
+    if (ui.songs[door.id] === undefined) ui.songs[door.id] = letters[door.id]?.song || state.artist.songs[0] || null;
     const chosen = ui.songs[door.id];
-    const engine = letters[door.id]?.engine === 'openai' ? 'Drafted with OpenAI from the evidence on the right. Edit anything.' : 'Drafted from a template. Add an OpenAI key for a tailored draft. Edit anything.';
+    const L = letters[door.id] || {};
+    const how = L.engine === 'openai' ? 'Drafted with OpenAI from the evidence card.' : L.error ? `Drafted from a template: the OpenAI call failed (${esc(L.error)}).` : 'Drafted from a template (no OpenAI key).';
+    const engine = `${how} Qloo stops at the artist, so a person picks the song; we have no licensing history, so check recent uses first. Edit anything.`;
     const inOutbox = outbox().find((l) => l.doorId === door.id && l.artistKey === state.artist.key && l.status !== 'sent');
     desk = `
       ${knock.length > 1 ? `<div class="switch" role="group" aria-label="Letters today">${knock.map((d, i) => `<button data-door="${d.id}" aria-pressed="${d.id === door.id}">${i + 1}. ${esc(d.window.title)}</button>`).join('')}</div>` : ''}
@@ -142,10 +149,11 @@ function renderToday() {
           <h2>${esc(titleOf(door.window))}</h2>
           <p class="kind">${esc(kindLabel[door.window.kind] || '')}${door.window.platform ? `, ${esc(door.window.platform)}` : ''}</p>
           <dl>
+            <div><dt>Pitching for</dt><dd>${esc(door.timing.use || '')}</dd></div>
             ${scoreRows(door, state)}
-            <div><dt>Audience overlap</dt><dd>${overlapLine(door)}</dd></div>
             <div><dt>Clearance</dt><dd>${clearanceBlock(door.clearance)}<details class="notes"><summary>Notes and sources</summary>${state.artist.clearanceNote ? `<div class="src">${esc(state.artist.clearanceNote)}</div>` : ''}${state.artist.sources?.length ? `<div class="src">${state.artist.sources.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">Source ${i + 1}</a>`).join(', ')}</div>` : ''}<div class="src">For setting priorities, not legal advice.</div></details></dd></div>
             <div><dt>Date</dt><dd>${dateLine(door.timing)}</dd></div>
+            <div><dt>Audience overlap</dt><dd>${overlapLine(door)}</dd></div>
           </dl>
           ${door.window.note ? `<p class="note">${esc(door.window.note)}</p>` : ''}
         </aside>
@@ -163,11 +171,12 @@ function renderToday() {
 
   const skips = skip.length ? `
     <div class="skipped">
-      <h3>Not knocking today</h3>
+      <h3>${door ? 'Not pitching today' : 'Open windows, and why not today'}</h3>
       <div class="skips">${skip.map((d) => `
         <div class="skip">
           <strong>${esc(titleOf(d.window))}</strong>
-          <p>${esc(allUnconfirmed ? 'Clearance unconfirmed.' : d.reason)}${allUnconfirmed && d.topPct ? ` Audience score: top ${d.topPct}% with ${esc(d.window.earlier.label)} fans.` : ''}</p>
+          <p>${esc(allUnconfirmed ? 'Clearance unconfirmed.' : d.reason)}</p>
+          ${d.topPct ? `<span class="meta">Card score: top ${d.topPct}% for ${esc(d.window.earlier.label)} fans</span>` : ''}
           <span class="meta">${esc(d.timing.event)} ${fmtDate(d.timing.date)}, ${esc(d.timing.dateStatus)}</span>
           ${d.clearance.category !== 'unconfirmed' ? `<button class="btn link" data-override="${d.id}">Knock anyway</button>` : ''}
         </div>`).join('')}
@@ -281,20 +290,24 @@ function renderCount() {
   $('#outbox-count').textContent = open ? String(open) : '';
 }
 
+const OUTCOMES = [['unknown', 'No reply yet'], ['passed', 'Passed'], ['hold', 'On hold'], ['quote', 'Quote requested'], ['placed', 'Placed']];
+
 function renderOutbox() {
   const el = $('#tab-outbox');
   const note = '<p class="note-store">Saved in this browser only. Nothing is emailed, and the server keeps no copy.</p>';
   const list = [...outbox()].sort((a, b) => (a.status === 'sent') - (b.status === 'sent') || String(a.deadline).localeCompare(String(b.deadline)));
   if (!list.length) { el.innerHTML = '<p class="empty">No letters yet. Add one from Today. Up to three a day per artist.</p>' + note; return; }
+  const sent = list.filter((l) => l.status === 'sent');
+  const tally = sent.length ? `<p class="tally">${sent.length} sent. ${OUTCOMES.map(([v, t]) => `${t}: ${sent.filter((l) => l.used === v).length}`).join('. ')}.</p>` : '';
   const today = ui.data?.state?.today || new Date().toISOString().slice(0, 10);
   const days = (iso) => Math.round((Date.parse(iso + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86400000);
-  el.innerHTML = note + `<div class="list">${list.map((l) => `
+  el.innerHTML = note + tally + `<div class="list">${list.map((l) => `
     <div class="row" data-id="${esc(l.id)}">
       <div><h3>${esc(l.title)}</h3><div class="sub">${esc(l.artistName || '')}${l.song ? `, "${esc(l.song)}"` : ''}. ${esc(l.recipient)}</div></div>
       <div class="actions">
         ${l.status === 'sent'
           ? `<span class="status-sent">Sent ${new Date(l.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-             <label class="used">Used? <select data-used><option value="unknown"${l.used === 'unknown' ? ' selected' : ''}>Not yet known</option><option value="yes"${l.used === 'yes' ? ' selected' : ''}>Yes</option><option value="no"${l.used === 'no' ? ' selected' : ''}>No</option></select></label>`
+             <label class="used">Outcome <select data-used>${OUTCOMES.map(([v, t]) => `<option value="${v}"${l.used === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label>`
           : `<button class="btn primary" data-send>Copy and mark sent</button><button class="btn quiet" data-remove>Remove</button>`}
       </div>
       <div class="sub">${l.deadline ? `Window date ${fmtDate(l.deadline)}${l.deadline.length === 10 ? `, ${days(l.deadline)} days left` : ''}` : ''}</div>
@@ -352,54 +365,71 @@ function renderTrust() {
   const iv = (o, f = pct) => (o ? `${f(o.value)} <span class="src">[${f(o.lo)}, ${f(o.hi)}]</span>` : '–');
   const n0 = (v) => (v === null || v === undefined ? '–' : String(Math.round(v)));
   const sgn = (v) => (v === null || v === undefined ? '–' : `${v > 0 ? '+' : ''}${v.toFixed(2)}`);
+  const sgn3 = (v) => (v === null || v === undefined ? '–' : `${v > 0 ? '+' : ''}${v.toFixed(3)}`);
   const sgn0 = (v) => (v === null || v === undefined ? '–' : `${v > 0 ? '+' : ''}${Math.round(v)}`);
   const methodTable = (s) => `<table><tr><th>Method</th><th>Pooled AUC</th><th>Hits in top 50</th></tr>${Object.keys(s.pooledAuc).map((k) => `<tr><td>${esc(names[k] || k)}</td><td>${iv(s.pooledAuc[k])}</td><td>${iv(s.hits[k], n0)}</td></tr>`).join('')}</table>`;
   const h1 = b?.hypotheses?.H1 || {};
   const passed = Object.entries(h1).filter(([, v]) => v?.holds).map(([k]) => names[k] || k);
+  const sc = t.siblingCheck;
+  const sib = sc ? `<p>Close sibling titles (${sc.siblingPairs} pairs, such as consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) against ${sc.randomPairs} unrelated pairs, registered before it ran. Bar: top-50 overlap at least 3x random with p below 0.01. ${['qlooRaw', 'qlooExcess', 'llm'].map((k) => { const r = sc.results[k]; return `${esc(names[k].replace(/ \(card score.*\)/, ''))}: ${r.ratio}x, p ${r.p < 0.001 ? '< 0.001' : r.p}, ${r.pass ? 'passed' : 'not passed'}`; }).join('; ')}. The link to release-year distance is weak, so the overlap reflects the audience, not just when the data was collected.</p>` : '';
   const thirdName = (k) => (k === 'high' ? 'Most popular third' : k === 'mid' ? 'Middle third' : 'Least popular third');
   const tert = b ? ['high', 'mid', 'low'].map((k) => {
     const s = b.byTertile[k];
     const best = s.qlooVs?.qlooBlend;
-    return `<tr><td>${thirdName(k)}</td><td>${s.positives}</td><td>${iv(s.pooledAuc?.qlooBlend)}</td><td>${iv(s.pooledAuc?.popularity)}</td><td>${best ? `${sgn(best.aucMinusPopularity.value)} <span class="src">[${sgn(best.aucMinusPopularity.lo)}, ${sgn(best.aucMinusPopularity.hi)}]</span>` : '–'}</td><td>${n0(s.hits?.qlooBlend?.value)} vs ${n0(s.hits?.llm?.value)}</td></tr>`;
+    const llmCell = k === 'low' ? `${n0(s.hits?.llm?.value)} <span class="src">(given only these 1,000 names: ${n0(s.hits?.llmTail?.value)})</span>` : n0(s.hits?.llm?.value);
+    return `<tr><td>${thirdName(k)}</td><td>${s.positives}</td><td>${iv(s.pooledAuc?.qlooBlend)}</td><td>${iv(s.pooledAuc?.popularity)}</td><td>${best ? `${sgn(best.aucMinusPopularity.value)} <span class="src">[${sgn(best.aucMinusPopularity.lo)}, ${sgn(best.aucMinusPopularity.hi)}]</span>` : '–'}</td><td>${n0(s.hits?.qlooBlend?.value)}</td><td>${llmCell}</td></tr>`;
   }).join('') : '';
-  const sc = t.siblingCheck;
-  const sib = sc ? `<p>Close sibling titles (${sc.siblingPairs} pairs, such as consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) against ${sc.randomPairs} unrelated pairs, registered before it ran. Bar: top-50 overlap at least 3x random with p below 0.01. ${['qlooRaw', 'qlooExcess', 'llm'].map((k) => { const r = sc.results[k]; return `${esc(names[k].replace(/ \(card score.*\)/, ''))}: ${r.ratio}x, p ${r.p < 0.001 ? '< 0.001' : r.p}, ${r.pass ? 'passed' : 'not passed'}`; }).join('; ')}. The link to release-year distance is weak, so the overlap reflects the audience, not just when the data was collected.</p>` : '';
   const ov = b?.overall, bl = ov?.qlooVs?.qlooBlend, ex = ov?.qlooVs?.qlooExcess;
+  const hi = b?.byTertile.high.qlooVs.qlooBlend, fl = b?.films?.qlooVs?.qlooBlend;
   const midLow = b ? ['mid', 'low'].map((k) => b.byTertile[k].qlooVs.qlooBlend.aucMinusPopularity) : [];
-  const llmHigh = b?.byTertile.high.hits.llm.value, llmMidLow = b ? b.byTertile.mid.hits.llm.value + b.byTertile.low.hits.llm.value : 0;
-  const blendMidLow = b ? b.byTertile.mid.hits.qlooBlend.value + b.byTertile.low.hits.qlooBlend.value : 0;
+  const ci = (o, f = sgn) => (o ? `${f(o.value)} [${f(o.lo)}, ${f(o.hi)}]` : '–');
   const sch = t.scoreChange;
+  const bars = b ? (() => {
+    const rows = [['qlooBlend', 'Qloo card score'], ['llm', 'LLM only'], ['similarTitles', 'What similar titles used'], ['popularity', 'Popularity']];
+    const max = Math.max(...rows.map(([k]) => ov.hits[k].value));
+    return `<div class="bars" role="img" aria-label="Sequel artists found in the top 50">${rows.map(([k, label]) => `<div class="barrow${k === 'qlooBlend' ? ' lead' : ''}"><span class="barlabel">${label}</span><span class="bartrack"><span class="barfill" style="width:${(ov.hits[k].value / max) * 100}%"></span></span><span class="barval">${n0(ov.hits[k].value)} <span class="of">of ${b.positives}</span></span></div>`).join('')}</div>`;
+  })() : '';
+  const usesTable = b ? `<table><tr><th>Qloo use (registered before the test)</th><th>AUC over popularity</th><th>Top-50 hits over the LLM</th><th>Cleared the bar</th></tr>${['qlooRaw', 'qlooExcess', 'qlooTimesPop', 'qlooBlend'].map((k) => { const v = ov.qlooVs[k]; return `<tr><td>${esc(names[k])}</td><td>${ci(v.aucMinusPopularity)}</td><td>${ci(v.hitsMinusLlm, sgn0)}</td><td>${h1[k]?.holds ? '<strong>Yes</strong>' : 'No'}</td></tr>`; }).join('')}</table>` : '';
   const backtest = b ? `
-    <p class="claim">Ranking artists by the earlier title's Qloo audience affinity plus popularity, on ${b.pairsScored} sequels already out, put the artists each sequel went on to use higher more often than popularity alone or an LLM. The method was committed before any song list was collected (commit <span class="hash">${esc(t.backtestMethod?.commit || b.registeredCommit)}</span>), and <code>npm run backtest</code> re-runs it.</p>
-    <h3>Where Qloo helps most</h3>
+    <p class="claim">On ${b.pairsScored} sequels already out, the earlier title's Qloo audience rank, averaged with popularity, put the artists each sequel went on to use higher than popularity alone or an LLM did. Audience rank alone pointed the same way but did not clear our bar.</p>
+<p class="story">One of 12 sequels where the card score found an artist that neither popularity nor the LLM did: the soundtrack of <em>Guardians of the Galaxy Vol. 2</em> includes Fleetwood Mac, and ranked from the first film's Qloo audience, Fleetwood Mac was in our top 50 of about 3,000 artists. Qloo's data is today's, so fans of the first film have also seen Vol. 2. That bias favours Qloo; the sealed forecast is the clean test.</p>
+    <p class="sub">Sequel artists found in each method's top 50, summed over ${b.pairsScored} sequels (${b.positives} to find).</p>
+    ${bars}
     <ul class="wins">
-      <li><strong>Less famous artists.</strong> In the middle and least popular thirds of the pool, the Qloo ranking beats popularity by ${sgn(midLow[0]?.value)} and ${sgn(midLow[1]?.value)} AUC (lower ends ${sgn(midLow[0]?.lo)} and ${sgn(midLow[1]?.lo)}). These are the catalogue artists a rights holder most needs help with.</li>
-      <li><strong>The LLM sticks to stars.</strong> All ${n0(llmHigh)} of the LLM's top-50 hits were in the most popular third; it found ${n0(llmMidLow)} in the other two. The Qloo ranking found ${n0(blendMidLow)} there.</li>
-      <li><strong>The audience signal is steady.</strong> Close sibling titles get similar Qloo artist lists, ${sc ? sc.results.qlooRaw.ratio : '–'}x more overlap than unrelated pairs. The LLM reaches ${sc ? sc.results.llm.ratio : '–'}x, because it names the same famous artists for most titles.</li>
+      <li><strong>Famous artists, the ones this tool pitches.</strong> Every top-50 hit of the card score and of the LLM was in the most popular third of the pool, which holds the 500 artists the selection rule picks from (The Clash is No. 109). Within that third, the card score also beat popularity by ${ci(hi?.aucMinusPopularity)} AUC.</li>
+      <li><strong>Films and games.</strong> On the ${b.films.pairs} film and game sequels: ${ci(fl?.aucMinusPopularity)} AUC over popularity, and ${n0(b.films.hits.qlooBlend.value)} top-50 hits against the LLM's ${n0(b.films.hits.llm.value)} (${ci(fl?.hitsMinusLlm, sgn0)}).</li>
+      <li><strong>Committed first, score picked after.</strong> The method was committed before any song list was collected (commit <span class="hash">${esc(t.backtestMethod?.commit || b.registeredCommit)}</span>), and <code>npm run backtest</code> re-runs it. Of the four Qloo uses it registered, only the card score cleared the bar, and we switched to it after seeing that (details below). The sealed forecast is the test it has not seen.</li>
     </ul>
-    <h3>All methods</h3>
-    <p>${b.candidates} past sequels listed; ${b.pairsScored} had sequel artists in the ${num(b.pool)}-artist pool who were not on the earlier title's list, ${b.positives} in all (${b.films.pairs} films and games, ${b.series.pairs} series). Pooled AUC: 0.5 is chance. Intervals: 95%, resampling franchises.</p>
-    ${methodTable(b.overall)}
-    <p>Registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. <strong>${passed.length ? `Cleared by: ${passed.map(esc).join(', ')}` : 'No Qloo use cleared it'}</strong> (AUC ${sgn(bl?.aucMinusPopularity.value)} [${sgn(bl?.aucMinusPopularity.lo)}, ${sgn(bl?.aucMinusPopularity.hi)}] over popularity; ${sgn0(bl?.hitsMinusLlm.value)} [${sgn0(bl?.hitsMinusLlm.lo)}, ${sgn0(bl?.hitsMinusLlm.hi)}] hits over the LLM).</p>
-    <table><tr><th>Pool third</th><th>Sequel artists</th><th>Card score AUC</th><th>Popularity AUC</th><th>Difference</th><th>Top-50 hits, card score vs LLM (whole pool)</th></tr>${tert}</table>
-    <div class="change"><h3>We changed the card score after this test</h3>
-      <p>${esc(sch?.text || '')}</p>
-      <p>Original score, excess affinity: pooled AUC ${iv(ov?.pooledAuc.qlooExcess)}, ${sgn(ex?.aucMinusPopularity.value)} [${sgn(ex?.aucMinusPopularity.lo)}, ${sgn(ex?.aucMinusPopularity.hi)}] over popularity, ${sgn0(ex?.hitsMinusLlm.value)} [${sgn0(ex?.hitsMinusLlm.lo)}, ${sgn0(ex?.hitsMinusLlm.hi)}] top-50 hits over the LLM. Not cleared.</p>
-    </div>
-    <h3>Sibling titles</h3>
-    ${sib}
     <h3>Limits</h3>
     <ul>
-      <li>Series (${b.series.pairs}) and titles released after the LLM's training cutoff (${b.afterCutoff.pairs} pairs) did not show Qloo ahead of popularity. Most sealed titles are one or the other.</li>
-      <li>In the least popular third, an LLM shown only those ${num(b.pool / 3)} names found as many sequel artists as Qloo (${n0(b.byTertile.low.hits.llmTail?.value)} vs ${n0(b.byTertile.low.hits.qlooBlend.value)}).</li>
+      <li>Series (${b.series.pairs} pairs, AUC ${ci(b.series.qlooVs.qlooBlend.aucMinusPopularity, sgn3)} over popularity) and titles released after the LLM's training cutoff (${b.afterCutoff.pairs} pairs, ${ci(b.afterCutoff.qlooVs.qlooBlend.aucMinusPopularity, sgn3)}) did not show Qloo clearly ahead of popularity. Most sealed titles are one or the other.</li>
+      <li>The backtest checks songs used in the sequels themselves (soundtrack albums and episode lists). The app pitches trailers and TV spots too, where picks follow other rules.</li>
+      <li>The LLM is <code>gpt-4.1-mini</code> at temperature 0, given both titles and the pool. It returns a 50-name shortlist, not a full ranking, so we could not test an LLM-plus-popularity blend against ours.</li>
+      <li>Less famous artists: inside the middle and least popular thirds, ranking only those artists, the card score beat popularity by ${sgn(midLow[0]?.value)} and ${sgn(midLow[1]?.value)} AUC. But asked for 50 names from the whole pool, the LLM put all 50 in the most popular third, so it never competed there. Given only the least popular ${num(b.pool / 3)} names, it found as many sequel artists as Qloo (${n0(b.byTertile.low.hits.llmTail?.value)} vs ${n0(b.byTertile.low.hits.qlooBlend.value)}).</li>
+      <li>"Least popular" means the bottom of a popular pool (Qloo popularity 0.9 or higher), not the long tail.</li>
       <li>Four Qloo uses were tested without correcting for that, so one pass is a narrow pass.</li>
       <li>Known biases, written down before scoring: ${(t.backtestMethod?.knownBiases || []).map(esc).join(' ')}</li>
-    </ul>`
+    </ul>
+    <details><summary>All methods and the four Qloo uses</summary>
+      <p>${b.candidates} past sequels listed; ${b.pairsScored} had sequel artists in the ${num(b.pool)}-artist pool who were not on the earlier title's list, ${b.positives} in all (${b.films.pairs} films and games, ${b.series.pairs} series). Pooled AUC: 0.5 is chance. Intervals: 95%, resampling franchises.</p>
+      <div class="tablewrap">${methodTable(b.overall)}</div>
+      <p>Registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. Raw affinity found more hits, but its lower ends touched or crossed zero. Differences are computed before rounding.</p>
+      <div class="tablewrap">${usesTable}</div>
+    </details>
+    <details><summary>We changed the card score after this test</summary>
+      <div class="change"><p>${esc(sch?.text || '')}</p>
+      <p>Original score, excess affinity: pooled AUC ${iv(ov?.pooledAuc.qlooExcess)}, ${ci(ex?.aucMinusPopularity)} over popularity, ${ci(ex?.hitsMinusLlm, sgn0)} top-50 hits over the LLM. Not cleared.</p></div>
+    </details>
+    <details><summary>By popularity third</summary>
+      <p>Each third is ranked on its own: the card score's top 50 inside that third. The LLM column counts the LLM's 50 whole-pool picks that fall in that third.</p>
+      <div class="tablewrap"><table><tr><th>Pool third</th><th>Sequel artists</th><th>Card score AUC</th><th>Popularity AUC</th><th>Difference</th><th>Top-50 hits, card score</th><th>LLM hits</th></tr>${tert}</table></div>
+    </details>
+    <details><summary>Sibling titles</summary>${sib}</details>`
     : '<p>Not run yet.</p>';
 
   const ds = (t.dataSources || []).map((d) => `<li><strong>${d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` : esc(d.name)}.</strong> ${esc(d.use)}</li>`).join('');
   const qu = t.qlooUse;
-  const usage = qu ? `<p>${num(qu.liveCalls)} live Qloo calls while building and testing, on ${qu.endpoints.length} endpoints (${qu.endpoints.map((e) => `<code>${esc(e)}</code>`).join(', ')}). Insights for ${qu.insightTypes.map((e) => `<code>${esc(e)}</code>`).join(' and ')}; search across ${qu.searchTypes.length} entity types. ${qu.rejected} request was rejected (a trending query over a full year). After a restart the app re-scores the pool once, about ${num(qu.coldStart)} calls, then serves from its private cache.</p>` : '';
+  const usage = qu ? `<p>${num(qu.liveCalls)} live Qloo calls while building and testing, on ${qu.endpoints.length} endpoints (${qu.endpoints.map((e) => `<code>${esc(e)}</code>`).join(', ')}). Insights for ${qu.insightTypes.map((e) => `<code>${esc(e)}</code>`).join(', ')} (tags tried, then left out); search across ${qu.searchTypes.length} entity types. ${qu.rejected} request was rejected (a trending query over a full year). After a restart the app re-scores the pool once, about ${num(qu.coldStart)} calls, then serves from its private cache.</p>` : '';
 
   const p = t.premise;
   const premise = p ? `
@@ -430,44 +460,76 @@ function renderTrust() {
     </tr>`).join('');
   const rr = t.rules;
   el.innerHTML = `<div class="trust">
-    <p class="roles">Qloo measures the audience. Our code ranks the doors and decides. The language model drafts the letter and stands in as the baseline in the tests. A person sends.</p>
-    <section><h2>Backtest on past sequels</h2>${backtest}</section>
-    <section><h2>Sealed forecast</h2>${seal}${results}${timeline}</section>
-    <section><h2>Does Qloo add something popularity cannot?</h2>${premise}</section>
+    <p class="roles">Qloo measures the audience. Our code ranks the windows and decides. The language model drafts the letter and is the baseline in the tests. A person sends.</p>
+    <section><h2>Does the Qloo ranking pick better?</h2>${backtest}</section>
     <section><h2>What we learned about Qloo's data</h2>
       <ul>
         <li>Affinity depends on the signal, not on the other artists in the request: the same artist scored inside two different candidate lists got the same value. So 3,000 artists can be scored in chunks of 50 and stay on one scale.</li>
-        <li>Affinity is not popularity in disguise: across 3,000 artists and 12 titles, the median rank correlation was ${p?.medianSpearman?.toFixed(2) ?? '–'}, and each title's audience picks its own artists.</li>
+        <li>Affinity is not popularity in disguise: across 3,000 artists and 12 titles, the median rank correlation was ${p?.medianSpearman?.toFixed(2) ?? '–'}, and each title's audience picks its own artists (bar set before the test: 0.5).</li>
+        <li>We tried <code>urn:tag</code> insights to explain a match. For the GTA V audience, music-genre tags came back empty, and unfiltered tags were mostly unrelated (hobbies, endorsements). For Yellowjackets, the music genres were the broad popular ones (pop, hip hop, indie). Too generic for a letter, so the card shows ranks only. With one signal title, explainability would credit that one title, so we left it off.</li>
         <li>Paging <code>filter.popularity.min=0.9</code> returns artists most popular first but skips some of the most popular (Drake is missing), so our pool is "the first 3,000 returned", not the top 3,000.</li>
         <li>A returning series is one Qloo entity across seasons, so its audience already includes the new season. That is why series are reported apart in the backtest.</li>
         <li><code>/v2/trending</code> has held one repeated value per artist since mid-October 2025, matching its early-2025 order, so we use Wikipedia page views for "quiet" instead.</li>
-        <li><code>urn:demographics</code> returns relative scores per age band and gender, not shares; we convert them against an even baseline (our assumption).</li>
+        <li><code>urn:demographics</code> returns relative scores per age band and gender, not shares; we convert them against an even baseline (our assumption). The overlap varies little between artists, so it only breaks ties.</li>
       </ul>
     </section>
     <section><h2>How much Qloo we used</h2>${usage}</section>
-    <section><h2>How we define quiet</h2>${quiet}</section>
-    <section><h2>Data sources</h2><ul>${ds}</ul></section>
-    <section><h2>Candidate titles</h2>
-      <table><tr><th>Title</th><th>Earlier title used as the Qloo signal</th><th>Window</th><th>Out during judging (${fmtDate(j.start)}–${fmtDate(j.end)})</th><th>Role</th><th>Sources</th></tr>${rows}</table>
-    </section>
-    <section><h2>Rules, fixed before the test</h2>
-      <p>Pool: ${esc(t.pool.rule)} N = ${Number(t.pool.n).toLocaleString('en-US')}.</p>
-      <p>Card score (since Oct 23, after the backtest): with the earlier title as the Qloo signal, rank the pool by affinity and by popularity, average the two ranks, break ties by affinity. Cards show the result as "top X%" of the pool. Doors below the top ${rr.minPercentile}% are not knocked. Until Oct 23 the card showed excess affinity, the affinity percentile among the 100 artists closest in popularity.</p>
-      <p>Timing: first trailers are estimated ${rr.trailerLead.live} days before release for live action and ${rr.trailerLead.animation} for animation (Stephen Follows' averages). ${rr.minDays} to ${rr.maxDays} days out is the best window. Series show production status instead of a countdown.</p>
-      <p>Order: clearance first, then timing (announced dates before estimates), then the card score, then audience overlap. At most ${rr.dailyCap} letters a day per artist. Letters mention audience overlap only at ${Math.round(rr.overlapStrong * 100)}% or more.</p>
-    </section>
     <section><h2>Data handling</h2>
-      <p>Following Qloo's developer guide, no Qloo response data (affinity or popularity values, entity IDs, raw responses) is stored in the public repository. Responses are cached privately on the server. The files under <code>seal/</code> hold only hashes, counts, scores we computed and artist names.</p>
+      <p>Following Qloo's developer guide, no Qloo response data (affinity or popularity values, entity IDs, raw responses) is stored in the public repository. Responses are cached privately on the server. The browser gets ranks and percentiles only. Files under <code>seal/</code> hold hashes, counts, statistics we computed (AUC, correlations, ratios) and artist names; no per-artist Qloo value.</p>
     </section>
+    <details class="sec"><summary>Sealed forecast: settled after release, not during judging</summary>${seal}${results}${timeline}</details>
+    <details class="sec"><summary>How we define quiet, and why The Clash is the demo</summary>${quiet}</details>
+    <details class="sec"><summary>Does Qloo add something popularity cannot? (key-day check)</summary>${premise}</details>
+    <details class="sec"><summary>Rules</summary>
+      <p>Pool: ${esc(t.pool.rule)} N = ${Number(t.pool.n).toLocaleString('en-US')}.</p>
+      <p>Card score (since Oct 23, after the backtest): with the earlier title as the Qloo signal, rank the pool by affinity and by popularity, average the two ranks, break ties by affinity. Cards show the result as "top X%" of the pool. The agent knocks only inside the top ${100 - rr.minPercentile}% (top 50% until Oct 24; now the same bar as the artist selection rule). Until Oct 23 the card showed excess affinity, the affinity percentile among the 100 artists closest in popularity.</p>
+      <p>What each window pitches for: games, the launch trailer and TV spots (in-game music is licensed long before release); films, the first trailer, estimated ${rr.trailerLead.live} days before release for live action and ${rr.trailerLead.animation} for animation (Stephen Follows' averages); series, the episodes, treated as locked within ${rr.seriesLockDays} days of the premiere. ${rr.minDays} to ${rr.maxDays} days out is the best window for trailers and launches.</p>
+      <p>Order: an artist that is not quiet gets no letters. Then clearance, then timing (announced dates before estimates), then the card score, then audience overlap. At most ${rr.dailyCap} letters a day per artist. Letters mention audience overlap only at ${Math.round(rr.overlapStrong * 100)}% or more. A person can knock anyway on any skipped window; that choice is logged.</p>
+    </details>
+    <details class="sec"><summary>Data sources</summary><ul>${ds}</ul></details>
+    <details class="sec"><summary>Candidate titles</summary>
+      <div class="tablewrap"><table><tr><th>Title</th><th>Earlier title used as the Qloo signal</th><th>Window</th><th>Out during judging (${fmtDate(j.start)}–${fmtDate(j.end)})</th><th>Role</th><th>Sources</th></tr>${rows}</table></div>
+    </details>
   </div>`;
 }
 
 function setTab(tab) {
   ui.tab = tab;
   document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
-  for (const name of ['today', 'outbox', 'trust']) $(`#tab-${name}`).hidden = name !== tab;
+  for (const name of ['today', 'roster', 'outbox', 'trust']) $(`#tab-${name}`).hidden = name !== tab;
   if (tab === 'outbox' && ui.data) renderOutbox();
+  if (tab === 'roster') loadRoster();
   if (tab === 'trust') { renderTrust(); if (!ui.trust) loadTrust(); }
+}
+
+async function loadRoster() {
+  const el = $('#tab-roster');
+  if (!ui.roster) el.innerHTML = '<p class="loading">Ranking your roster for every open window…</p>';
+  try { ui.roster = ui.roster || await api('/api/roster'); renderRoster(); } catch (e) { el.innerHTML = `<p class="error">${esc(e.message)}</p>`; }
+}
+
+function renderRoster() {
+  const r = ui.roster;
+  const status = (row) => (row.action === 'letter' ? '<span class="st go">Letter today</span>' : `<span class="st">${esc(row.reason)}</span>`);
+  $('#tab-roster').innerHTML = `
+    <h1 class="headline">Your roster, window by window</h1>
+    <p class="what">Each open window ranks artists by the card score: the earlier title's Qloo audience rank averaged with popularity. Only quiet artists with confirmed clearance get letters. ${r.letters} letter${r.letters === 1 ? '' : 's'} today for the ${r.artists} demo artists.</p>
+    <p class="quietline">Without Qloo's audience signal (popularity alone), ${r.withoutQloo.changed} of ${r.withoutQloo.decisions} decisions today would change${r.withoutQloo.changes.length ? `: ${r.withoutQloo.changes.map(esc).join('; ')}` : ''}.</p>
+    <div class="windows">${r.windows.map((w) => `
+      <div class="win">
+        <div class="win-head"><h2>${esc(w.title)}</h2><span class="src">${esc(w.use)} ${esc(w.timing.event)} ${fmtDate(w.timing.date)}, ${esc(w.timing.dateStatus)}.${w.timing.bucket !== 'in-window' ? ` ${esc(w.timing.reason.charAt(0).toUpperCase() + w.timing.reason.slice(1))}.` : ''}</span></div>
+        <table class="ros"><tr><th>Demo artist</th><th>Card score</th><th>Quiet</th><th>Today</th></tr>
+        ${w.rows.map((row) => `<tr><td><button class="btn link" data-artist="${esc(row.key)}">${esc(row.name)}</button></td><td>${row.topPct ? `Top ${row.topPct}%` : '–'}</td><td>${row.quiet === true ? 'Yes' : row.quiet === false ? 'No' : 'Unknown'}</td><td>${status(row)}</td></tr>`).join('')}
+        </table>
+        ${w.scan && w.scan.byScore.length ? `<div class="scan"><h3>Quiet artists from the ${fmtDate(r.scan.at)} scan that fit best</h3>
+          <p class="src">${r.scan.quiet} of the ${r.scan.famous} most popular artists in the pool were quiet catalogue acts. Clearance for these is not entered yet, so no letters.</p>
+          <ol>${w.scan.byScore.map((x) => `<li><strong>${esc(x.name)}</strong> <span class="src">top ${x.topPct}%, No. ${num(x.affinityRank)} by ${esc(w.earlier)} fans' affinity${x.year ? `, last studio album ${esc(x.year)}` : ''}</span></li>`).join('')}</ol>
+          <p class="src">By popularity alone the first five would be ${w.scan.byPop.map(esc).join(', ')}.</p></div>` : ''}
+      </div>`).join('')}
+    </div>`;
+  $('#tab-roster').querySelectorAll('[data-artist]').forEach((b) => b.addEventListener('click', () => {
+    ui.artist = b.dataset.artist; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; setTab('today'); load();
+  }));
 }
 
 async function loadTrust() {

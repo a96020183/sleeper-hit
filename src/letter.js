@@ -1,5 +1,6 @@
-// Pitch letter drafts. Structure (fixed): 1) the song and the scene, 2) two plain-language data
-// reasons, 3) one clearance line, signed by the person. Raw Qloo scores never appear, and the
+// Pitch letter drafts. Structure (fixed): 1) the song and what it is pitched for (launch trailer,
+// first trailer, episodes) plus one sourced fact about how the earlier work used music, 2) one
+// plain-language data reason, 3) one clearance line, signed by the person. Raw Qloo scores never appear, and the
 // letter never claims the artist "will be picked": Qloo describes aggregate audiences.
 // With OPENAI_API_KEY set, OpenAI writes the draft from these facts; otherwise a template does.
 import { config } from './config.js';
@@ -23,19 +24,25 @@ export function letterFacts({ artist, door, song, manualPct = artist.clearance?.
     const p = Number(manualPct);
     if (cover.caveat) clearanceLine = `A cover needs a licence for the song only. We hold ${p}% of the publishing; the other ${100 - p}% is not yet confirmed. ${originalNote}`;
     else if (p >= 100) clearanceLine = `A cover needs a licence for the song only, and we control the publishing. ${originalNote}`;
-    else if (cover.role === 'listed by') clearanceLine = `${cover.publisher} lists the song in its catalogue, so a cover should need one licence request; we would confirm its share before quoting. ${originalNote}`;
+    else if (cover.role === 'listed by') clearanceLine = `${cover.publisher} lists the song in its catalogue, so a cover or trailer re-record should need one licence request; we would confirm its share before quoting. ${originalNote}`;
     else clearanceLine = `${cover.publisher || 'One publisher'} ${cover.role === 'administered by' ? 'administers' : 'controls'} the song, so a cover needs one licence request. ${originalNote}`;
   } else {
     clearanceLine = 'Both a cover and the original need other rights holders\' OK, which we would confirm before quoting.';
   }
+  const pitchFor = w.kind === 'game' ? `a launch trailer or TV spot for ${w.title}`
+    : w.kind === 'film' ? `the first trailer for ${w.title}`
+      : `${w.title}${w.season ? ` ${w.season}` : ''}`;
   return {
     artist: artist.name,
-    song: song || null,
+    song: song || artist.songs?.[0] || null,
+    pitchFor,
     recipient: door.recipient,
     title: w.title + (w.season ? ` ${w.season}` : ''),
     earlier: w.earlier.label,
     sceneHint: w.sceneHint || '',
     topPct: door.topPct,
+    affinityRank: door.blend?.affinityRank ?? null,
+    poolSize: door.blend?.of ?? null,
     overlapStrong: door.overlap !== null && door.overlap >= OVERLAP_STRONG,
     clearanceLine,
   };
@@ -49,9 +56,11 @@ export function templateLetter(f) {
     '',
     'Hi [Name],',
     '',
-    `${song} by ${f.artist} could sit under [scene] in ${f.title}.${f.sceneHint ? ' ' + f.sceneHint : ''}`,
+    `I'd like to put ${song} by ${f.artist} forward for ${f.pitchFor || f.title}.${f.sceneHint ? ' ' + f.sceneHint : ''}`,
     '',
-    `Why ${f.artist}: of about 3,000 well-known artists, they rank in the top ${f.topPct}% for the ${f.earlier} audience, weighing how much that audience likes them and how widely they are known.` +
+    (f.affinityRank && f.affinityRank <= 100
+      ? `Why ${f.artist}: in Qloo's audience data, ${f.earlier} fans rank them No. ${f.affinityRank} of about 3,000 well-known artists by affinity.`
+      : `Why ${f.artist}: in Qloo's audience data, they sit in the top ${f.topPct}% of about 3,000 well-known artists for ${f.earlier} fans, weighing affinity and how widely they are known.`) +
       (f.overlapStrong ? ` Their listeners also match that audience closely by age and gender.` : ''),
     '',
     f.clearanceLine + ' We can confirm terms within [time frame].',
@@ -66,8 +75,8 @@ export function templateLetter(f) {
 const SYSTEM = `You draft short sync pitch letters for a music rights holder.
 Rules:
 - Plain, warm, specific. Under 150 words in the body. No hype words.
-- First line after the greeting: the song and the scene it could fit. If no song is given, write [Song]. Always leave the scene as [scene] for the person to fill, optionally followed by one sentence drawn from the scene hint.
-- Second paragraph: the data reasons exactly as given, in plain words. Never add numbers that are not given. Never say the artist will be chosen.
+- First line after the greeting: the song and what it is pitched for (pitchFor), then the scene hint if given. Do not invent scenes, trailer contents or past uses beyond the scene hint. If no song is given, write [Song].
+- Second paragraph: one short data reason exactly as given, in plain words. Never add numbers that are not given. Never say the artist will be chosen.
 - Third paragraph: the clearance line as given, plus "We can confirm terms within [time frame]." Do not add any rights claim beyond the clearance line.
 - Keep the "To:" and "Subject:" lines, the greeting "Hi [Name]," and sign off with "Best," then "[Your name]" and "[Company]".`;
 

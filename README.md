@@ -1,93 +1,82 @@
 # Sleeper Hit
 
-An agent for music rights holders. It finds upcoming sequels whose audience ranks a quiet artist near the top, checks clearance, and drafts the pitch letter. A person picks the song, edits the letter and sends it.
+An agent for sync teams at music publishers and catalogue owners. It checks that a famous artist has gone quiet, finds upcoming sequels whose audience already ranks that artist near the top in Qloo, checks clearance and drafts the pitch letter. A person picks the song, edits the letter and sends it.
 
-Qloo measures the audience. Our code ranks the doors and decides. The language model drafts the letter and stands in as the baseline in the tests. A person sends.
+Qloo measures the audience. Our code ranks the windows and decides. The language model drafts the letter and is the baseline in the tests. A person sends.
 
 Built for the Qloo Agentic Hackathon 2026.
 
-**What we can show:** ranking artists by the earlier title's Qloo audience affinity plus popularity, on 26 sequels already out, put the artists each sequel went on to use higher more often than popularity alone or an LLM. The method was committed before any song list was collected, and `npm run backtest` re-runs it. Series and titles newer than the LLM did not show that advantage; see [Backtest](#backtest-on-past-sequels).
+**What we can show:** on 26 sequels already out, the earlier title's Qloo audience rank, averaged with popularity, put the artists each sequel went on to use higher than popularity alone or an LLM did. Audience rank alone pointed the same way but did not clear our bar. Example: the soundtrack of *Guardians of the Galaxy Vol. 2* includes Fleetwood Mac; ranked from the first film's Qloo audience, Fleetwood Mac was in our top 50 of about 3,000 artists, and neither popularity's top 50 nor the LLM's 50 picks found any artist from that soundtrack. (Qloo's data is today's, so fans of the first film have also seen Vol. 2; that bias favours Qloo.) The method was committed before any song list was collected. The score was picked after the test, and series and titles newer than the LLM showed no clear edge. See [Does Qloo pick better?](#does-qloo-pick-better)
+
+**30 seconds:** open the app. The first screen is today's letter for The Clash, with the evidence beside it. Roster shows every open window: the five demo artists, the quiet catalogue artists from our scan that fit it best, and how many decisions would change on popularity alone. Switch the artist to The Verve to see the agent refuse (not quiet). Trust holds the backtest.
+
+![First screen: today's pitch letter for The Clash, with the evidence card](docs/screenshots/1-first-screen.png)
+
+More in `docs/screenshots/`: Roster, a refused artist, the outbox, Trust and phone width. Screenshots were taken on Oct 24.
+
+## The problem
+
+A publisher or catalogue owner holds many artists who were huge and are now quiet. A placement in a trailer, a game launch or a returning series can wake one up: *Stranger Things* did it for Kate Bush in 2022, and the GTA VI trailers did it for Tom Petty and The Pointer Sisters. Sync teams pitch these windows by hand, from memory and contacts, and usually learn about a window when the music is already chosen.
+
+The sequel is the opening. The earlier title's audience is already in Qloo's graph, so before the sequel's music is picked we can ask: does that audience already rank this artist near the top?
+
+Recorded-music sync revenue was US$641 million worldwide in 2025 ([IFPI Global Music Report 2026, via Digital Music News](https://www.digitalmusicnews.com/2026/03/18/global-music-industry-revenue-2025/)). That figure is the label side only; publishers earn sync fees on top. One licensing company puts upfront fees for a known song by an established artist at $5,000 to $1,000,000, with trailers among the higher-paying uses ([Soundstripe](https://www.soundstripe.com/blogs/sync-licensing)).
+
+**Who pays (our plan, not tested with customers):** the sync team at a publisher or catalogue owner, as a monthly subscription per catalogue. One extra placement a year from a sleeping artist would cover it. We have not yet put the tool in front of a sync team.
 
 ## What it does
 
-Pick an artist. The page first says whether the artist is quiet right now (English Wikipedia page views and no new studio album in 5 years, see below). Then, for every open sync window on a sequel (a returning series, a sequel film's trailer, a game sequel), the agent:
+Pick an artist. The agent:
 
-1. **Scores** the window with Qloo. The earlier title is the signal. Qloo ranks about 3,000 well-known artists by that audience's affinity; the card shows the artist's affinity rank and popularity rank ("Qloo says"), and our score: the two ranks averaged, as "top X%" of the pool ("Our read").
-2. **Adds a second signal**: the age and gender overlap between the earlier title's audience and the artist's listeners (Qloo demographics).
-3. **Checks clearance** from public sources plus the user's own input: one-stop, cover clearable, needs another party's consent, or unconfirmed. Every category shows its source.
-4. **Checks timing**: release date, estimated first-trailer date, or production status for series. Every date is marked "announced" or "estimated".
-5. **Decides**. It ranks doors by clearance, then timing, then the card score, then overlap. It writes at most three letters a day and gives every skipped door a one-line reason. A person can knock anyway; that choice is logged.
-6. **Drafts the letter**. The first line is the song and the scene. Audience data is the second paragraph. Raw Qloo scores never appear.
+1. **Checks that the artist is quiet**: flat English Wikipedia page views and no new studio album in 5 years (rules below). An artist that is not quiet gets no letters; a person can still knock anyway.
+2. **Lists open windows on sequels** and what each one pitches for. Games: the launch trailer and TV spots, because in-game music is licensed long before release. Films: the first trailer, estimated from the release date. Series: the episodes, treated as locked within 60 days of the premiere.
+3. **Scores each window with Qloo.** The earlier title is the signal. Qloo ranks about 3,000 well-known artists by that audience's affinity; the card shows the artist's affinity rank and popularity rank ("Qloo says") and our score, the two ranks averaged, as "top X%" ("Our read"). The agent knocks only inside the top 20%.
+4. **Checks clearance** from public sources plus the user's own share: one-stop, cover clearable, needs another party's consent, or unconfirmed. Every category shows its source. Unconfirmed gets no letter.
+5. **Checks timing.** Every date is marked "announced" or "estimated".
+6. **Decides.** Clearance, then timing, then the card score, then age and gender overlap (Qloo demographics) to break ties. At most three letters a day, and every skipped window gets a one-line reason.
+7. **Drafts the letter.** The first line is the song and what it is pitched for, plus one sourced fact about how the title has used music so far. One line of audience data follows. Raw Qloo scores never appear.
 
-Nothing is emailed. "Copy and mark sent" puts the letter on the clipboard and records it in the outbox, where the outcome can be filled in later.
+The **Roster** tab turns it around: for every open window, the demo artists ranked by the card score, with who gets a letter today and why the others do not; the five best-fitting of the 55 quiet catalogue artists from our Oct 23 scan (clearance not entered, so no letters); and how many of today's decisions would change on popularity alone. On Oct 24 that was 2 of 25: without Qloo, The Clash would also get letters for Sonic the Hedgehog 4 and Godzilla x Kong: Supernova, whose audiences rank it only in their top 34% and 31%.
 
-The **Trust** tab holds the backtest, the sealed forecast and how it gets settled, the check that Qloo affinity is not just popularity, what we learned about Qloo's data, how much Qloo we used, how we define quiet, the data sources, the candidate titles and the fixed rules.
+Nothing is emailed. "Copy and mark sent" puts the letter on the clipboard and moves it to the outbox, where the outcome (no reply, passed, on hold, quote requested, placed) is tracked.
 
 ## How Qloo is used
 
 | Step | Request |
 |---|---|
-| Resolve names | `GET /search?query=…&types=urn:entity:artist` (or `urn:entity:tv_show`, `urn:entity:movie`, `urn:entity:videogame`). Only an exact name match, with the expected year for titles, is accepted. |
-| Artist pool | `GET /v2/insights?filter.type=urn:entity:artist&filter.popularity.min=0.9&take=50&page=…` (results come back most popular first) |
+| Resolve names | `GET /search?query=…&types=urn:entity:artist` (or `urn:entity:tv_show`, `urn:entity:movie`, `urn:entity:videogame`). Only an exact name match, with the expected year for titles, is accepted; anything else is shown to a person. |
+| Artist pool | `GET /v2/insights?filter.type=urn:entity:artist&filter.popularity.min=0.9&take=50&page=…` (most popular first) |
 | Score | `GET /v2/insights?filter.type=urn:entity:artist&signal.interests.entities=<earlier title>&filter.results.entities=<up to 50 artist ids>`, repeated over the whole pool |
 | Demographics | `GET /v2/insights?filter.type=urn:demographics&signal.interests.entities=<artist>,<titles>` |
-| Checked, not used | `GET /v2/trending?filter.type=urn:entity:artist&signal.interests.entities=<id>&filter.start_date=…&filter.end_date=…` (see below) |
+| Tried, not used | `/v2/trending` (frozen values) and `filter.type=urn:tag` (too generic to explain a match); see [What we learned](#what-we-learned-about-qloos-data) |
 
-Other public data: the [Wikimedia Pageviews API](https://wikimedia.org/api/rest_v1/) (monthly English Wikipedia views, known bots excluded) for the quiet check, and the Wikidata API to turn the Wikidata id Qloo carries into an article title.
-
-Example, ids redacted:
+### From request to result (ids redacted)
 
     GET https://hackathon.api.qloo.com/v2/insights
       ?filter.type=urn:entity:artist
-      &signal.interests.entities=<earlier title id>
-      &filter.results.entities=<pool artist ids>
+      &signal.interests.entities=<GTA V id>
+      &filter.results.entities=<50 pool artist ids>
+      &take=50
+
+Each response lists the requested artists under `results.entities[]`, and we read `entity_id`, `name`, `popularity` and `query.affinity` (values not shown here). Repeated over the pool, 2,992 artists came back scored for GTA V; the rest had too little data. We rank all of them by `query.affinity` and by `popularity`, average the two ranks and break ties by affinity. Ranked by affinity, The Clash is No. 1; by popularity, No. 109. Averaged, it is No. 28, the top 1%.
+
+Demographics: `GET /v2/insights?filter.type=urn:demographics&signal.interests.entities=<The Clash id>,<GTA V id>` returns relative scores per age band and gender under `results.demographics[].query`. We turn each into shares against an even baseline and take the overlap of the two distributions: 76% for The Clash and GTA V. The Clash is quiet, UMPG lists its songs, and on Oct 24 GTA VI was 26 days from launch, so the agent drafts a letter pitching a launch trailer or TV spot. The same request for *Sonic the Hedgehog 3* puts The Clash in the top 34%, so the agent skips Sonic 4 and says why.
 
 ### The card score
 
-With the earlier title as the signal, rank the pool by Qloo affinity and by Qloo popularity, average the two ranks, break ties by affinity (`blendRanks` in `src/scoring.js`). The card shows it as "top X%" of the pool; doors below the top 50% are not knocked.
+With the earlier title as the signal, rank the pool by Qloo affinity and by Qloo popularity, average the two ranks, break ties by affinity (`blendRanks` in `src/scoring.js`).
 
-**We changed this score after seeing the backtest.** Until Oct 23 the card and the seal used excess affinity: the artist's affinity percentile among artists of similar popularity. It did not clear the registered bar (pooled AUC 0.71 [0.64, 0.79]; +0.03 [-0.05, +0.14] over popularity; +5 [-10, +20] top-50 hits over the LLM). Of the four Qloo uses registered before the backtest, only the rank blend cleared it, so the card and the seal now use the blend. Picking the winner after the fact favours it; the sealed forecast, settled after release, is the test it has not seen. The original score stays in the seal (`excessRank`) and will be reported next to the blend, but does not decide the verdict.
+**We changed this score after seeing the backtest.** Until Oct 23 the card and the seal used excess affinity: the artist's affinity percentile among artists of similar popularity. It did not clear the registered bar. Of the four Qloo uses registered before the backtest, only the rank blend cleared it, so the card and the seal now use the blend. Picking the winner after the fact favours it; the sealed forecast, settled after release, is the test it has not seen. The original score stays in the seal (`excessRank`) and will be reported next to the blend, but does not decide the verdict.
 
-### How much Qloo we used
+## Does Qloo pick better?
 
-About 6,400 live Qloo calls while building and testing (our own call log), on three endpoints: `/search`, `/v2/insights` (`urn:entity:artist` and `urn:demographics`) and `/v2/trending` (checked, then dropped). Search ran across four entity types. One request was rejected (a trending query over a full year). After a restart the app re-scores the pool once, about 370 calls throttled to 4 a second, then serves from its private cache; each further artist costs about two calls.
+`npm run backtest` asks whether an earlier title's Qloo audience ranks the artists its sequel newly used (artists not on the earlier title's list) above the rest of the 3,000-artist pool. It compares Qloo with popularity, an LLM given both titles (`gpt-4.1-mini`, the sealed baseline's prompt) and "what similar titles used". The method, including the candidate list, inclusion rules, four Qloo uses, popularity thirds and an after-LLM-cutoff split, was committed in `seal/backtest-v2-method.json` (commit `034f21e`) before any list was collected; the script refuses to run if that file changes.
 
-### What we learned about Qloo's data
+36 candidates; 26 pairs scored (20 films and games, 6 series), 249 sequel artists to find, 18 franchises. 10 were left out: 5 had no lawful song list, 1 had no new pool artists, and 4 were not run because of the Qloo call budget (Space Jam 2, Spider-Man 2 and 3, Transformers 2). Candidates were processed in the registered order, and the budget rule (1,400 calls) was committed with the method.
 
-- Affinity depends on the signal, not on the other artists in the request: the same artist scored inside two different candidate lists got an identical value. So a large pool can be scored in chunks of 50 and stay on one scale (as the Taste Atlas team also reported).
-- Affinity is not popularity in disguise. On 3,000 artists and 12 titles, the median rank correlation between affinity and popularity was 0.16 (0.13 on the first 500), and the median agreement between two titles' rankings was 0.20. Each title's audience picks its own artists. The bar, set before the test, was 0.5.
-- The pool is the first 3,000 artists Qloo returns for `filter.popularity.min=0.9`, most popular first. It is not the complete top 3,000: the paging skips some very popular artists (Drake and Metro Boomin are missing). We describe it that way everywhere.
-- A returning series is one Qloo entity across seasons, so its audience already includes the new season. Series are reported apart in the backtest for that reason.
-- `/v2/trending` (Oct 23, `npm run check:trending`, 25 artists): the weekly series moves from Sep 2023 to Feb 2025, returns nothing from March to mid-October 2025, and since Oct 17 2025 every series holds one repeated value. That value keeps the early-2025 order (rank correlation 0.98 with Dec 2024), so it says nothing about the last 90 days. In the moving period it also missed a known wake-up: Tom Petty's best week came 80 days after his GTA VI trailer. We do not use trending.
-- `urn:demographics` returns relative scores per age band and gender, not shares. We convert them to shares against an even baseline (our assumption) before computing overlap.
+Pooled AUC (0.5 = chance) with 95% intervals from resampling franchises:
 
-### Quiet, from Wikipedia page views and the catalogue
-
-Rule, fixed before the demo artist was re-checked: in the 36 complete months before today, no month in the last 24 above 1.5 times the 36-month average (no recent wake-up), and the last 3 months at or below that average (not rising now). Months are compared as views per day. `npm run check:quiet` runs it on the demo artists and on three known wake-ups: Kate Bush after Stranger Things (May 2022, caught at 9.6x) and Tom Petty after the first GTA VI trailer (Dec 2023, caught at 1.8x). The Pointer Sisters after GTA VI trailer 2 (May 2025) were flagged for a different month; the trailer month itself reached only 1.26x, so the rule can miss smaller wake-ups.
-
-Catalogue condition, added after the rank-blend score let current stars through: the page-view rule only compares an artist with its own past, so a quiet artist must also have released no new studio album in the last 5 years. A studio album is a [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API) release group with primary type Album and no secondary type (no compilations, live albums, soundtracks or remixes), leaving out groups that hold only bootlegs. The artist is found through the Wikidata id Qloo carries. Not found, or no dated studio album: marked unknown and not counted as quiet. A posthumous or reunion studio album counts as new. Release groups dated after the check date are ignored, because they are not out yet or are bad data. MusicBrainz is volunteer-edited and can be wrong: on Oct 23 a Beatles album dated November 2026, which we could not find anywhere else, would otherwise have dropped them. We handle this with that general rule, not a hand edit for one artist.
-
-Limits: page views measure reading attention, not listening, and lean English-speaking. Without contact details in the User-Agent, Wikimedia allows about 10 page-view requests a minute, so the app makes one request per artist and caches it. A rights holder can use its own royalty statements instead, and the card then says so.
-
-`npm run find-sleepers` applies the selection rule: the best open door in the top 20% of the pool on the card score, among the pool's 500 most popular, and quiet by the rules above, best door first. On Oct 23, with the card score changed to the rank blend, 491 of the 500 passed the door filter (the blend favours well-known artists, so this filter barely narrows anything; the quiet rules do the work). 140 of the 463 with enough Wikipedia history were quiet by page views; of those, 54 had no studio album in 5 years, 84 had one (Taylor Swift, Lana Del Rey, Adele and Paramore among them) and 2 were unknown. The Verve, the earlier demo, is not quiet: July 2025 reached 2.32x its 3-year average.
-
-The default demo is **The Clash**, and it is our pick, not the rule's. It is quiet (last 3 months 0.93x, busiest month 1.17x, last studio album 1985) and the GTA V audience's top artist by affinity among 2,992 scored (No. 109 by popularity; No. 28 on the blend, top 1%). It is 9th of the 55; The Beatles, Pink Floyd and Queen are among those ahead. We chose it because its original recordings have been licensed for the screen, which makes the pitch letter believable: Stranger Things season 1 used "Should I Stay or Should I Go" ([Netflix Tudum](https://www.netflix.com/tudum/articles/stranger-things-every-song)). The Beatles, by contrast, licensed a master recording to a TV show for the first time only in 2012, for Mad Men ([The World, citing the Wall Street Journal](https://theworld.org/stories/2012-05-07/mad-men-spends-big-beatles-song)).
-
-## Backtest on past sequels
-
-`npm run backtest` asks whether an earlier title's Qloo audience ranks the artists its sequel newly used (artists not on the earlier title's list) above the rest of the 3,000-artist pool, compared with Qloo popularity, an LLM given both titles (`gpt-4.1-mini`, the sealed baseline's prompt), and "what similar titles used". The whole method, including the candidate list, the inclusion rules, four Qloo uses, popularity thirds and an after-LLM-cutoff split, was committed in `seal/backtest-v2-method.json` (commit `034f21e`) before any list was collected or any number computed; the script refuses to run if that file changes.
-
-36 candidates; 26 pairs scored (20 films and games, 6 series), 249 positives, 18 franchises. 10 were left out (no song list, no new pool artists, or the Qloo call budget).
-
-**Where Qloo helps most:**
-
-- **Less famous artists.** In the middle and least popular thirds of the pool, the card score beats popularity by +0.24 and +0.21 AUC (lower ends +0.13 and +0.10). These are the catalogue artists a rights holder most needs help with.
-- **The LLM sticks to stars.** All 23 of the LLM's top-50 hits were in the most popular third; it found none in the other two. The card score found 23 there.
-- **The audience signal is steady.** A second registered check (`seal/sibling-check-method.json`, commit `8893210`) compared close sibling titles (19 pairs, for example consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) with 923 unrelated pairs. Qloo's artist lists overlapped 4.4x more for siblings (raw affinity; 4.6x for excess affinity; p < 0.001; bar 3x and p < 0.01), with only a weak link to release-year distance. The LLM reached 1.8x, because it names the same famous artists for most titles.
-
-Result (Oct 23), pooled AUC (0.5 = chance) with 95% intervals from resampling franchises:
-
-| Method | AUC | Hits in top 50 |
+| Method | AUC | Sequel artists in the top 50 |
 |---|---|---|
 | Popularity | 0.69 [0.62, 0.73] | 12 |
 | LLM only | 0.54 [0.52, 0.55] | 23 |
@@ -97,38 +86,67 @@ Result (Oct 23), pooled AUC (0.5 = chance) with 95% intervals from resampling fr
 | Qloo affinity x popularity | 0.76 [0.68, 0.83] | 37 |
 | **Qloo affinity and popularity rank blend (card score)** | **0.77 [0.70, 0.82]** | **33** |
 
-The registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. The rank blend clears it: AUC +0.08 [+0.04, +0.14] over popularity, +10 [+3, +19] hits over the LLM.
+The registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. Differences are computed before rounding.
+
+| Qloo use | AUC over popularity | Hits over the LLM | Cleared |
+|---|---|---|---|
+| Raw affinity | +0.07 [0.00, +0.17] | +14 [-2, +32] | No |
+| Excess affinity | +0.03 [-0.05, +0.14] | +5 [-10, +20] | No |
+| Affinity x popularity | +0.08 [+0.01, +0.17] | +14 [-2, +31] | No |
+| **Rank blend** | **+0.08 [+0.04, +0.14]** | **+10 [+3, +19]** | **Yes** |
+
+**Where Qloo helps most:**
+
+- **Famous artists, the ones this tool pitches.** Every top-50 hit of the card score (33) and of the LLM (23) was in the most popular third of the pool, which holds the 500 artists the selection rule picks from (The Clash is No. 109 by popularity). Within that third, the card score also beat popularity by +0.09 AUC [+0.02, +0.16].
+- **Films and games.** On the 20 film and game sequels: +0.10 AUC [+0.05, +0.18] over popularity, and 23 top-50 hits against the LLM's 16 (+7 [0, +16]).
+- **A steady audience signal.** A second registered check (`seal/sibling-check-method.json`, commit `8893210`) compared 19 close sibling pairs (consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age, …) with 923 unrelated pairs. Qloo's top-50 lists overlapped 4.4x more for siblings (raw affinity; p < 0.001; bar 3x and p < 0.01), with only a weak link to release-year distance. The LLM reached 1.8x, because it names the same famous artists for most titles.
 
 **Limits:**
 
-- Titles released after the LLM's training cutoff (9 pairs, 84 positives) and the 6 series did not show Qloo ahead of popularity. Most sealed titles are one or the other.
-- In the least popular third, an LLM given only those 1,000 names found as many sequel artists as Qloo (12 vs 12).
-- Four Qloo uses were tested and the intervals are not corrected for that, so this is a narrow pass. The card score was chosen after the test (see [The card score](#the-card-score)).
+- Series (6 pairs, +0.048 [-0.008, +0.101] AUC over popularity) and titles released after the LLM's training cutoff (9 pairs, +0.046 [-0.006, +0.101]) did not show Qloo clearly ahead of popularity. Most sealed titles are one or the other.
+- The backtest checks songs used in the sequels themselves (soundtrack albums and episode lists). The app also pitches trailers and TV spots, where picks follow other rules.
+- The LLM is `gpt-4.1-mini` at temperature 0. It returns a 50-name shortlist, not a full ranking, so we could not test an LLM-plus-popularity blend against ours. Its prompt is in `seal/backtest-v2-method.json`.
+- Less famous artists: ranking only the middle or least popular third, the card score beat popularity by +0.24 and +0.21 AUC. But the LLM, asked for 50 names from the whole pool, put all 50 in the most popular third, so it never competed there. Given only the least popular 1,000 names, it found as many sequel artists as Qloo (12 vs 12). "Least popular" is the bottom of a popular pool (Qloo popularity 0.9 or higher), not the long tail.
+- Four Qloo uses were tested without correcting for that, so this is a narrow pass, and the card score was chosen after the test.
 - Known biases, written down first: Qloo's audience data is current (favours Qloo, strongly for series, whose signal includes the new season); the LLM may remember soundtracks released before its cutoff; a shortlist of 50 caps the LLM's AUC near 0.5, which is why top-50 hits is the LLM comparison.
 
-## Sealed forecast, after judging moved to Nov 2–5
+### Reproduce it
 
-- **By Oct 30:** seal. Three SHA-256 hashes (pool list, per-title ranks, baseline predictions) go in `seal/hashes.json` and the submission text, with the settlement rules. The sealed ranking is the card score, the affinity and popularity rank blend; `seal/hashes.json` states that this score was chosen after the backtest, why, and what the original score scored. The files stay private, optionally encrypted.
-- **Judging, Nov 2–5:** almost nothing can be checked. Black Doves season 2 is the only sealed title out (Nov 5), and its first season's list suggests about one new pool artist, too few to count. We say so instead of reporting a number.
-- **After release:** a person adds each released title's public song list to `src/data/new_soundtracks.js`; `npm run settle` checks the hashes and scores the forecast with the same scorer as the backtest. Pass: pooled AUC 0.65 or higher and above popularity, the LLM and similar titles; fail: 0.55 or lower, or not above popularity or the LLM. The original excess-affinity ranking is scored and reported next to it. Names and ranks are unsealed at the first settlement.
-- **Jan 31, 2027:** final settlement. Fewer than 10 new artists by then means no result.
+Inputs are committed: the method (`seal/backtest-v2-method.json`), the candidate list (`src/data/backtest_v2_candidates.js`) and the song lists (`src/data/backtest_v2_lists.json`, artist names and sources only). The pool is the cached first 3,000 artists for `filter.popularity.min=0.9`, built on Oct 22; its hash goes into the seal. A clean run needs `QLOO_API_KEY` and `OPENAI_API_KEY`: about 1,350 Qloo calls (4 a second, about 6 minutes) and 52 OpenAI calls (`gpt-4.1-mini`, temperature 0, about US$0.30). Qloo's data changes over time, so a later run can differ a little from the numbers above.
 
-## Data sources
+### Decisions made after seeing data
 
-- **[Netflix Tudum](https://www.netflix.com/tudum):** song lists for the 6 series in the backtest and for Black Doves season 1 in the seal (12 articles), each read once, 3 seconds apart. netflix.com/robots.txt allows our crawler. Only artist names are kept; some lists are highlights, not every song.
-- **[MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API):** soundtrack albums for the 20 films and games in the backtest, and the earlier titles' lists for the seal (`npm run collect-lists`); the latest studio album of each artist for the quiet check (about 830 lookups on Oct 23). Official `/ws/2` web service (about 300 soundtrack lookups), one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0. Soundtrack albums can differ from what is used on screen.
-- **[Wikimedia Pageviews](https://wikimedia.org/api/rest_v1/) and Wikidata:** monthly English Wikipedia views for the quiet check, one request per artist, cached.
-- **Not used:** Tunefind (its robots.txt blocks our crawler) and the iTunes Search API (robots.txt disallows `/search`).
+| When | What changed | Why |
+|---|---|---|
+| Oct 23 | Card and seal score: excess affinity to the rank blend | Only the blend cleared the registered bar |
+| Oct 23 | Quiet rule: added "no studio album in 5 years" | The blend let current stars through the page-view rule |
+| Oct 23 | Demo artist: The Verve to The Clash, picked by hand (9th of 55) | The Verve is not quiet; The Clash's recordings have been licensed for the screen |
+| Oct 24 | Window rules per medium (game launch marketing, series locked within 60 days) and the top-20% knock bar | In-game and episode music is chosen long before release |
+| Oct 24 | Letters cite the audience (affinity) rank, not the blended score | The blend mixes in popularity, so it is not "the audience's" rank |
 
-## Data handling
+## What we learned about Qloo's data
 
-Qloo's developer guide says: "Do not store Qloo response data in a public repository." This repo holds no Qloo response data, entity ids or keys:
+- Affinity depends on the signal, not on the other artists in the request: the same artist scored inside two different candidate lists got an identical value. So a large pool can be scored in chunks of 50 and stay on one scale (as the Taste Atlas team also reported).
+- Affinity is not popularity in disguise. On 3,000 artists and 12 titles, the median rank correlation between affinity and popularity was 0.16, and the median agreement between two titles' rankings was 0.20. The bar, set before the test, was 0.5.
+- `urn:tag` insights did not explain matches well enough for a letter. For the GTA V audience, music-genre tags (`filter.tag.types=urn:tag:genre:music`) came back empty, and unfiltered tags were mostly unrelated (hobbies, endorsements). For Yellowjackets the music genres were the broad popular ones (pop, hip hop, indie). The card shows ranks only. With one signal title, explainability would credit that one title, so we left it off.
+- The pool is the first 3,000 artists Qloo returns for `filter.popularity.min=0.9`, most popular first. It is not the complete top 3,000: the paging skips some very popular artists (Drake and Metro Boomin are missing).
+- A returning series is one Qloo entity across seasons, so its audience already includes the new season. Series are reported apart in the backtest for that reason.
+- `/v2/trending` (Oct 23, `npm run check:trending`, 25 artists): the weekly series moves from Sep 2023 to Feb 2025, returns nothing from March to mid-October 2025, and since Oct 17 2025 every series holds one repeated value that keeps the early-2025 order (rank correlation 0.98 with Dec 2024). In the moving period it also missed a known wake-up: Tom Petty's best week came 80 days after his GTA VI trailer. We do not use trending.
+- `urn:demographics` returns relative scores per age band and gender, not shares. We convert them to shares against an even baseline (our assumption). The resulting overlap varies little between artists (76% and 75% for two demo artists on GTA V), so it only breaks ties.
 
-- All responses are cached privately on the server in `.private/` (git-ignored).
-- The browser only receives derived values (ranks, percentiles, overlap, categories).
-- The sealed forecast publishes only SHA-256 hashes. The files stay private, optionally encrypted.
-- Files under `seal/` hold only hashes, counts, scores we computed and artist names.
-- `npm run check:public` scans the repo for entity ids, raw values and keys before publishing.
+**Usage:** about 6,370 live Qloo calls while building and testing (our own call log), on `/search`, `/v2/insights` and `/v2/trending`. One request was rejected (a trending query over a full year). After a restart the app re-scores the pool once, about 370 calls throttled to 4 a second, then serves from its private cache.
+
+## Known limitations
+
+- Qloo results describe aggregate audiences. A high rank is a reason to knock, not a prediction that a supervisor will pick the artist.
+- Qloo stops at the artist; a person picks the song. The app has no licensing history, so it cannot warn that a song has been used too often lately.
+- The candidate windows are a hand-kept list of announced sequels with public dates (`src/data/windows.js`, each with sources); the agent does not discover new titles yet. Series trailers and promos are not a separate window yet.
+- The backtest pass is narrow, the card score was chosen after it, and series and newer titles showed no clear edge over popularity.
+- Clearance categories help set priorities. They are not legal advice. Public rights data is incomplete; when in doubt the card says "Unconfirmed".
+- The quiet rule, the window rules (60-day series lock, 14 to 60 days for trailers and launches) and the top-20% bar are our choices, shown in the Trust tab. Wikipedia page views measure reading attention, not plays.
+- The pool is not the complete top 3,000, and "least popular" in it still means well known.
+- Song lists come from MusicBrainz soundtrack releases and Netflix Tudum articles. Albums can differ from what is used on screen; some Tudum lists are highlights.
+- The sealed forecast cannot be scored during judging; results come after release.
 
 ## Setup
 
@@ -137,22 +155,69 @@ Requires Node.js 22 or newer. No dependencies to install.
 ```sh
 git clone <this repo>
 cd sleeper-hit
-cp .env.example .env      # then put your Qloo hackathon key in QLOO_API_KEY
+cp .env.example .env      # put your Qloo hackathon key in QLOO_API_KEY (and OPENAI_API_KEY if you have one)
 npm test
 npm start                 # http://localhost:3000
 ```
 
 - Without `QLOO_API_KEY` (or with `QLOO_MODE=mock`) the app runs on an offline mock and shows a "Qloo MOCK data" badge. Mock numbers mean nothing.
 - Without `OPENAI_API_KEY`, letters come from a plain template and the app says so.
-- The first live start scores the pool for every open door, about 370 Qloo calls throttled to 4 per second (roughly a minute and a half), plus one Wikipedia request per artist; later loads use the private cache.
+- The first live start scores the pool for every open window, about 370 Qloo calls throttled to 4 per second (roughly a minute and a half), plus one Wikipedia request per artist; later loads use the private cache.
 
-Other commands:
+## Data handling
+
+Qloo's developer guide says: "Do not store Qloo response data in a public repository." This repo holds no Qloo response data, entity ids or keys:
+
+- All responses are cached privately on the server in `.private/` (git-ignored). The browser receives ranks, percentiles, overlap and categories only.
+- The sealed forecast publishes only SHA-256 hashes. The files stay private, optionally encrypted.
+- `npm run check:public` scans the repo for entity ids, raw affinity or popularity values, raw responses, trending values and keys before publishing.
+
+| File in `seal/` | Holds |
+|---|---|
+| `backtest-v2-method.json`, `sibling-check-method.json` | The registered methods (no results) |
+| `backtest-v2.json` | AUCs, intervals, hit counts and the names of sequel artists hit, per method and pair |
+| `sibling-check.json` | Overlap ratios and p-values |
+| `premise.json` | Median correlations and the verdict |
+| `trending-check.json` | Counts of trending series that answered or changed, and dates |
+| `quiet-check.json` | Wikipedia page-view ratios (Wikimedia data, not Qloo) |
+
+## Details
+
+### Quiet, from Wikipedia page views and the catalogue
+
+Rule, fixed before the demo artist was re-checked: in the 36 complete months before today, no month in the last 24 above 1.5 times the 36-month average (no recent wake-up), and the last 3 months at or below that average (not rising now). Months are compared as views per day. `npm run check:quiet` runs it on the demo artists and on known wake-ups: Kate Bush after Stranger Things (May 2022, caught at 9.6x) and Tom Petty after the first GTA VI trailer (Dec 2023, caught at 1.8x). The Pointer Sisters after GTA VI trailer 2 (May 2025) were flagged for a different month; the trailer month itself reached only 1.26x, so the rule can miss smaller wake-ups.
+
+Catalogue condition, added after the rank-blend score let current stars through: a quiet artist must also have released no new studio album in the last 5 years. A studio album is a [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API) release group with primary type Album and no secondary type, leaving out groups that hold only bootlegs. The artist is found through the Wikidata id Qloo carries. Not found, or no dated studio album: unknown, not counted as quiet. A posthumous or reunion studio album counts as new. Release groups dated after the check date are ignored (not out yet, or bad data: on Oct 23 a Beatles album dated November 2026, found nowhere else, would otherwise have dropped them).
+
+Limits: page views measure reading attention, not listening, and lean English-speaking. A rights holder can use its own royalty statements instead, and the card then says so.
+
+### The demo artist is our pick
+
+`npm run find-sleepers` applies the selection rule: among the pool's 500 most popular, the best open window in the top 20% on the card score, and quiet by the rules above. On Oct 23, 491 of the 500 passed the window filter (the blend favours well-known artists, so the quiet rules do the work); 140 of the 463 with enough Wikipedia history were quiet by page views, and 55 of those had no studio album in 5 years.
+
+The default demo, **The Clash**, is 9th of the 55 and our pick, not the rule's. We chose it because its original recordings have been licensed for the screen, which makes the pitch letter believable: Stranger Things season 1 used "Should I Stay or Should I Go" ([Netflix Tudum](https://www.netflix.com/tudum/articles/stranger-things-every-song)). The Beatles, ranked above it, licensed a master recording to a TV show for the first time only in 2012, for Mad Men ([The World, citing the Wall Street Journal](https://theworld.org/stories/2012-05-07/mad-men-spends-big-beatles-song)). The Verve, the earlier demo, is not quiet: July 2025 reached 2.32x its 3-year average.
+
+### Sealed forecast
+
+- **By Oct 30:** seal. Three SHA-256 hashes (pool list, per-title ranks, baseline predictions) go in `seal/hashes.json` and the submission text, with the settlement rules. The sealed ranking is the card score; `seal/hashes.json` states that this score was chosen after the backtest, why, and what the original score scored.
+- **Judging, Nov 2–5:** almost nothing can be checked. Black Doves season 2 is the only sealed title out (Nov 5), and its first season's list suggests about one new pool artist, too few to count.
+- **After release:** a person adds each released title's public song list to `src/data/new_soundtracks.js`; `npm run settle` checks the hashes and scores the forecast with the backtest's scorer. Pass: pooled AUC 0.65 or higher and above popularity, the LLM and similar titles; fail: 0.55 or lower, or not above popularity or the LLM. The original excess-affinity ranking is reported next to it. Names and ranks are unsealed at the first settlement.
+- **Jan 31, 2027:** final settlement. Fewer than 10 new artists by then means no result.
+
+### Data sources
+
+- **[Netflix Tudum](https://www.netflix.com/tudum):** song lists for the 6 series in the backtest and for Black Doves season 1 in the seal (12 articles), each read once, 3 seconds apart. netflix.com/robots.txt allows our crawler. Only artist names are kept.
+- **[MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API):** soundtrack albums for the 20 films and games in the backtest and the earlier titles' lists for the seal (about 300 lookups), and each artist's latest studio album for the quiet check (about 830 lookups). Official `/ws/2` web service, one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0.
+- **[Wikimedia Pageviews](https://wikimedia.org/api/rest_v1/) and Wikidata:** monthly English Wikipedia views for the quiet check, one request per artist, cached.
+- **Not used:** Tunefind (its robots.txt blocks our crawler) and the iTunes Search API (robots.txt disallows `/search`).
+
+### Other commands
 
 ```sh
 npm run premise                  # key-day checks: is affinity more than popularity? is the sample big enough?
 npm run find-sleepers            # scan the pool for famous artists that are quiet now (Qloo + Wikipedia + MusicBrainz)
 npm run check:trending           # what /v2/trending returns for the demo artists and their peers
-npm run check:quiet              # the Wikipedia quiet rule on the demo artists and three known wake-ups
+npm run check:quiet              # the Wikipedia quiet rule on the demo artists and known wake-ups
 npm run backtest                 # past sequels: Qloo vs an LLM vs popularity (method hashed first)
 npm run seal                     # dry-run seal into .private/
 SEAL_PASSWORD=… npm run seal -- --final   # final seal; writes seal/hashes.json (hashes only)
@@ -160,33 +225,16 @@ SEAL_PASSWORD=… npm run settle            # score the seal against released ti
 npm run check:public             # scan for anything that must not be public
 ```
 
-## Deploy on Render (free plan)
+### Deploy on Render (free plan)
 
-The free plan has a temporary disk and sleeps when idle. The app is built for that:
+During judging, a plan that does not sleep avoids the cold start below.
 
-- The server keeps no user data. The outbox, "knock anyway" choices and your own rights share are saved in your browser (localStorage) and sent with each request.
-- The private Qloo cache is only a speed-up. After a restart it is empty; the first request re-scores the pool with Qloo (about 370 calls, throttled) and refills it. The default artist is warmed up at start.
-- The Trust tab reads only committed, public files under `seal/` (hashes, the backtest, the premise check, the trending and quiet checks, and settlement results once they exist).
+The free plan has a temporary disk and sleeps when idle. The server keeps no user data: the outbox, "knock anyway" choices and your own rights share are saved in your browser and sent with each request. The private Qloo cache is only a speed-up; after a restart the first request re-scores the pool (about 370 calls, throttled). The Trust tab reads only committed, public files under `seal/`.
 
-Steps:
-
-1. Push this repo to GitHub (it contains no keys; `.env` and `.private/` are git-ignored).
+1. Push this repo to GitHub (`.env` and `.private/` are git-ignored).
 2. In Render, choose New > Blueprint and select the repo. `render.yaml` defines one free web service (`npm start`, health check `/healthz`, Node 22).
-3. When asked, set `QLOO_API_KEY` (and `OPENAI_API_KEY` if you have one) as secret environment variables. `QLOO_BASE_URL` is preset to the hackathon URL.
+3. Set `QLOO_API_KEY` (and `OPENAI_API_KEY`) as secret environment variables. `QLOO_BASE_URL` is preset to the hackathon URL.
 4. Open the service URL. The first visit after the service wakes can take a minute or two.
-
-Any other host that runs a long-lived Node process works the same way. Qloo calls stay on the server.
-
-## Known limitations
-
-- Qloo results describe aggregate audiences. A high score does not mean a supervisor will pick the artist.
-- Qloo stops at the artist; a person picks the song.
-- Clearance categories help set priorities. They are not legal advice. Public rights data is incomplete; when in doubt the card says "Unconfirmed" and asks a person.
-- The quiet rule (1.5x, 24 and 36 months, 3 months, no studio album in 5 years) and the overlap threshold are our choices, shown in the Trust tab. Wikipedia page views are a proxy for attention, not plays.
-- The card score was chosen after the backtest, and its pass was narrow. The backtest showed no advantage for series or for titles newer than the LLM. Audience rank is a reason to knock, not a prediction that the song will be picked.
-- The pool is not the complete top 3,000 (Qloo paging skips some very popular artists).
-- Song lists come from MusicBrainz soundtrack releases and Netflix Tudum articles. Albums can differ from what is used on screen; some Tudum lists are highlights.
-- The sealed forecast cannot be scored during judging; results come after release.
 
 ## License
 

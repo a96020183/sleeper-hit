@@ -30,10 +30,20 @@ test('unconfirmed clearance never gets a letter', () => {
   assert.match(out[0].reason, /Clearance unconfirmed/);
 });
 
-test('below the top-50% bar is skipped with the reason', () => {
-  const out = decide([door('x', 'cover', 'in-window', 38)]);
+test('outside the top-20% bar is skipped with the reason', () => {
+  const out = decide([door('x', 'cover', 'in-window', 66)]);
   assert.equal(out[0].action, 'skip');
-  assert.match(out[0].reason, /Top 62%/);
+  assert.match(out[0].reason, /top 34%.*top 20%/);
+  assert.equal(decide([door('y', 'cover', 'in-window', 81)])[0].action, 'letter');
+});
+
+test('an artist that is not quiet gets no letters, but a person can knock anyway', () => {
+  const out = decide([door('x', 'cover', 'in-window', 99), door('y', 'cover', 'too-late', 99, { reason: 'too late' })], { block: 'Not quiet.', overrides: new Set(['z']) });
+  assert.ok(out.every((d) => d.action === 'skip'));
+  assert.equal(out.find((d) => d.id === 'x').reason, 'Not quiet.');
+  assert.equal(out.find((d) => d.id === 'y').reason, 'Not quiet.');
+  const flipped = decide([door('x', 'cover', 'in-window', 99)], { block: 'Not quiet.', overrides: new Set(['x']) });
+  assert.equal(flipped[0].action, 'letter');
 });
 
 test('timing outside the window is skipped with its reason', () => {
@@ -43,10 +53,10 @@ test('timing outside the window is skipped with its reason', () => {
 });
 
 test(`at most ${DAILY_CAP} letters a day; the rest wait with a reason`, () => {
-  const doors = Array.from({ length: 5 }, (_, i) => door('d' + i, 'cover', 'in-window', 90 - i));
+  const doors = Array.from({ length: 5 }, (_, i) => door('d' + i, 'cover', 'in-window', 95 - i));
   const out = decide(doors);
   assert.equal(out.filter((d) => d.action === 'letter').length, DAILY_CAP);
-  assert.match(out.find((d) => d.id === 'd4').reason, /Daily limit/);
+  assert.match(out.find((d) => d.id === 'd4').reason, /Already 3 letters today/);
 });
 
 test('a person can flip a skipped door back, and it is marked', () => {
@@ -92,6 +102,10 @@ test('timing: estimated first trailer, series status, thresholds', () => {
   const series = evaluateTiming({ kind: 'series', release: '2026-11-05', dateStatus: 'announced', production: 'post-production' }, '2026-10-22');
   assert.equal(series.bucket, 'too-late');
   assert.equal(series.daysLeft, null);
+  // Series: episode music is treated as locked within 60 days of the premiere.
+  assert.equal(evaluateTiming({ kind: 'series', release: '2026-11-20', dateStatus: 'announced', production: 'post-production' }, '2026-10-24').bucket, 'too-late');
+  assert.equal(evaluateTiming({ kind: 'series', release: '2027-02-20', dateStatus: 'announced', production: 'post-production' }, '2026-10-24').bucket, 'in-window');
+  assert.match(game.use, /Launch trailer/);
   assert.equal(evaluateTiming({ kind: 'game', release: addDays('2026-10-22', 90), dateStatus: 'announced' }, '2026-10-22').bucket, 'early');
 });
 
@@ -132,6 +146,29 @@ test('clearance: The Clash demo = cover through the publisher that lists the son
   const { letterFacts, templateLetter } = await import('../src/letter.js');
   const door = { window: { title: 'T', season: '', earlier: { label: 'E' }, sceneHint: '' }, recipient: 'R', clearance: c, topPct: 1, overlap: null };
   const text = templateLetter(letterFacts({ artist: ARTISTS['the-clash'], door }));
-  assert.match(text, /lists the song in its catalogue, so a cover should need one licence request; we would confirm its share before quoting./);
+  assert.match(text, /lists the song in its catalogue, so a cover or trailer re-record should need one licence request; we would confirm its share before quoting./);
   assert.ok(!ARTISTS['the-clash'].songs.includes('This Is England')); // Cut the Crap: Strummer share at Warner Chappell
+});
+
+test('without Qloo: popularity-only decision swaps the card score for popularity rank', async () => {
+  const { popularityOnly } = await import('../src/pipeline.js');
+  const scored = { doors: [{ id: 'x', pct: 99, blend: { rank: 1, affinityRank: 1, popularityRank: 500, of: 1000 } }, { id: 'y', pct: null, blend: null }] };
+  const p = popularityOnly(scored);
+  assert.equal(Math.round(p.doors[0].pct), 50);
+  assert.equal(p.doors[1].pct, null);
+});
+
+test('the letter cites the audience (affinity) rank, not the blended score', async () => {
+  const { letterFacts, templateLetter } = await import('../src/letter.js');
+  const c = classifyClearance(ARTISTS['the-clash'].clearance);
+  const door = { window: { title: 'T', season: '', kind: 'game', earlier: { label: 'E' }, sceneHint: '' }, recipient: 'R', clearance: c, topPct: 1, overlap: null, blend: { affinityRank: 1, of: 2992 } };
+  const text = templateLetter(letterFacts({ artist: ARTISTS['the-clash'], door }));
+  assert.match(text, /E fans rank them No\. 1 of about 3,000 well-known artists by affinity/);
+  assert.match(text, /a launch trailer or TV spot for T/);
+});
+
+test('timing: a final season does not suggest a next season', () => {
+  const t = evaluateTiming({ kind: 'series', season: 'Season 4 (final)', release: '2026-11-20', dateStatus: 'announced', production: 'post-production' }, '2026-10-24');
+  assert.equal(t.bucket, 'too-late');
+  assert.doesNotMatch(t.reason, /next season/);
 });

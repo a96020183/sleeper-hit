@@ -22,6 +22,7 @@
     </label>
     <nav class="tabs" role="tablist">
       <button role="tab" data-tab="today" aria-selected="true">Today</button>
+      <button role="tab" data-tab="roster" aria-selected="false">Roster</button>
       <button role="tab" data-tab="outbox" aria-selected="false">Outbox <span id="outbox-count" class="count"></span></button>
       <button role="tab" data-tab="trust" aria-selected="false">Trust</button>
     </nav>
@@ -32,6 +33,7 @@
     <section id="tab-today" class="tab" aria-live="polite">
       <p class="loading" id="loading">Scoring today's doors with Qloo…</p>
     </section>
+    <section id="tab-roster" class="tab" hidden></section>
     <section id="tab-outbox" class="tab" hidden></section>
     <section id="tab-trust" class="tab" hidden></section>
   </main>

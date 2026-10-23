@@ -173,7 +173,9 @@ export function decideArtist(scored, { overrides = new Set(), manual = null } = 
   const artist = ARTISTS[scored.artistKey];
   const record = manualRecord(artist, manual);
   const clearance = classifyClearance(record);
-  const decided = decide(scored.doors.map((d) => ({ ...d, clearance })), { overrides });
+  const q = scored.quiet;
+  const block = q && q.quiet === false ? `${artist.name} is not quiet right now, so no letters. Sleeper Hit pitches catalogue artists whose attention has gone flat.` : null;
+  const decided = decide(scored.doors.map((d) => ({ ...d, clearance })), { overrides, block });
   return {
     artist: { key: artist.key, name: artist.name, songs: artist.songs, persona: record.manual?.persona || null, manualPct: record.manual?.publishingPct ?? null, clearanceNote: artist.clearanceNote || '', sources: artist.sources || [] },
     today: scored.today,
@@ -182,6 +184,31 @@ export function decideArtist(scored, { overrides = new Set(), manual = null } = 
     demographicsOk: scored.demographicsOk,
     doors: decided.map(({ signalId, pct, ...d }) => ({ ...d, pctRounded: pct === null ? null : Math.round(pct) })),
     warnings: scored.warnings,
+  };
+}
+
+// Card-score ranks of every pool artist for one window (no extra Qloo calls once the pool is scored).
+// Returns Map normalized name -> { topPct, rank, affinityRank, popularityRank, of }.
+export async function windowRanks(client, windowId) {
+  const w = WINDOWS.find((x) => x.id === windowId);
+  const sig = await client.resolve({ query: w.earlier.query, type: w.earlier.type, name: w.earlier.name || w.earlier.query, year: w.earlier.year });
+  const pool = await sharedPool(client);
+  const aff = await poolAffinity(client, sig.id, pool);
+  const ranks = blendRanks(pool, aff);
+  const out = new Map();
+  for (const a of pool) {
+    const b = ranks.get(a.id);
+    if (b) out.set(normName(a.name), { topPct: topPercent(b.pct), rank: b.rank, affinityRank: b.affinityRank, popularityRank: b.popularityRank, of: b.n });
+  }
+  return out;
+}
+export const normName = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, ' ').trim();
+
+// The same decision with the card score replaced by popularity rank alone ("without Qloo's audience signal").
+export function popularityOnly(scored) {
+  return {
+    ...scored,
+    doors: scored.doors.map((d) => (d.blend ? { ...d, pct: (100 * (d.blend.of - (d.blend.popularityRank - 1) - 0.5)) / d.blend.of } : d)),
   };
 }
 

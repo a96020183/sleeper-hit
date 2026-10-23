@@ -22,7 +22,7 @@ export const SOURCES = {
 export const RECIPIENTS = {
   series: 'Music supervisor, series',
   film: 'Trailer music team, studio marketing',
-  game: 'Game music team',
+  game: 'Marketing music team (trailers and TV spots)',
 };
 
 export const WINDOWS = [
@@ -39,9 +39,9 @@ export const WINDOWS = [
     id: 'gta-vi', title: 'Grand Theft Auto VI', season: '', kind: 'game', platform: 'Rockstar Games',
     earlier: { query: 'Grand Theft Auto V', type: 'urn:entity:videogame', year: '2014', label: 'GTA V' },
     release: '2026-11-19', dateStatus: 'announced', production: 'launch',
-    note: 'The first three trailers used licensed songs (Tom Petty, The Pointer Sisters). A launch trailer usually follows.',
+    note: 'Trailer 1 used Tom Petty’s “Love Is a Long Road”; trailer 2 used The Pointer Sisters’ “Hot Together”. A launch trailer usually follows.',
     sources: [SOURCES.gtaDate, SOURCES.gtaTrailerUMPG, SOURCES.gtaTrailerLuminate],
-    sceneHint: 'The trailers so far set one well-known licensed song under a slow montage.',
+    sceneHint: 'The first two trailers were each built around one licensed song by a well-known act: Tom Petty’s “Love Is a Long Road” and The Pointer Sisters’ “Hot Together”.',
     card: true, sealed: true,
   },
   {
