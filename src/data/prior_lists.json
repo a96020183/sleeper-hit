@@ -1,0 +1,172 @@
+{
+ "black-doves-s2": {
+  "sources": [
+   "https://www.netflix.com/tudum/articles/black-doves-netflix"
+  ],
+  "partial": true,
+  "artists": [
+   "Raye",
+   "Cher"
+  ],
+  "log": []
+ },
+ "gta-vi": {
+  "sources": [
+   "https://musicbrainz.org/release/bfe12585-55c7-46cc-8eb7-8bd81e3f596e",
+   "https://musicbrainz.org/release/e22f8d3b-1f58-4875-99c2-fa79bb82010e",
+   "https://musicbrainz.org/release/00aa415a-2b2a-4d1d-aac5-a0ca83d0dcc3"
+  ],
+  "partial": true,
+  "artists": [
+   "Oh No",
+   "BJ the Chicago Kid",
+   "Freddie Gibbs",
+   "JasonMartin",
+   "Twin Shadow",
+   "Neon Indian",
+   "Wavves",
+   "Gangrene",
+   "Flying Lotus",
+   "HEALTH",
+   "OFF!",
+   "Tyler, The Creator",
+   "Nite Jewel",
+   "A$AP Rocky",
+   "Age of Consent",
+   "Marion Band$",
+   "Nipsey Hussle",
+   "100s",
+   "Favored Nations",
+   "Yeasayer",
+   "The Chain Gang of 1974",
+   "The Alchemist",
+   "Woody Jackson",
+   "Tangerine Dream",
+   "Niki Randa",
+   "Lee “Scratch” Perry",
+   "Jai Paul",
+   "George McCrae",
+   "Charlie Feathers",
+   "The Weirdos",
+   "Mexican Institute of Sound",
+   "Joe Goddard",
+   "Valentina",
+   "Bootsy Collins",
+   "Bob Seger & the Silver Bullet Band",
+   "Dan Croll",
+   "Glasses Malone",
+   "Waylon Jennings",
+   "Yellowman",
+   "Simple Minds",
+   "Toro y Moi",
+   "Hot Snakes",
+   "Cashmere Cat",
+   "Kausion"
+  ],
+  "log": [
+   "rejected, no official release: Grand Theft Auto V: Complete Radio Soundtracks"
+  ]
+ },
+ "spider-verse-3": {
+  "sources": [
+   "https://musicbrainz.org/release/4d7f19a6-3c6b-4ca6-b067-09976ee5024c"
+  ],
+  "partial": true,
+  "artists": [
+   "Metro Boomin",
+   "Swae Lee",
+   "Lil Wayne",
+   "Offset",
+   "A$AP Rocky",
+   "Roisee",
+   "Future",
+   "Lil Uzi Vert",
+   "JID",
+   "James Blake",
+   "NAV",
+   "A Boogie Wit da Hoodie",
+   "Ei8ht",
+   "Don Toliver",
+   "Wizkid",
+   "BEAM",
+   "Toian",
+   "Coi Leray",
+   "21 Savage",
+   "2 Chainz",
+   "Nas"
+  ],
+  "log": []
+ },
+ "fast-x-2": {
+  "sources": [
+   "https://musicbrainz.org/release/48670f26-df63-4e80-b0cc-213882f13afc"
+  ],
+  "partial": true,
+  "artists": [
+   "Kai Cenat",
+   "Lil Durk",
+   "EST Gee",
+   "Anti da Menace",
+   "Luh Tyler",
+   "YoungBoy Never Broke Again",
+   "Bailey Zimmerman",
+   "Dermot Kennedy",
+   "Kodak Black",
+   "NLE Choppa",
+   "Jimin",
+   "JVKE",
+   "Muni Long",
+   "24kGoldn",
+   "Kane Brown",
+   "G Herbo",
+   "Lil Tjay",
+   "Fridayy",
+   "Khi Infinite",
+   "Cootie",
+   "BiC Fizzle",
+   "BigXthaPlug",
+   "Peezy",
+   "BabyTron",
+   "Babyface Ray",
+   "Nardo Wick",
+   "Kordhell",
+   "Key Glock",
+   "$uicideboy$",
+   "BIA",
+   "J Balvin",
+   "María Becerra",
+   "Justin Quiles",
+   "Dalex",
+   "Santa Fe Klan",
+   "Daddy Yankee",
+   "Myke Towers",
+   "Skrillex",
+   "LUDMILLA",
+   "Duki",
+   "King Doudou",
+   "ANNA",
+   "MadMan",
+   "Gemitaiz",
+   "The Notorious B.I.G.",
+   "Bone Thugs‐n‐Harmony",
+   "YG",
+   "Ty Dolla $ign",
+   "Lambo4oe",
+   "Jessie Murph"
+  ],
+  "log": []
+ },
+ "ice-age-6": {
+  "sources": [
+   "https://musicbrainz.org/release/eb7b252d-e6af-4c05-b313-a66b835db7d8"
+  ],
+  "partial": true,
+  "artists": [
+   "John Debney",
+   "David Newman",
+   "John Powell",
+   "Trent Harmon"
+  ],
+  "log": []
+ }
+}

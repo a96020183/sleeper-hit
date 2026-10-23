@@ -1,0 +1,2842 @@
+{
+ "collectedAt": "2026-10-23",
+ "lists": {
+  "spider-verse-2": {
+   "later": {
+    "credits": [
+     "Metro Boomin",
+     "Swae Lee",
+     "Lil Wayne",
+     "Offset",
+     "A$AP Rocky",
+     "Roisee",
+     "Future",
+     "Lil Uzi Vert",
+     "JID",
+     "James Blake",
+     "NAV",
+     "A Boogie Wit da Hoodie",
+     "Ei8ht",
+     "Don Toliver",
+     "Wizkid",
+     "BEAM",
+     "Toian",
+     "Coi Leray",
+     "21 Savage",
+     "2 Chainz",
+     "Nas"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/4d7f19a6-3c6b-4ca6-b067-09976ee5024c",
+      "title": "METRO BOOMIN PRESENTS SPIDER‐MAN: ACROSS THE SPIDER‐VERSE: SOUNDTRACK FROM AND INSPIRED BY THE MOTION PICTURE",
+      "tracks": 23,
+      "artists": 21
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Spider‐Man: Across the Spider‐Verse"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Blackway",
+     "Black Caviar",
+     "Post Malone",
+     "Swae Lee",
+     "Jaden",
+     "Nicki Minaj",
+     "Anuel AA",
+     "BANTU",
+     "Aminé",
+     "Duckwrth",
+     "Shaboozey",
+     "Juice WRLD",
+     "Seezyn",
+     "Thutmose",
+     "Ski Mask the Slump God",
+     "Jacquees",
+     "Coi Leray",
+     "LouGotCash",
+     "Beau Young Prince",
+     "Lil Wayne",
+     "Ty Dolla $ign",
+     "XXXTENTACION",
+     "DJ Khalil",
+     "Denzel Curry",
+     "Cordae",
+     "SwaVay",
+     "Trevor Rich",
+     "Vince Staples",
+     "Nicky Jam",
+     "Prince Royce",
+     "Ozuna"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/5806887b-e681-4f40-87d1-49ee690a072c",
+      "title": "Spider‐Man: Into the Spider‐Verse (Soundtrack from & Inspired by the Motion Picture)",
+      "tracks": 15,
+      "artists": 31
+     }
+    ],
+    "log": [
+     "rejected score: Spider‐Man: Into the Spider‐Verse: Original Score",
+     "rejected single: Sunflower (Spider‐Man: Into the Spider‐Verse)"
+    ],
+    "missing": false
+   }
+  },
+  "fast-x": {
+   "later": {
+    "credits": [
+     "Kai Cenat",
+     "Lil Durk",
+     "EST Gee",
+     "Anti da Menace",
+     "Luh Tyler",
+     "YoungBoy Never Broke Again",
+     "Bailey Zimmerman",
+     "Dermot Kennedy",
+     "Kodak Black",
+     "NLE Choppa",
+     "Jimin",
+     "JVKE",
+     "Muni Long",
+     "24kGoldn",
+     "Kane Brown",
+     "G Herbo",
+     "Lil Tjay",
+     "Fridayy",
+     "Khi Infinite",
+     "Cootie",
+     "BiC Fizzle",
+     "BigXthaPlug",
+     "Peezy",
+     "BabyTron",
+     "Babyface Ray",
+     "Nardo Wick",
+     "Kordhell",
+     "Key Glock",
+     "$uicideboy$",
+     "BIA",
+     "J Balvin",
+     "María Becerra",
+     "Justin Quiles",
+     "Dalex",
+     "Santa Fe Klan",
+     "Daddy Yankee",
+     "Myke Towers",
+     "Skrillex",
+     "LUDMILLA",
+     "Duki",
+     "King Doudou",
+     "ANNA",
+     "MadMan",
+     "Gemitaiz",
+     "The Notorious B.I.G.",
+     "Bone Thugs‐n‐Harmony",
+     "YG",
+     "Ty Dolla $ign",
+     "Lambo4oe",
+     "Jessie Murph"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/48670f26-df63-4e80-b0cc-213882f13afc",
+      "title": "FAST X: Original Motion Picture Soundtrack",
+      "tracks": 21,
+      "artists": 50
+     }
+    ],
+    "log": [
+     "rejected score: Fast X: Original Motion Picture Score",
+     "rejected single: Datura (FAST X Soundtrack)"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected score: F9 (Original Motion Picture Score)"
+    ],
+    "missing": true
+   }
+  },
+  "angry-birds-2": {
+   "later": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 2 credited artist(s) (composer-only): The Angry Birds Movie 2"
+    ],
+    "missing": true
+   },
+   "earlier": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected score: The Angry Birds Movie (Original Motion Picture Score)"
+    ],
+    "missing": true
+   }
+  },
+  "gta-v": {
+   "later": {
+    "credits": [
+     "Oh No",
+     "BJ the Chicago Kid",
+     "Freddie Gibbs",
+     "JasonMartin",
+     "Twin Shadow",
+     "Neon Indian",
+     "Wavves",
+     "Gangrene",
+     "Flying Lotus",
+     "HEALTH",
+     "OFF!",
+     "Tyler, The Creator",
+     "Nite Jewel",
+     "A$AP Rocky",
+     "Age of Consent",
+     "Marion Band$",
+     "Nipsey Hussle",
+     "100s",
+     "Favored Nations",
+     "Yeasayer",
+     "The Chain Gang of 1974",
+     "The Alchemist",
+     "Woody Jackson",
+     "Tangerine Dream",
+     "Niki Randa",
+     "Lee “Scratch” Perry",
+     "Jai Paul",
+     "George McCrae",
+     "Charlie Feathers",
+     "The Weirdos",
+     "Mexican Institute of Sound",
+     "Joe Goddard",
+     "Valentina",
+     "Bootsy Collins",
+     "Bob Seger & the Silver Bullet Band",
+     "Dan Croll",
+     "Glasses Malone",
+     "Waylon Jennings",
+     "Yellowman",
+     "Simple Minds",
+     "Toro y Moi",
+     "Hot Snakes",
+     "Cashmere Cat",
+     "Kausion"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/bfe12585-55c7-46cc-8eb7-8bd81e3f596e",
+      "title": "The Music of Grand Theft Auto V",
+      "tracks": 59,
+      "artists": 43
+     },
+     {
+      "source": "https://musicbrainz.org/release/e22f8d3b-1f58-4875-99c2-fa79bb82010e",
+      "title": "The Music of Grand Theft Auto V, Volume 1: Original Music",
+      "tracks": 18,
+      "artists": 21
+     },
+     {
+      "source": "https://musicbrainz.org/release/00aa415a-2b2a-4d1d-aac5-a0ca83d0dcc3",
+      "title": "The Music of Grand Theft Auto V, Volume 3: The Soundtrack",
+      "tracks": 19,
+      "artists": 22
+     }
+    ],
+    "log": [
+     "rejected score: The Music of Grand Theft Auto V, Volume 2: The Score",
+     "rejected, no official release: Grand Theft Auto V: Complete Radio Soundtracks"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Michael Hunter",
+     "Mobb Deep",
+     "Havoc",
+     "Prodigy",
+     "The Rapture",
+     "Munga",
+     "Busta Rhymes",
+     "CJ Hilton",
+     "Joe Walsh",
+     "Bob Marley & The Wailers",
+     "Damian “Jr. Gong” Marley",
+     "Серёга",
+     "Greenskeepers",
+     "Elektrik Funk",
+     "Qadir",
+     "David Axelrod",
+     "Nas",
+     "Fela Kuti",
+     "Global Communication",
+     "Stuart Hart",
+     "Tony Eicher",
+     "Aaron Johnston",
+     "Jesse Murphy",
+     "Avi Bortnick",
+     "Дельфин",
+     "Баста",
+     "Ленинград",
+     "Кино",
+     "Marakesh",
+     "Ранетки",
+     "T9",
+     "Макс Лоренс",
+     "Олег Кваша",
+     "Глюк’oZa",
+     "Quest Pistols",
+     "Руслана",
+     "Дыши"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/28bd70fd-da89-4bce-b176-4583e9618337",
+      "title": "The Music of Grand Theft Auto IV",
+      "tracks": 16,
+      "artists": 19
+     },
+     {
+      "source": "https://musicbrainz.org/release/e2b6430a-dc0d-4db5-a320-4861c9b3ba09",
+      "title": "Grand Theft Auto IV — The Theme Song Collection",
+      "tracks": 4,
+      "artists": 6
+     },
+     {
+      "source": "https://musicbrainz.org/release/4d904981-28b8-4a07-bc91-4064e192ec05",
+      "title": "Vladivostok FM: Music From and Inspired by Grand Theft Auto IV",
+      "tracks": 16,
+      "artists": 14
+     }
+    ],
+    "log": [
+     "rejected, no official release: Grand Theft Auto IV: Commercials",
+     "rejected, no official release: Grand Theft Auto IV: WKTT Radio",
+     "rejected, no official release: Grand Theft Auto IV: Integrity 2.0",
+     "rejected, no official release: Grand Theft Auto IV: Public Liberty Radio",
+     "rejected, no official release: Grand Theft Auto IV: Massive B Soundsystem 96.9"
+    ],
+    "missing": false
+   }
+  },
+  "sonic-3": {
+   "later": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Sonic the Hedgehog 3: Music from the Motion Picture"
+    ],
+    "missing": true
+   },
+   "earlier": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Sonic the Hedgehog 2: Music from the Motion Picture",
+     "rejected single: Stars In The Sky (From Sonic The Hedgehog 2)"
+    ],
+    "missing": true
+   }
+  },
+  "gxk-new-empire": {
+   "later": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 2 credited artist(s) (composer-only): Godzilla x Kong: The New Empire: Original Motion Picture Soundtrack"
+    ],
+    "missing": true
+   },
+   "earlier": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Godzilla vs. Kong: Original Motion Picture Soundtrack"
+    ],
+    "missing": true
+   }
+  },
+  "ice-age-5": {
+   "later": {
+    "credits": [
+     "John Debney",
+     "David Newman",
+     "John Powell",
+     "Trent Harmon"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/eb7b252d-e6af-4c05-b313-a66b835db7d8",
+      "title": "Ice Age: Collision Course: Original Motion Picture Score",
+      "tracks": 31,
+      "artists": 4
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Ice Age: Continental Drift"
+    ],
+    "missing": true
+   }
+  },
+  "deadpool-3": {
+   "later": {
+    "credits": [
+     "The Platters",
+     "*NSYNC",
+     "Merrilee Rush and the Turnabouts",
+     "Stray Kids",
+     "Fergie",
+     "Goo Goo Dolls",
+     "Huey Lewis and the News",
+     "Waylon Jennings",
+     "Patsy Cline",
+     "The Jordanaires",
+     "Chris de Burgh",
+     "Avril Lavigne",
+     "Hugh Jackman",
+     "Keala Settle",
+     "Zac Efron",
+     "Zendaya",
+     "The Greatest Showman Ensemble",
+     "John Travolta",
+     "Olivia Newton‐John",
+     "Jimmy Durante",
+     "Eric Carmen",
+     "Aretha Franklin",
+     "Royal Philharmonic Orchestra",
+     "Green Day",
+     "Rob Simonsen"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/f435a26f-71ee-415a-9e1f-e61de22c991f",
+      "title": "Deadpool & Wolverine: Original Motion Picture Soundtrack",
+      "tracks": 50,
+      "artists": 25
+     }
+    ],
+    "log": [
+     "rejected score: Deadpool & Wolverine: Original Score",
+     "rejected, 2 credited artist(s) (composer-only): Deadpool & Wolverine: Madonna's \"Like a Prayer\" EP"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Céline Dion",
+     "Diplo",
+     "French Montana",
+     "Lil Pump",
+     "Zhavia",
+     "Tyler Bates",
+     "Teamheadkick",
+     "DJ Shadow",
+     "Run the Jewels",
+     "Peter Gabriel",
+     "a‐ha",
+     "Cher",
+     "Dolly Parton",
+     "Air Supply",
+     "Pat Benatar",
+     "Alicia Morton",
+     "Skrillex",
+     "Sirah",
+     "Jordan Smith",
+     "The Osborne Brothers",
+     "Guignol",
+     "Mischief Brew",
+     "Steve Miller Band"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/bfd873a1-d81b-46f5-90ba-0a93ce2c8ffe",
+      "title": "Deadpool 2 (Super Duper Cut)",
+      "tracks": 18,
+      "artists": 23
+     }
+    ],
+    "log": [
+     "rejected score: Deadpool 2: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "twisters": {
+   "later": {
+    "credits": [
+     "Luke Combs",
+     "Miranda Lambert",
+     "Conner Smith",
+     "Tucker Wetmore",
+     "Thomas Rhett",
+     "Warren Zeiders",
+     "Megan Moroney",
+     "Lainey Wilson",
+     "Bailey Zimmerman",
+     "Jelly Roll",
+     "Kane Brown",
+     "Sam Barber",
+     "Tyler Childers",
+     "Leon Bridges",
+     "Benson Boone",
+     "Shania Twain",
+     "BRELAND",
+     "Dylan Gossett",
+     "Lanie Gardner",
+     "Alexandra Kay",
+     "Wyatt Flores",
+     "Jake Kohn",
+     "The Red Clay Strays",
+     "Tanner Usrey",
+     "Tanner Adell",
+     "Mason Ramsey",
+     "Tyler Halverson",
+     "Flatland Cavalry",
+     "Nolan Taylor",
+     "Wilderado",
+     "Ken Pomeroy",
+     "James McAlister",
+     "Charley Crockett"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/4a696cf6-2960-4bac-a552-7898b91bc421",
+      "title": "Twisters: The Album",
+      "tracks": 29,
+      "artists": 33
+     }
+    ],
+    "log": [
+     "rejected score: Twisters: Original Motion Picture Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Van Halen",
+     "Rusted Root",
+     "Tori Amos",
+     "Alison Krauss & Union Station",
+     "Mark Knopfler",
+     "Soul Asylum",
+     "Belly",
+     "k.d. lang",
+     "Lisa Loeb",
+     "Nine Stories",
+     "Red Hot Chili Peppers",
+     "Goo Goo Dolls",
+     "Shania Twain",
+     "Stevie Nicks",
+     "Lindsey Buckingham",
+     "Edward Van Halen",
+     "Alex Van Halen"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/98b3eee8-91ea-4836-b003-8427990b44b5",
+      "title": "Twister: Music From the Motion Picture Soundtrack",
+      "tracks": 14,
+      "artists": 17
+     }
+    ],
+    "log": [
+     "rejected score: Twister: Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "bad-boys-4": {
+   "later": {
+    "credits": [
+     "Black Eyed Peas",
+     "El Alfa",
+     "Becky G",
+     "BIA",
+     "JID",
+     "Scar Lip",
+     "Flo Milli",
+     "Shenseea",
+     "Myke Towers",
+     "21 Lil Harold",
+     "Luísa Sonza",
+     "Papatinho",
+     "Will Smith",
+     "Sean Paul",
+     "Trueno"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/0d8f1cbc-9e3d-43fe-abf3-e68fd93ba1f6",
+      "title": "Bad Boys: Ride or Die: The Soundtrack",
+      "tracks": 10,
+      "artists": 15
+     }
+    ],
+    "log": [
+     "rejected score: Bad Boys: Ride or Die (Original Motion Picture Score)"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Meek Mill",
+     "Farruko",
+     "City Girls",
+     "Black Eyed Peas",
+     "J Balvin",
+     "Rick Ross",
+     "Bryson Tiller",
+     "DJ Durel",
+     "Quavo",
+     "Rich the Kid",
+     "Nicky Jam",
+     "Daddy Yankee",
+     "Pitbull",
+     "Lil Jon",
+     "Jaden",
+     "Buju Banton"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/707dc0ed-3ce0-4d3b-b15c-b806482bb30c",
+      "title": "Bad Boys for Life: The Soundtrack",
+      "tracks": 10,
+      "artists": 16
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Bad Boys for Life"
+    ],
+    "missing": false
+   }
+  },
+  "despicable-me-4": {
+   "later": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 2 credited artist(s) (composer-only): Despicable Me 4: Original Motion Picture Soundtrack",
+     "rejected single: Double Life (From \"Despicable Me 4\")",
+     "rejected single: None of Your Business (from Despicable Me 4)"
+    ],
+    "missing": true
+   },
+   "earlier": {
+    "credits": [
+     "Pharrell Williams",
+     "Trey Parker",
+     "Michael Jackson",
+     "a‐ha",
+     "The Minions",
+     "Nena",
+     "Madonna",
+     "Heitor Pereira",
+     "Morat",
+     "Álvaro Soler"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/e4d8126c-144e-483f-8d62-2f9ba3799df2",
+      "title": "Despicable Me 3: Original Motion Picture Soundtrack",
+      "tracks": 17,
+      "artists": 10
+     }
+    ],
+    "log": [
+     "rejected score: Despicable Me 3: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "bridget-jones-4": {
+   "later": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "rejected, 2 credited artist(s) (composer-only): Bridget Jones: Mad About the Boy (Original Motion Picture Soundtrack)",
+     "rejected single: It Isn’t Perfect But It Might Be (from “Bridget Jones: Mad About the Boy” Original Motion Picture Soundtrack)"
+    ],
+    "missing": true
+   },
+   "earlier": {
+    "credits": [
+     "Ellie Goulding",
+     "Years & Years",
+     "Knox Brown",
+     "Gallant",
+     "Ed Sheeran",
+     "Jess Glynne",
+     "Billon",
+     "Tiggs da Author",
+     "Lily Allen",
+     "Annie Lennox",
+     "House of Pain",
+     "The Isley Brothers",
+     "Dionne Warwick",
+     "The Temptations",
+     "Marvin Gaye",
+     "Sister Sledge",
+     "McFadden & Whitehead",
+     "Craig Armstrong"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/0ec3b1dd-091f-43bf-bf5c-8f07545f7ab5",
+      "title": "Bridget Jones’s Baby: Original Motion Picture Soundtrack",
+      "tracks": 19,
+      "artists": 18
+     }
+    ],
+    "log": [
+     "rejected score: Bridget Jones's Baby: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "freakier-friday": {
+   "later": {
+    "credits": [
+     "Lindsay Lohan",
+     "Chantry Johnson",
+     "Maitreyi Ramakrishnan",
+     "Julia Butters",
+     "Pink Slip",
+     "Christina Vidal",
+     "The Beaches",
+     "Amie Doherty"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/93b86fa2-455e-4c72-a664-4d2f6c07ba4a",
+      "title": "Freakier Friday (Original Motion Picture Soundtrack)",
+      "tracks": 11,
+      "artists": 8
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Lindsay Lohan",
+     "Simple Plan",
+     "Lillix",
+     "American Hi‐Fi",
+     "Forty Foot Echo",
+     "Halo Friendlies",
+     "Christina Vidal",
+     "Chad Michael Murray",
+     "Bowling for Soup",
+     "The Donnas",
+     "Andrew W.K.",
+     "Diffuser",
+     "Lash",
+     "Ashlee Simpson",
+     "Joey Ramone",
+     "Rolfe Kent"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/aaaf28bb-ef6a-47f0-b05b-923a4d9e9ccb",
+      "title": "Freaky Friday: Original Soundtrack",
+      "tracks": 16,
+      "artists": 16
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "stranger-things-5": {
+   "later": {
+    "credits": [
+     "Michael Jackson",
+     "Psychedelic Furs",
+     "Diana Ross",
+     "Kate Bush",
+     "ABBA",
+     "The Chordettes",
+     "Freddy Martin & His Orchestra",
+     "Tiffany",
+     "Yello",
+     "Elmer Bernstein",
+     "The Chords",
+     "Rob Simonsen/London City Orchestra",
+     "Moby",
+     "Butthole Surfers",
+     "Prince",
+     "Fleetwood Mac",
+     "Pixies",
+     "Iron Maiden",
+     "Cowboy Junkies",
+     "David Bowie"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/stranger-things-every-song",
+      "format": "songThenArtist",
+      "seasons": [
+       5
+      ],
+      "parsed": 26,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Toto",
+     "The Clash",
+     "The Bangles",
+     "Peter Gabriel",
+     "Joy Division",
+     "New Order",
+     "Echo and the Bunnymen",
+     "Corey Hart",
+     "Devo",
+     "The Romantics",
+     "Scorpions",
+     "Duran Duran",
+     "Jim Croce",
+     "Psychedelic Furs",
+     "Bon Jovi",
+     "Fad Gadget",
+     "Olivia Newton-John",
+     "Cyndi Lauper",
+     "The Police",
+     "The Cars",
+     "Huey Lewis and the News",
+     "Patsy Cline",
+     "Madonna",
+     "“Weird Al” Yankovic",
+     "Foreigner",
+     "Teena Marie",
+     "Howard Jones",
+     "Wham!",
+     "Vera Lynn",
+     "The Pointer Sisters",
+     "John Mellencamp",
+     "Limahl",
+     "The Beach Boys",
+     "Starpoint",
+     "Kate Bush",
+     "The Cramps",
+     "Mae Arnette",
+     "Extreme",
+     "KISS",
+     "Dead or Alive",
+     "Falco",
+     "Baltimora",
+     "The Surfaris",
+     "Talking Heads",
+     "Musical Youth",
+     "Ella Fitzgerald and Louis Armstrong",
+     "Ricky Nelson",
+     "James Taylor",
+     "Rick Derringer",
+     "Journey",
+     "Metallica",
+     "Moby",
+     "Siouxsie and the Banshees"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/stranger-things-every-song",
+      "format": "songThenArtist",
+      "seasons": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "parsed": 55,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "outer-banks-5": {
+   "later": {
+    "credits": [
+     "New Candys",
+     "Mercan Dede",
+     "Warbaby",
+     "Oscar Martos",
+     "Daliborovo Granje",
+     "Branko Galoic",
+     "Lado",
+     "Bonobo",
+     "Speedy West",
+     "GHOSTWOMAN",
+     "Jane Street",
+     "LA LOM",
+     "The Brian Jonestown Massacre",
+     "Jr. Thomas & The Volcanos",
+     "Mazzy Star",
+     "Gringo Star",
+     "WITCH",
+     "The Rugged Nuggets",
+     "Dizzy Gillespie",
+     "Arcy Drive",
+     "Aaron Frazer",
+     "Marshbanks",
+     "Miss Red",
+     "Freddie McGregor",
+     "Benny Trokan",
+     "Antelope",
+     "Dan Ubick",
+     "Steel Pulse",
+     "Jeremie Albino",
+     "The Thing",
+     "Doreen Schaffer",
+     "Brent Cobb",
+     "tøm hughes",
+     "Favourite People",
+     "JD McPherson",
+     "Johnny",
+     "Gitkin",
+     "Dwayne Ellis",
+     "Glyders",
+     "Fat Freddy’s Drop",
+     "Rattlesnake Milk",
+     "Lijadu Sisters",
+     "Howie B.",
+     "The Stooges",
+     "R.L. Burnside",
+     "Sister Nancy",
+     "The Nude Party",
+     "The Stews",
+     "Mapache",
+     "Hanni El Khatib",
+     "Allah-Las",
+     "Greg Humphreys",
+     "Workhorse",
+     "The Meters",
+     "Sly and the Family Stone",
+     "Sandra-Mae Lux",
+     "Ray Charles",
+     "Jake La Botz",
+     "Anthony Lazaro",
+     "Cottonwood Firing Squad",
+     "The Runarounds",
+     "Hollow Ship",
+     "Chicha Libre",
+     "Tame Impala",
+     "Cat’s Eyes",
+     "Empress",
+     "The Ironsides",
+     "Charlotte Gainsbourg",
+     "Sugar Pie DeSanto",
+     "JJUUJJUU",
+     "Glass Beams",
+     "Edwyn Collins",
+     "Beautiful Chorus",
+     "SYML",
+     "Lilah Pate",
+     "Party of the Sun",
+     "Nude Party",
+     "Fcukers",
+     "The Gnars",
+     "Night Beats",
+     "APM Music",
+     "Dude Standphill",
+     "Sturgill Simpson",
+     "hey, nothing",
+     "The Cars",
+     "The Tonettes",
+     "Dr. Dog",
+     "Stevie Wonder",
+     "The Tennors",
+     "Fruit Bats",
+     "King Tuff"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/outer-banks-soundtrack",
+      "format": "artistThenSong",
+      "seasons": [
+       5
+      ],
+      "parsed": 98,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "alt-J",
+     "The Whitefield Brothers",
+     "Sandollar",
+     "Khruangbin",
+     "Cayucas",
+     "Sub Focus",
+     "Stylo G",
+     "The Teskey Brothers",
+     "The Shivas",
+     "Black River Assembly",
+     "Harlem",
+     "John Pearson",
+     "Luster",
+     "The Mango Furs",
+     "Roc C",
+     "Mickey Lamantia",
+     "Mmuso",
+     "Ro$$ Mac",
+     "A Giant Dog",
+     "Audiodub",
+     "Chicano Batman",
+     "Skinshape",
+     "Mattiel",
+     "BBG Baby Joe",
+     "Kilgore",
+     "Widowspeak",
+     "Hembree",
+     "The Flaming Lips",
+     "De Wolfe Music",
+     "Killimanjaro",
+     "Los Mirlos",
+     "Local Natives",
+     "Michael Miglio",
+     "Robbie Dupree",
+     "The Destinations",
+     "Spider Harrison",
+     "Hundred Visions",
+     "Royal Headache",
+     "Modern Pantheist",
+     "The Clash",
+     "The Mighty Indiana Travelers",
+     "Elenowen",
+     "Fat Freddy’s Drop",
+     "The Heliocentrics",
+     "Lemy",
+     "Eric B. & Rakim",
+     "Black Oshin",
+     "The Belle Sounds",
+     "Ella Fitzgerald and Louis Armstrong",
+     "Lord Cobra",
+     "Greg Humphreys Electric Trio",
+     "RF Shannon",
+     "Black Lips",
+     "Blind Blake",
+     "BRONCHO",
+     "Melodiesinfonie",
+     "The Babe Rainbow",
+     "The Garifuna Collective",
+     "The Cables",
+     "Dan Auerbach",
+     "Ikebe Shakedown",
+     "Sun Room",
+     "Eddy Grant",
+     "4th Coming",
+     "Goat",
+     "Little Barrie & Malcolm Catto",
+     "Allah-Las",
+     "Umalali",
+     "Kurt Vile",
+     "Dr. Dog",
+     "Young the Giant",
+     "Richard Marks",
+     "Toots and the Maytals",
+     "Natural Child",
+     "M.I.A.",
+     "Noonday Devils",
+     "Willie Griffin",
+     "Gang of Four",
+     "The Flying Stars of Brooklyn NY",
+     "Magnolian",
+     "Edward Sharpe & the Magnetic Zeros",
+     "Drama B",
+     "Delroy Wilson",
+     "Tommy Guerrero",
+     "Blackfoot Gypsies",
+     "GUM",
+     "Celeste",
+     "The Pretty Things",
+     "Ty Segall",
+     "Fleet Foxes",
+     "The xx",
+     "Sonny & the Sunsets",
+     "Gorillaz",
+     "binki",
+     "Katastro",
+     "Sugar Fed Leopards",
+     "The Chats",
+     "Sister John",
+     "Peace",
+     "Fontaines D.C.",
+     "Spanky Wilson",
+     "Deeper",
+     "David Wingo",
+     "The Melodians",
+     "Gabor Szabo",
+     "El Michels Affair ft. Bobby Oroza",
+     "Dehd",
+     "Luna",
+     "Dawn Penn",
+     "Songhoy Blues",
+     "Jimmy Castor Bunch",
+     "Psychic Mirrors",
+     "Yeah Yeah Yeahs",
+     "The Nude Party",
+     "Dowdelin",
+     "Roo Panes",
+     "Damian Marley",
+     "Pachyman",
+     "African Brothers",
+     "The Poets of Rhythm",
+     "Amanaz",
+     "Penny and the Quarters",
+     "Toro y Moi",
+     "Extreme Music",
+     "Often",
+     "Damien Jurado",
+     "The Kinks",
+     "Backseat Lovers",
+     "Born Free",
+     "Bobby Oroza",
+     "DeWolff",
+     "Toro y Moi & Unknown Mortal Orchestra",
+     "Orions Belte",
+     "Dirty South",
+     "Jack Johnson",
+     "PawPaw Rod",
+     "Leo Nocentelli",
+     "Virus Syndicate",
+     "Spencer",
+     "Alabama Shakes",
+     "Ofege",
+     "R.L. Burnside",
+     "The Cactus Channel",
+     "Mac DeMarco",
+     "Hoveriii",
+     "Ski Mask the Slump God",
+     "KB",
+     "Lukas Nelson & Promise of the Real",
+     "Wesley Attew",
+     "The Clean",
+     "Shawn Lee and the Soul Surfers",
+     "Marcus King",
+     "The Spaceshits",
+     "Joy Oladokon",
+     "Neil Young",
+     "Tilly VW",
+     "The Paragons",
+     "Robert Lester Folsom",
+     "S.G. Goodman",
+     "Kerbside Collection",
+     "Shannon & the Clams",
+     "Medeski, Martin & Wood",
+     "Fake Fruit",
+     "Tommy Strange",
+     "The Nerves",
+     "Los Destellos",
+     "Luis Kalaff y sus Alegres Dominicanos",
+     "Raúl Monsalve y los Forajidos",
+     "Kito Vélez y sus Estrellas",
+     "Sylvia de Grasse",
+     "Meridian Brothers and El Grupo Renacimiento",
+     "Calexico",
+     "Hermanos Gutiérrez",
+     "Los Espiritus",
+     "The Avett Brothers",
+     "The Allergies",
+     "The Mystery Lights",
+     "Cake",
+     "The Greyhounds",
+     "The Aggrolites",
+     "Dub Specialist",
+     "Funkadelic",
+     "Genesee Johnny",
+     "Ron Gallo",
+     "Secret Colours",
+     "Viagra Boys",
+     "Bass Drum of Death",
+     "Death Valley Girls",
+     "Erasmo Carlos",
+     "Omni !",
+     "Jackie Mittoo & Sound Dimension",
+     "GHOSTWOMAN",
+     "Hykkers",
+     "Gladiators",
+     "Tommy James & The Shondells",
+     "The Sheepdogs",
+     "Ted Hawkins",
+     "Super Kijang",
+     "Tame Impala",
+     "BALTHVS",
+     "JJ Cale",
+     "BROS",
+     "Magic Shoppe",
+     "Dan Ubick",
+     "Los Muertos",
+     "Mariana Manchego",
+     "Arc De Soleil",
+     "Scoundrels",
+     "Freddie McKay",
+     "Mapache",
+     "Skegss",
+     "Devo",
+     "Early Moods",
+     "Holy Wave",
+     "Volta Jazz",
+     "Gitkin",
+     "The Brian Jonestown Massacre",
+     "Scott McMicken and THE EVER-EXPANDING",
+     "Public Memory",
+     "The Black Angels",
+     "The Zips",
+     "Willie Lindo",
+     "Television",
+     "Duff Thompson",
+     "Jennifer Lara",
+     "The Felice Brothers",
+     "Buju Banton",
+     "Holly Golightly",
+     "Ghost Funk Orchestra",
+     "Flying Burrito Brothers",
+     "Black Sabbath",
+     "Cotton Jones",
+     "Nathaniel Rateliff & The Night Sweats",
+     "Day We Ran",
+     "Eric Burdon",
+     "Suki Waterhouse",
+     "Girl and Girl",
+     "Sgt. Papers",
+     "The Beta Band",
+     "Gilberto Gil",
+     "Blind Faith",
+     "Vusi Mahlasela & Norman Zulu & Jive Connection",
+     "My Morning Jacket",
+     "Flaco Jiminez, Dwight Yoakam",
+     "Warren Zevon",
+     "Brian Jonestown Massacre",
+     "Les Tres",
+     "Greg Humphreys",
+     "JJ Whitefield",
+     "Tinariwen",
+     "Would Cha3b",
+     "Abdesselam Damoussi & Nour Eddine",
+     "Invisible Systems",
+     "Tamikrest",
+     "Bab L’Bluz"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/outer-banks-soundtrack",
+      "format": "artistThenSong",
+      "seasons": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "parsed": 315,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "nobody-wants-this-2": {
+   "later": {
+    "credits": [
+     "Selena Gomez",
+     "Teddy Swims",
+     "Royel Otis",
+     "Chris Stapleton",
+     "Kacey Musgraves",
+     "Baylee Lynn",
+     "FINNEAS",
+     "Towa Bird",
+     "Alessia Cara",
+     "Role Model",
+     "Just Jayne",
+     "Ella Langley",
+     "BENEE",
+     "Portugal. The Man",
+     "GIVĒON",
+     "Dermot Kennedy",
+     "Cuco",
+     "Cassandra Coleman",
+     "Taylor Swift",
+     "Chappell Roan",
+     "Sabrina Carpenter"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/nobody-wants-this-season-2-soundtrack-tracklisting",
+      "format": "numberedList",
+      "seasons": null,
+      "parsed": 18,
+      "named": 0
+     },
+     {
+      "source": "https://www.netflix.com/tudum/articles/nobody-wants-this-season-2-soundtrack-interview",
+      "format": "headingThenArtist",
+      "seasons": null,
+      "parsed": 3,
+      "named": 3
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "HAIM",
+     "Francis and the Lights",
+     "Rihanna",
+     "Boyz II Men",
+     "Chumbawamba",
+     "Bonnie Raitt",
+     "Dionne Warwick",
+     "Mac Miller",
+     "Fleet Foxes",
+     "Dua Lipa",
+     "Olivia Rodrigo"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/nobody-wants-this-season-one-soundtrack",
+      "format": "songByArtist",
+      "seasons": null,
+      "parsed": 4,
+      "named": 9
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "wednesday-2": {
+   "later": {
+    "credits": [
+     "The Lennon Sisters",
+     "Chavela Vargas",
+     "Berry Lipman Singers",
+     "Sixpence None the Richer",
+     "MAMAMOO",
+     "Sisters of Mercy",
+     "Pitch Slaps",
+     "Bruce Springsteen",
+     "The Kinks",
+     "Mozart’s The Marriage of Figaro",
+     "Roberto Alagna",
+     "Roky Erickson",
+     "Creedence Clearwater Revival",
+     "Pedro Vargas",
+     "R.E.M.",
+     "GnusCello",
+     "Foreigner",
+     "Dean Martin",
+     "Gary Wright",
+     "Eric Carmen",
+     "The Cranberries",
+     "Bernard Herrmann",
+     "Squirrel Nut Zippers",
+     "Instrumental Version",
+     "BLACKPINK",
+     "Blue Oyster Cult",
+     "Clouseaux",
+     "Lady Gaga",
+     "The Rapture",
+     "APM Library",
+     "The Surfaris",
+     "The Eurythmics",
+     "The Hampton Rock String Quartet"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/wednesday-season-2-soundtrack",
+      "format": "headingThenArtist",
+      "seasons": null,
+      "parsed": 33,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [],
+    "used": [],
+    "log": [
+     "No Tudum song list for season 1 found; repeats not removed."
+    ],
+    "missing": true
+   }
+  },
+  "bridgerton-4": {
+   "later": {
+    "credits": [
+     "Coldplay",
+     "Vitamin String Quartet",
+     "Usher ft. Pitbull",
+     "Strings From Paris",
+     "Third Eye Blind",
+     "Taylor Swift",
+     "Joseph William Morgan",
+     "Paramore",
+     "Olivia Rodrigo",
+     "Caleb Chan",
+     "Charli XCX",
+     "Peter Gregson",
+     "Billie Eilish",
+     "Gemini Strings",
+     "Teddy Swims",
+     "The Cars",
+     "Altum Quartet",
+     "Sting",
+     "Music Lab Collective",
+     "Camila Cabello",
+     "Lord Huron",
+     "Joni Fuller"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/bridgerton-season-4-soundtrack-pop-song-covers",
+      "format": "headingThenArtist",
+      "seasons": null,
+      "parsed": 26,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Gayle",
+     "Vitula",
+     "BTS",
+     "Vitamin String Quartet",
+     "Nick Jonas",
+     "Shimmer",
+     "Sia",
+     "Billie Eilish",
+     "Taylor Swift and Lana Del Rey",
+     "Atwood Quartet",
+     "Pitbull",
+     "Archer Marsh",
+     "Ariana Grande",
+     "Strings from Paris",
+     "Imagine Dragons",
+     "Thomas Mercier",
+     "Demi Lovato",
+     "Coldplay",
+     "Taylor Swift",
+     "Duomo",
+     "Ellie Goulding",
+     "Tori Kelly",
+     "Kris Bowers",
+     "Shawn Mendes",
+     "Harry Styles"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/bridgerton-season-3-soundtrack-covers",
+      "format": "headingThenArtist",
+      "seasons": null,
+      "parsed": 28,
+      "named": 0
+     },
+     {
+      "source": "https://www.netflix.com/tudum/articles/bridgerton-season-2-pop-covers-official-list",
+      "format": "none",
+      "seasons": null,
+      "parsed": 0,
+      "named": 7
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "beef-2": {
+   "later": {
+    "credits": [
+     "Finneas O’Connell has",
+     "Disclosure",
+     "Jessie Ware",
+     "Daft Punk featuring Pharrell Williams and Nile Rodgers",
+     "Billie Eilish",
+     "Yeah Yeah Yeahs",
+     "M83",
+     "Chappell Roan",
+     "Hot Chip",
+     "Tame Impala",
+     "Zedd featuring Foxes",
+     "Mark Ronson feat. Bruno Mars",
+     "Nero",
+     "Leona Lewis",
+     "La Roux",
+     "Rex Orange County",
+     "Saint Lucia",
+     "Father John Misty",
+     "Fun featuring Janelle Monae",
+     "The Rapture",
+     "LCD Soundsystem",
+     "Future Islands",
+     "Low",
+     "Phoenix"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/finneas-oconnell-beef-season-2-music-composer",
+      "format": "artistThenSong",
+      "seasons": null,
+      "parsed": 27,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "O-Town",
+     "Hoobastank",
+     "Collective Soul",
+     "P-Lo",
+     "Tori Amos",
+     "Elevation Worship",
+     "Incubus",
+     "Sugar Ray",
+     "Limp Bizkit",
+     "Morphine",
+     "The Offspring",
+     "Shearwater",
+     "System of a Down",
+     "Bethel Music",
+     "Paula Cole",
+     "Christina Aguilera",
+     "Bush",
+     "Keane",
+     "Grant Lee Buffalo",
+     "Tad",
+     "Björk",
+     "The Smashing Pumpkins",
+     "It’s the song that they ended up using for the trailer,",
+     "Is",
+     "What was Kelly Clarkson’s team’s reaction to your request to use",
+     "Why was Keane’s",
+     "The Smashing Pumpkins’ (purposely misspelled)"
+    ],
+    "used": [
+     {
+      "source": "https://www.netflix.com/tudum/articles/beef-every-90s-song-soundtrack",
+      "format": "artistThenSong",
+      "seasons": null,
+      "parsed": 27,
+      "named": 0
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "guardians-2": {
+   "later": {
+    "credits": [
+     "Electric Light Orchestra",
+     "Sweet",
+     "Aliotta Haynes Jeremiah",
+     "Fleetwood Mac",
+     "Sam Cooke",
+     "Glen Campbell",
+     "George Harrison",
+     "Looking Glass",
+     "Jay & the Americans",
+     "Silver",
+     "Cheap Trick",
+     "Cat Stevens",
+     "Parliament",
+     "The Sneepers",
+     "David Hasselhoff",
+     "Tyler Bates"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/eb7c1cf5-d1d0-410a-be9f-c81c30e23952",
+      "title": "Guardians of the Galaxy, Vol. 2 (deluxe edition)",
+      "tracks": 30,
+      "artists": 16
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Guardians of the Galaxy, Vol. 2",
+     "rejected single: Guardians Inferno (from \"Guardians of the Galaxy Vol. 2\")"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Blue Swede",
+     "Raspberries",
+     "Norman Greenbaum",
+     "David Bowie",
+     "Elvin Bishop",
+     "10cc",
+     "The Jacksons",
+     "Redbone",
+     "The Runaways",
+     "Rupert Holmes",
+     "Five Stairsteps",
+     "Marvin Gaye",
+     "Tammi Terrell",
+     "Tyler Bates"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/94d3e761-411e-4a11-b20c-4121f9355195",
+      "title": "Guardians of the Galaxy: Awesome Mix Vol. 1",
+      "tracks": 12,
+      "artists": 13
+     },
+     {
+      "source": "https://musicbrainz.org/release/35bfcb08-0c85-4592-982e-50643f4574c8",
+      "title": "Guardians of the Galaxy: Deluxe",
+      "tracks": 41,
+      "artists": 14
+     }
+    ],
+    "log": [
+     "rejected score: Guardians of the Galaxy: Original Score"
+    ],
+    "missing": false
+   }
+  },
+  "guardians-3": {
+   "later": {
+    "credits": [
+     "Radiohead",
+     "Heart",
+     "Rainbow",
+     "Spacehog",
+     "Earth, Wind & Fire",
+     "The Flaming Lips",
+     "Faith No More",
+     "EHAMIC",
+     "Alice Cooper",
+     "The Mowgli’s",
+     "X",
+     "The The",
+     "Beastie Boys",
+     "Florence + the Machine",
+     "Bruce Springsteen",
+     "The Replacements",
+     "Redbone"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/1ab8aec6-c855-43c9-94cf-b62f6259a6d6",
+      "title": "Guardians of the Galaxy, Vol. 3: Awesome Mix, Vol. 3",
+      "tracks": 17,
+      "artists": 17
+     }
+    ],
+    "log": [
+     "rejected score: Guardians of the Galaxy, Vol 3: Original Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Electric Light Orchestra",
+     "Sweet",
+     "Aliotta Haynes Jeremiah",
+     "Fleetwood Mac",
+     "Sam Cooke",
+     "Glen Campbell",
+     "George Harrison",
+     "Looking Glass",
+     "Jay & the Americans",
+     "Silver",
+     "Cheap Trick",
+     "Cat Stevens",
+     "Parliament",
+     "The Sneepers",
+     "David Hasselhoff",
+     "Tyler Bates"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/eb7c1cf5-d1d0-410a-be9f-c81c30e23952",
+      "title": "Guardians of the Galaxy, Vol. 2 (deluxe edition)",
+      "tracks": 30,
+      "artists": 16
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): Guardians of the Galaxy, Vol. 2"
+    ],
+    "missing": false
+   }
+  },
+  "deadpool-2": {
+   "later": {
+    "credits": [
+     "Céline Dion",
+     "Diplo",
+     "French Montana",
+     "Lil Pump",
+     "Zhavia",
+     "Tyler Bates",
+     "Teamheadkick",
+     "DJ Shadow",
+     "Run the Jewels",
+     "Peter Gabriel",
+     "a‐ha",
+     "Cher",
+     "Dolly Parton",
+     "Air Supply",
+     "Pat Benatar",
+     "Alicia Morton",
+     "Skrillex",
+     "Sirah",
+     "Jordan Smith",
+     "The Osborne Brothers",
+     "Guignol",
+     "Mischief Brew",
+     "Steve Miller Band"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/bfd873a1-d81b-46f5-90ba-0a93ce2c8ffe",
+      "title": "Deadpool 2 (Super Duper Cut)",
+      "tracks": 18,
+      "artists": 23
+     }
+    ],
+    "log": [
+     "rejected score: Deadpool 2: Original Motion Picture Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Juice Newton",
+     "Tom Holkenborg",
+     "Salt‐N‐Pepa",
+     "Neil Sedaka",
+     "Teamheadkick",
+     "DMX",
+     "George Michael",
+     "Junkie XL",
+     "The Chordettes",
+     "Campfire",
+     "Chicago",
+     "Brentwood Duo"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/1b5a5d8a-d6e3-4167-89cb-77ff4c256166",
+      "title": "Deadpool: Original Motion Picture Soundtrack",
+      "tracks": 23,
+      "artists": 7
+     },
+     {
+      "source": "https://musicbrainz.org/release/1d65563b-bac2-4ecb-83f3-aef68f2b69b5",
+      "title": "Deadpool Reloaded: More Music From the Motion Picture",
+      "tracks": 12,
+      "artists": 6
+     }
+    ],
+    "log": [],
+    "missing": false
+   }
+  },
+  "twilight-2": {
+   "later": {
+    "credits": [
+     "Death Cab for Cutie",
+     "Band of Skulls",
+     "Thom Yorke",
+     "Lykke Li",
+     "The Killers",
+     "Anya Marina",
+     "Muse",
+     "Bon Iver",
+     "St. Vincent",
+     "Black Rebel Motorcycle Club",
+     "Hurricane Bells",
+     "Sea Wolf",
+     "OK Go",
+     "Grizzly Bear",
+     "Victoria Legrand",
+     "Editors",
+     "Alexandre Desplat",
+     "Jennifer Rostock",
+     "Lupe Fiasco",
+     "The Magic Numbers",
+     "Amadou & Mariam",
+     "The APM Orchestra",
+     "Ulf Bästlein"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/6aacbc6e-770e-4238-a581-89a286ba8113",
+      "title": "The Twilight Saga: New Moon: Biss zur Mittagsstunde: Original Motion Picture Soundtrack",
+      "tracks": 21,
+      "artists": 23
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): The Twilight Saga: New Moon",
+     "rejected by hand 2b8a3b46-f212-4145-92bc-07b6476235ad: \"Music Inspired by the Film & Other Cult Classics\": not the film's soundtrack"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Muse",
+     "Paramore",
+     "The Black Ghosts",
+     "Linkin Park",
+     "MUTEMATH",
+     "Perry Farrell",
+     "Collective Soul",
+     "Blue Foundation",
+     "Robert Pattinson",
+     "Iron & Wine",
+     "Carter Burwell",
+     "O.A.R."
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/f7cfccfe-720b-4905-a0de-dfb249999989",
+      "title": "Twilight: Music From the Original Motion Picture Soundtrack",
+      "tracks": 23,
+      "artists": 12
+     }
+    ],
+    "log": [
+     "rejected score: Twilight: The Score"
+    ],
+    "missing": false
+   }
+  },
+  "twilight-3": {
+   "later": {
+    "credits": [
+     "Metric",
+     "Muse",
+     "The Bravery",
+     "Florence + the Machine",
+     "Sia",
+     "Fanfarlo",
+     "The Black Keys",
+     "The Dead Weather",
+     "Beck",
+     "Bat for Lashes",
+     "Vampire Weekend",
+     "UNKLE",
+     "The Black Angels",
+     "Eastern Conference Champions",
+     "Band of Horses",
+     "CeeLo Green",
+     "Howard Shore",
+     "MiMi",
+     "Jesse & Joy",
+     "Hori",
+     "Battles",
+     "Bombay Bicycle Club"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/f7629c85-04ab-49b3-b634-acc9cb14e39c",
+      "title": "The Twilight Saga: Eclipse",
+      "tracks": 22,
+      "artists": 22
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): The Twilight Saga: Eclipse"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Death Cab for Cutie",
+     "Band of Skulls",
+     "Thom Yorke",
+     "Lykke Li",
+     "The Killers",
+     "Anya Marina",
+     "Muse",
+     "Bon Iver",
+     "St. Vincent",
+     "Black Rebel Motorcycle Club",
+     "Hurricane Bells",
+     "Sea Wolf",
+     "OK Go",
+     "Grizzly Bear",
+     "Victoria Legrand",
+     "Editors",
+     "Alexandre Desplat",
+     "Jennifer Rostock",
+     "Lupe Fiasco",
+     "The Magic Numbers",
+     "Amadou & Mariam",
+     "The APM Orchestra",
+     "Ulf Bästlein"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/6aacbc6e-770e-4238-a581-89a286ba8113",
+      "title": "The Twilight Saga: New Moon: Biss zur Mittagsstunde: Original Motion Picture Soundtrack",
+      "tracks": 21,
+      "artists": 23
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): The Twilight Saga: New Moon"
+    ],
+    "missing": false
+   }
+  },
+  "twilight-4": {
+   "later": {
+    "credits": [
+     "The Joy Formidable",
+     "Angus & Julia Stone",
+     "Bruno Mars",
+     "Sleeping at Last",
+     "The Features",
+     "Christina Perri",
+     "Theophilus London",
+     "The Belle Brigade",
+     "Noisettes",
+     "Cider Sky",
+     "Iron & Wine",
+     "Imperial Mammoth",
+     "Aqualung",
+     "Lucy Schwartz",
+     "Mia Maestro",
+     "Carter Burwell",
+     "Hard‐Fi",
+     "Kevin Teasley"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/aa4b441e-fd24-4520-8509-7852e6535227",
+      "title": "The Twilight Saga: Breaking Dawn, Part 1: Original Motion Picture Soundtrack",
+      "tracks": 19,
+      "artists": 18
+     }
+    ],
+    "log": [
+     "rejected score: The Twilight Saga: Breaking Dawn, Part 1: The Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Metric",
+     "Muse",
+     "The Bravery",
+     "Florence + the Machine",
+     "Sia",
+     "Fanfarlo",
+     "The Black Keys",
+     "The Dead Weather",
+     "Beck",
+     "Bat for Lashes",
+     "Vampire Weekend",
+     "UNKLE",
+     "The Black Angels",
+     "Eastern Conference Champions",
+     "Band of Horses",
+     "CeeLo Green",
+     "Howard Shore",
+     "MiMi",
+     "Jesse & Joy",
+     "Hori",
+     "Battles",
+     "Bombay Bicycle Club"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/f7629c85-04ab-49b3-b634-acc9cb14e39c",
+      "title": "The Twilight Saga: Eclipse",
+      "tracks": 22,
+      "artists": 22
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): The Twilight Saga: Eclipse"
+    ],
+    "missing": false
+   }
+  },
+  "twilight-5": {
+   "later": {
+    "credits": [
+     "Passion Pit",
+     "Ellie Goulding",
+     "Green Day",
+     "Feist",
+     "The Boom Circuits",
+     "St. Vincent",
+     "POP ETC",
+     "Iko",
+     "A Boy & His Kite",
+     "James Vincent McMorrow",
+     "Paul McDonald",
+     "Nikki Reed",
+     "Reeve Carney",
+     "Christina Perri",
+     "Steve Kazee",
+     "Carter Burwell"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/158ccc11-66f4-422b-8d11-821b11de0b88",
+      "title": "The Twilight Saga: Breaking Dawn, Part 2: Original Motion Picture Soundtrack",
+      "tracks": 14,
+      "artists": 16
+     }
+    ],
+    "log": [
+     "rejected, 1 credited artist(s) (composer-only): The Twilight Saga: Breaking Dawn, Part 2"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "The Joy Formidable",
+     "Angus & Julia Stone",
+     "Bruno Mars",
+     "Sleeping at Last",
+     "The Features",
+     "Christina Perri",
+     "Theophilus London",
+     "The Belle Brigade",
+     "Noisettes",
+     "Cider Sky",
+     "Iron & Wine",
+     "Imperial Mammoth",
+     "Aqualung",
+     "Lucy Schwartz",
+     "Mia Maestro",
+     "Carter Burwell",
+     "Hard‐Fi",
+     "Kevin Teasley"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/aa4b441e-fd24-4520-8509-7852e6535227",
+      "title": "The Twilight Saga: Breaking Dawn, Part 1: Original Motion Picture Soundtrack",
+      "tracks": 19,
+      "artists": 18
+     }
+    ],
+    "log": [
+     "rejected score: The Twilight Saga: Breaking Dawn, Part 1: The Score"
+    ],
+    "missing": false
+   }
+  },
+  "hunger-games-2": {
+   "later": {
+    "credits": [
+     "Coldplay",
+     "Of Monsters and Men",
+     "Sia",
+     "The Weeknd",
+     "Diplo",
+     "The National",
+     "Christina Aguilera",
+     "Imagine Dragons",
+     "Lorde",
+     "The Lumineers",
+     "Ellie Goulding",
+     "Patti Smith",
+     "Santigold",
+     "Mikky Ekko",
+     "Phantogram",
+     "ANOHNI and the Johnsons",
+     "Abby"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/4f2cf18a-9a33-40e1-be36-042b083c5399",
+      "title": "Die Tribute von Panem: Catching Fire: Original Motion Picture Soundtrack",
+      "tracks": 16,
+      "artists": 17
+     }
+    ],
+    "log": [
+     "rejected score: The Hunger Games: Catching Fire: Original Motion Picture Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Arcade Fire",
+     "The Secret Sisters",
+     "Neko Case",
+     "Taylor Swift",
+     "The Civil Wars",
+     "Kid Cudi",
+     "Punch Brothers",
+     "The Decemberists",
+     "Carolina Chocolate Drops",
+     "Glen Hansard",
+     "Maroon 5",
+     "Rozzi",
+     "Miranda Lambert",
+     "Pistol Annies",
+     "Jayme Dee",
+     "The Low Anthem",
+     "Birdy",
+     "Sting"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/452c2747-1c8e-46a7-8bc4-f62286fa4727",
+      "title": "The Hunger Games: Songs From District 12 and Beyond",
+      "tracks": 17,
+      "artists": 18
+     }
+    ],
+    "log": [
+     "rejected score: The Hunger Games: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "hunger-games-3": {
+   "later": {
+    "credits": [
+     "Stromae",
+     "Lorde",
+     "Pusha T",
+     "Q‐Tip",
+     "HAIM",
+     "CHVRCHES",
+     "Tove Lo",
+     "Charli xcx",
+     "Simon Le Bon",
+     "Major Lazer",
+     "Ariana Grande",
+     "Raury",
+     "Tinashe",
+     "Bat for Lashes",
+     "Grace Jones",
+     "XOV",
+     "The Chemical Brothers",
+     "Miguel",
+     "James Newton Howard",
+     "Jennifer Lawrence"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/09940256-f6a3-4cc2-87a2-941a78e4661f",
+      "title": "The Hunger Games: Mockingjay, Pt. 1 (Original Motion Picture Soundtrack)",
+      "tracks": 15,
+      "artists": 20
+     }
+    ],
+    "log": [
+     "rejected score: The Hunger Games: Mockingjay, Part 1: Original Motion Picture Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Coldplay",
+     "Of Monsters and Men",
+     "Sia",
+     "The Weeknd",
+     "Diplo",
+     "The National",
+     "Christina Aguilera",
+     "Imagine Dragons",
+     "Lorde",
+     "The Lumineers",
+     "Ellie Goulding",
+     "Patti Smith",
+     "Santigold",
+     "Mikky Ekko",
+     "Phantogram",
+     "ANOHNI and the Johnsons",
+     "Abby"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/4f2cf18a-9a33-40e1-be36-042b083c5399",
+      "title": "Die Tribute von Panem: Catching Fire: Original Motion Picture Soundtrack",
+      "tracks": 16,
+      "artists": 17
+     }
+    ],
+    "log": [
+     "rejected score: The Hunger Games: Catching Fire: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "fifty-shades-2": {
+   "later": {
+    "credits": [
+     "ZAYN",
+     "Taylor Swift",
+     "Halsey",
+     "JRY",
+     "RuthAnne",
+     "Tove Lo",
+     "Toulouse",
+     "John Legend",
+     "The‐Dream",
+     "Nick Jonas",
+     "Nicki Minaj",
+     "Sia",
+     "Kygo",
+     "Andrew Jackson",
+     "Corinne Bailey Rae",
+     "José James",
+     "JP Cooper",
+     "The Avener",
+     "Mark Asari",
+     "Anderson East",
+     "Frances",
+     "Danny Elfman",
+     "Rita Ora",
+     "Little Charlie & the Nightcats"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/915d7abf-a01a-45c0-8785-4f1d707a6af1",
+      "title": "Fifty Shades Darker: Original Motion Picture Soundtrack",
+      "tracks": 21,
+      "artists": 24
+     }
+    ],
+    "log": [
+     "rejected score: Fifty Shades Darker (Original Motion Picture Score)",
+     "rejected single: I Don’t Wanna Live Forever (Fifty Shades Darker)"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Annie Lennox",
+     "Laura Welsh",
+     "The Weeknd",
+     "Jessie Ware",
+     "Ellie Goulding",
+     "Beyoncé",
+     "Sia",
+     "The Rolling Stones",
+     "AWOLNATION",
+     "Frank Sinatra",
+     "Vaults",
+     "Skylar Grey",
+     "Danny Elfman",
+     "Terence Coles",
+     "RoccStar",
+     "St. Paul & The Broken Bones"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/a7f1d34b-e67f-4fe9-bd3b-d10ab1b676be",
+      "title": "Fifty Shades of Grey: Original Motion Picture Soundtrack",
+      "tracks": 18,
+      "artists": 16
+     }
+    ],
+    "log": [
+     "rejected score: Fifty Shades of Grey: Original Motion Picture Score",
+     "rejected single: Earned It (Fifty Shades of Grey)"
+    ],
+    "missing": false
+   }
+  },
+  "fifty-shades-3": {
+   "later": {
+    "credits": [
+     "Hailee Steinfeld",
+     "BloodPop®",
+     "Liam Payne",
+     "Rita Ora",
+     "Black Atlass",
+     "Jessie Reyez",
+     "Whethan",
+     "Dua Lipa",
+     "Julia Michaels",
+     "Kiana Ledé",
+     "Prince Charlez",
+     "Bishop Briggs",
+     "The Spencer Lee Band",
+     "Sabrina Claudio",
+     "Miike Snow",
+     "Shungudzo",
+     "Jessie J",
+     "Samantha Gongol",
+     "Juliette Armanet",
+     "Sia",
+     "Jacob Banks",
+     "Louis the Child",
+     "Ellie Goulding",
+     "Danny Elfman",
+     "Jamie Dornan"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/2629c0e7-5cd7-4c58-b9bf-41f2d88d540b",
+      "title": "Fifty Shades Freed: The Final Chapter: Original Motion Picture Soundtrack",
+      "tracks": 22,
+      "artists": 25
+     }
+    ],
+    "log": [
+     "rejected score: Fifty Shades Freed: Original Motion Picture Score",
+     "rejected single: For You (Fifty Shades Freed)"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "ZAYN",
+     "Taylor Swift",
+     "Halsey",
+     "JRY",
+     "RuthAnne",
+     "Tove Lo",
+     "Toulouse",
+     "John Legend",
+     "The‐Dream",
+     "Nick Jonas",
+     "Nicki Minaj",
+     "Sia",
+     "Kygo",
+     "Andrew Jackson",
+     "Corinne Bailey Rae",
+     "José James",
+     "JP Cooper",
+     "The Avener",
+     "Mark Asari",
+     "Anderson East",
+     "Frances",
+     "Danny Elfman",
+     "Rita Ora",
+     "Little Charlie & the Nightcats"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/915d7abf-a01a-45c0-8785-4f1d707a6af1",
+      "title": "Fifty Shades Darker: Original Motion Picture Soundtrack",
+      "tracks": 21,
+      "artists": 24
+     }
+    ],
+    "log": [
+     "rejected score: Fifty Shades Darker (Original Motion Picture Score)"
+    ],
+    "missing": false
+   }
+  },
+  "black-panther-2": {
+   "later": {
+    "credits": [
+     "Rihanna",
+     "DBN Gogo",
+     "Sino Msolo",
+     "Kamo Mphela",
+     "Young Stunna",
+     "Busiswa",
+     "Burna Boy",
+     "Tems",
+     "Vivir Quintana",
+     "Mare Advertencia Lírika",
+     "Foudeqush",
+     "Ludwig Göransson",
+     "Snow tha Product",
+     "E‐40",
+     "Stormzy",
+     "Fireboy DML",
+     "Tobe Nwigwe",
+     "Fat Nwigwe",
+     "ADN Maya Colectivo",
+     "Pat Boy",
+     "Yaalen K’uj",
+     "All Mayan Winik",
+     "OG DAYV",
+     "Future",
+     "CKay",
+     "PinkPantheress",
+     "Bloody Civilian",
+     "Rema",
+     "Alemán",
+     "Blue Rojo",
+     "Calle × Vida",
+     "Guadalupe de Jesús Chan Poot",
+     "Amaarae",
+     "Santa Fe Klan"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/7a0dc3dc-16d6-4c63-8147-c4f65b2d9bba",
+      "title": "Black Panther: Wakanda Forever - Music From and Inspired By",
+      "tracks": 20,
+      "artists": 32
+     },
+     {
+      "source": "https://musicbrainz.org/release/4c357d61-c481-4a22-851e-a8f140441a80",
+      "title": "Black Panther: Wakanda Forever Prologue",
+      "tracks": 3,
+      "artists": 3
+     }
+    ],
+    "log": [
+     "rejected score: Black Panther: Wakanda Forever: Original Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Kendrick Lamar",
+     "SZA",
+     "ScHoolboy Q",
+     "2 Chainz",
+     "Saudi",
+     "Khalid",
+     "Swae Lee",
+     "Vince Staples",
+     "Yugen Blakrok",
+     "Jorja Smith",
+     "SOB X RBE",
+     "Ab‐Soul",
+     "Anderson .Paak",
+     "James Blake",
+     "Jay Rock",
+     "Future",
+     "Zacari",
+     "Babes Wodumo",
+     "Mozzy",
+     "Sjava",
+     "Reason",
+     "Travis Scott",
+     "The Weeknd"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/015b4017-a78f-4072-bb58-5c4638a82196",
+      "title": "Black Panther: The Album (Music From and Inspired By)",
+      "tracks": 14,
+      "artists": 23
+     }
+    ],
+    "log": [
+     "rejected score: Black Panther: Original Score"
+    ],
+    "missing": false
+   }
+  },
+  "fast-8": {
+   "later": {
+    "credits": [
+     "Young Thug",
+     "2 Chainz",
+     "Wiz Khalifa",
+     "PnB Rock",
+     "Lil Uzi Vert",
+     "Quavo",
+     "Travis Scott",
+     "G‐Eazy",
+     "Kehlani",
+     "Kodak Black",
+     "A Boogie Wit da Hoodie",
+     "Migos",
+     "YoungBoy Never Broke Again",
+     "21 Savage",
+     "Bassnectar",
+     "Ohana Bam",
+     "Lafa Taylor",
+     "Post Malone",
+     "Kevin Gates",
+     "Lil Yachty",
+     "Rico Nasty",
+     "Jeremih",
+     "Ty Dolla $ign",
+     "Sage the Gemini",
+     "Pitbull",
+     "J Balvin",
+     "Camila Cabello",
+     "Pinto \"Wahin\"",
+     "Ricky Luna",
+     "El Taiger"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/41e6bdce-343d-4a50-a834-b28152922011",
+      "title": "The Fate of the Furious: The Album",
+      "tracks": 14,
+      "artists": 30
+     }
+    ],
+    "log": [
+     "rejected score: The Fate of the Furious: Original Motion Picture Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Kid Ink",
+     "Tyga",
+     "Wale",
+     "YG",
+     "Rich Homie Quan",
+     "T.I.",
+     "Young Thug",
+     "Sevyn Streeter",
+     "Dillon Francis",
+     "DJ Snake",
+     "Wiz Khalifa",
+     "Iggy Azalea",
+     "Prince Royce",
+     "Charlie Puth",
+     "Juicy J",
+     "Kevin Gates",
+     "Future",
+     "Sage the Gemini",
+     "David Guetta",
+     "Kaz James",
+     "DJ Shadow",
+     "Yasiin Bey",
+     "J Balvin",
+     "French Montana",
+     "Nicky Jam",
+     "Flo Rida",
+     "Lookas",
+     "Lil Jon",
+     "Fito Blanko",
+     "Skylar Grey",
+     "Famous to Most",
+     "Trey Songz",
+     "Ty Dolla $ign",
+     "Steve Aoki",
+     "Chris Lake",
+     "Tujamo",
+     "soFLY & Nius",
+     "Gent & Jawns",
+     "The Narcicyst",
+     "Shadia Mansour",
+     "Deftones"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/4e4e2cde-552c-4033-8839-dd5d80681585",
+      "title": "Furious 7: Original Motion Picture Soundtrack (deluxe edition)",
+      "tracks": 22,
+      "artists": 41
+     }
+    ],
+    "log": [
+     "rejected score: Furious 7: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "space-jam-2": {
+   "later": {
+    "credits": [
+     "Lil Baby",
+     "Kirk Franklin",
+     "24kGoldn",
+     "Lil Wayne",
+     "Chance the Rapper",
+     "John Legend",
+     "Symba",
+     "Saweetie",
+     "Salt‐N‐Pepa",
+     "Kash Doll",
+     "Lil Uzi Vert",
+     "SAINt JHN",
+     "SZA",
+     "Jonas Brothers",
+     "Lil Tecca",
+     "Aminé",
+     "Dame D.O.L.L.A.",
+     "G‐Eazy",
+     "P‐Lo",
+     "White Dave",
+     "BROCKHAMPTON",
+     "Cordae",
+     "Duckwrth",
+     "Big Freedia",
+     "Joyner Lucas",
+     "Leon Bridges",
+     "Anthony Ramos"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/4811ad01-43b4-4f01-9e34-ee15f284612e",
+      "title": "Space Jam: A New Legacy",
+      "tracks": 16,
+      "artists": 27
+     }
+    ],
+    "log": [
+     "rejected score: Space Jam: A New Legacy: Score From the Original Motion Picture Soundtrack"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Seal",
+     "Coolio",
+     "Quad City DJ’s",
+     "R. Kelly",
+     "B‐Real",
+     "Busta Rhymes",
+     "LL Cool J",
+     "Method Man",
+     "D’Angelo",
+     "Monica",
+     "Salt‐N‐Pepa",
+     "Robin S",
+     "Barry White",
+     "Chris Rock",
+     "All‐4‐One",
+     "Changing Faces",
+     "JAŸ-Z",
+     "Spin Doctors",
+     "Biz Markie",
+     "Bugs Bunny"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/699f9124-dd54-49e5-be08-af63db70df3e",
+      "title": "Space Jam: Music From and Inspired by the Motion Picture",
+      "tracks": 14,
+      "artists": 20
+     }
+    ],
+    "log": [
+     "rejected score: Space Jam: Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "spider-man-2": {
+   "later": {
+    "credits": [
+     "Dashboard Confessional",
+     "Train",
+     "Hoobastank",
+     "Jet",
+     "Yellowcard",
+     "Maroon 5",
+     "Taking Back Sunday",
+     "Midtown",
+     "Lostprophets",
+     "Smile Empty Soul",
+     "The Ataris",
+     "Switchfoot",
+     "Ana Johnsson",
+     "Jimmy Gnecco",
+     "Brian May",
+     "Danny Elfman",
+     "Ptaky"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/b559c957-57a1-40c1-8155-9f181ab07368",
+      "title": "Spider‐Man 2: Music From and Inspired By",
+      "tracks": 17,
+      "artists": 17
+     }
+    ],
+    "log": [
+     "rejected score: Spider‐Man 2: Original Motion Picture Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Bob Harris",
+     "Paul Francis Webster",
+     "Chad Kroeger",
+     "Josey Scott",
+     "Sum 41",
+     "Black Lab",
+     "Bleu",
+     "Alien Ant Farm",
+     "Default",
+     "Corey Taylor",
+     "Greenwheel",
+     "The Strokes",
+     "The Hives",
+     "Theory of a Deadman",
+     "Pete Yorn",
+     "Macy Gray",
+     "Injected",
+     "Jerry Cantrell",
+     "Danny Elfman",
+     "Aerosmith",
+     "王力宏",
+     "CRASH"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/b936529a-e71c-4839-b7b8-4d36776f0767",
+      "title": "Spider‐Man: Music From and Inspired By",
+      "tracks": 21,
+      "artists": 22
+     }
+    ],
+    "log": [
+     "rejected score: Spider‐Man: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "spider-man-3": {
+   "later": {
+    "credits": [
+     "Snow Patrol",
+     "The Killers",
+     "Yeah Yeah Yeahs",
+     "Wolfmother",
+     "The Walkmen",
+     "Black Mountain",
+     "The Flaming Lips",
+     "Simon Dawes",
+     "Chubby Checker",
+     "Rogue Wave",
+     "Coconut Records",
+     "Jet",
+     "Sounds Under Radio",
+     "The Wyos",
+     "The Oohlas"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/257a42cb-721e-454f-aad8-704f348024f1",
+      "title": "Music From and Inspired by Spider-Man 3",
+      "tracks": 16,
+      "artists": 15
+     }
+    ],
+    "log": [],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Dashboard Confessional",
+     "Train",
+     "Hoobastank",
+     "Jet",
+     "Yellowcard",
+     "Maroon 5",
+     "Taking Back Sunday",
+     "Midtown",
+     "Lostprophets",
+     "Smile Empty Soul",
+     "The Ataris",
+     "Switchfoot",
+     "Ana Johnsson",
+     "Jimmy Gnecco",
+     "Brian May",
+     "Danny Elfman",
+     "Ptaky"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/b559c957-57a1-40c1-8155-9f181ab07368",
+      "title": "Spider‐Man 2: Music From and Inspired By",
+      "tracks": 17,
+      "artists": 17
+     }
+    ],
+    "log": [
+     "rejected score: Spider‐Man 2: Original Motion Picture Score"
+    ],
+    "missing": false
+   }
+  },
+  "transformers-2": {
+   "later": {
+    "credits": [
+     "Linkin Park",
+     "Green Day",
+     "Cavo",
+     "Taking Back Sunday",
+     "The Fray",
+     "Nickelback",
+     "The Used",
+     "Theory of a Deadman",
+     "The All‐American Rejects",
+     "Hoobastank",
+     "Staind",
+     "Avenged Sevenfold",
+     "Cheap Trick"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/b94e7150-edeb-4d0f-9be5-80b0c9e1a8aa",
+      "title": "Transformers: Revenge Of The Fallen - The Album",
+      "tracks": 13,
+      "artists": 13
+     }
+    ],
+    "log": [
+     "rejected score: Transformers: Revenge of the Fallen: The Score"
+    ],
+    "missing": false
+   },
+   "earlier": {
+    "credits": [
+     "Linkin Park",
+     "The Smashing Pumpkins",
+     "Disturbed",
+     "Goo Goo Dolls",
+     "The Used",
+     "HIM",
+     "Taking Back Sunday",
+     "Styles of Beyond",
+     "Mike Shinoda",
+     "Armor for Sleep",
+     "Idiot Pilot",
+     "Julien-K",
+     "MUTEMATH"
+    ],
+    "used": [
+     {
+      "source": "https://musicbrainz.org/release/0703bdb2-b2ae-4626-852d-574ffd7c2f31",
+      "title": "Transformers: The Album",
+      "tracks": 12,
+      "artists": 13
+     }
+    ],
+    "log": [
+     "rejected score: Transformers: The Score"
+    ],
+    "missing": false
+   }
+  }
+ }
+}

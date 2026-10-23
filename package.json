@@ -15,8 +15,9 @@
     "check:public": "node scripts/check-public.js",
     "find-sleepers": "node scripts/find-sleepers.js",
     "check:trending": "node scripts/check-trending.js",
-    "backtest": "node scripts/backtest.js",
+    "backtest": "node scripts/backtest-v2.js",
     "settle": "node scripts/settle.js",
-    "check:quiet": "node scripts/check-quiet.js"
+    "check:quiet": "node scripts/check-quiet.js",
+    "collect-lists": "node scripts/collect-lists.js"
   }
 }
