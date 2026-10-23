@@ -101,7 +101,7 @@ const DATA_SOURCES = [
 // The demo artist is chosen by us, not by the selection rule. Only claims with a public source.
 const DEMO_PICK = {
   artist: 'The Clash',
-  text: 'The Clash is the default demo because we chose it, not because the rule ranked it first. On Oct 23, npm run find-sleepers (the pool’s 500 most popular, best open door in the top 20%, quiet by page views and catalogue) put it 8th of 54. We picked it because its original recordings have been licensed for the screen, so a pitch letter for them is believable. Some acts ranked near it, such as The Beatles, have licensed their original recordings to TV very rarely, which would make the demo letter less realistic.',
+  text: 'The Clash is the default demo because we chose it, not because the rule ranked it first. On Oct 23, npm run find-sleepers (the pool’s 500 most popular, best open door in the top 20%, quiet by page views and catalogue) put it 9th of 55. We picked it because its original recordings have been licensed for the screen, so a pitch letter for them is believable. Some acts ranked above it, such as The Beatles, have licensed their original recordings to TV very rarely, which would make the demo letter less realistic.',
   sources: [
     { claim: 'Stranger Things season 1, episode 2, uses The Clash’s “Should I Stay or Should I Go”.', label: 'Netflix Tudum, every song in Stranger Things', url: 'https://www.netflix.com/tudum/articles/stranger-things-every-song' },
     { claim: 'Mad Men’s use of “Tomorrow Never Knows” (2012) was reported as the first time a Beatles master recording was licensed for a TV show (about $250,000, per the Wall Street Journal).', label: 'The World (PRX), May 2012', url: 'https://theworld.org/stories/2012-05-07/mad-men-spends-big-beatles-song' },

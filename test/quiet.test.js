@@ -62,11 +62,17 @@ test('catalogue: latest studio album older than 5 years is old; compilations and
   assert.equal(c.cutoff, '2021-10-23');
 });
 
-test('catalogue: a studio album in the last 5 years (or announced) is recent; a year-only date counts from year end', () => {
+test('catalogue: a studio album in the last 5 years is recent; a year-only date counts from year end', () => {
   assert.equal(catalogueFromAlbums([album('Old', '2010'), album('New', '2025-10-03')], '2026-10-23').old, false);
-  assert.equal(catalogueFromAlbums([album('Next', '2027-02-01')], '2026-10-23').old, false);
   assert.equal(catalogueFromAlbums([album('Edge', '2021')], '2026-10-23').old, false);
   assert.equal(catalogueFromAlbums([album('Edge', '2021-10-22')], '2026-10-23').old, true);
+});
+
+test('catalogue: release groups dated after asOf are ignored (not out yet, or bad data)', () => {
+  const c = catalogueFromAlbums([album('Last studio', '1969-09-26'), album('Bad record', '2026-11-24')], '2026-10-23');
+  assert.equal(c.old, true);
+  assert.equal(c.latest.title, 'Last studio');
+  assert.equal(catalogueFromAlbums([album('Next', '2027-02-01')], '2026-10-23').old, null);
 });
 
 test('catalogue: not found, or no dated studio album, is unknown and never quiet', () => {

@@ -25,17 +25,18 @@
 // is a catalogue act at all.
 import { addMonths } from './wiki.js';
 
-export const CATALOGUE_RULE = { years: 5, source: 'MusicBrainz release groups: primary type Album, no secondary type, not bootleg-only' };
+export const CATALOGUE_RULE = { years: 5, source: 'MusicBrainz release groups: primary type Album, no secondary type, not bootleg-only, not dated in the future' };
 
 // albums: [{ title, date, primary, secondary }] or null when the artist was not found.
 // Returns { old: true | false | null, latest: { title, date } | null, cutoff }.
 export function catalogueFromAlbums(albums, asOf, rule = CATALOGUE_RULE) {
   const cutoff = `${Number(asOf.slice(0, 4)) - rule.years}${asOf.slice(4, 10)}`;
   if (!albums) return { old: null, latest: null, cutoff, why: 'not found on MusicBrainz' };
-  const studio = albums.filter((a) => a.primary === 'Album' && !(a.secondary || []).length && /^\d{4}/.test(a.date || ''));
+  // Release groups dated after asOf are not out yet (or are bad data), so they do not count as a new album.
+  const studio = albums.filter((a) => a.primary === 'Album' && !(a.secondary || []).length && /^\d{4}/.test(a.date || '') && a.date <= asOf.slice(0, 10));
   if (!studio.length) return { old: null, latest: null, cutoff, why: 'no dated studio album on MusicBrainz' };
   const latest = studio.reduce((x, y) => (y.date > x.date ? y : x));
-  // A partial date counts from the end of its year or month (the cautious side); a future date counts as recent.
+  // A partial date counts from the end of its year or month (the cautious side).
   const full = latest.date.length === 4 ? `${latest.date}-12-31` : latest.date.length === 7 ? `${latest.date}-31` : latest.date;
   return { old: full < cutoff, latest: { title: latest.title, date: latest.date }, cutoff };
 }
