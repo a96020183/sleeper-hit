@@ -1,0 +1,135 @@
+// The agent run for one artist: resolve, score, check, decide. Returns only derived values
+// (percentiles, overlap, categories); raw Qloo affinity/popularity values and ids stay server-side.
+import { ARTISTS } from './data/artists.js';
+import { WINDOWS, RECIPIENTS } from './data/windows.js';
+import { ARTIST } from './qloo/client.js';
+import { percentileOf, topPercent, audienceOverlap } from './scoring.js';
+import { classifyClearance } from './clearance.js';
+import { evaluateTiming } from './timing.js';
+import path from 'node:path';
+import { quietFromPageviews, quietFromRoyalty, ruleWindow } from './quiet.js';
+import { Wiki, addMonths } from './wiki.js';
+import { makeMockWikiFetch } from './qloo/mock.js';
+import { decide } from './agent.js';
+
+const publicWindow = (w) => ({
+  id: w.id, title: w.title, season: w.season || '', kind: w.kind, platform: w.platform || '',
+  earlier: { label: w.earlier.label }, release: w.release || null, releaseMonth: w.releaseMonth || null,
+  dateStatus: w.dateStatus, production: w.production || null, note: w.note || '', sources: w.sources || [],
+  sceneHint: w.sceneHint || '', animation: !!w.animation,
+});
+
+// Qloo part: slow, cached per artist and day. Contains raw values; never sent to the browser.
+export async function scoreArtist(client, artistKey, today) {
+  const artist = ARTISTS[artistKey];
+  if (!artist) throw new Error(`Unknown artist ${artistKey}`);
+  const entity = await client.resolve({ query: artist.name, type: ARTIST });
+  const band = await client.peerBand(entity);
+  const bandIds = band.map((b) => b.id);
+  const clearance = null; // set per request in decideArtist
+  const warnings = [];
+
+  const doors = [];
+  const signals = [];
+  for (const w of WINDOWS.filter((x) => x.card)) {
+    const timing = evaluateTiming(w, today);
+    let pct = null, scored = 0, signalId = null;
+    try {
+      const sig = await client.resolve({ query: w.earlier.query, type: w.earlier.type, name: w.earlier.name || w.earlier.query, year: w.earlier.year });
+      signalId = sig.id;
+      signals.push(sig.id);
+      const aff = await client.scoreArtists(sig.id, bandIds);
+      scored = aff.size;
+      if (aff.has(entity.id)) pct = percentileOf(aff.get(entity.id).affinity, [...aff.values()].map((v) => v.affinity));
+    } catch (e) {
+      warnings.push(`${w.title}: ${e.message}`);
+    }
+    doors.push({ id: w.id, window: publicWindow(w), signalId, recipient: RECIPIENTS[w.kind], timing, clearance, pct, topPct: topPercent(pct), bandScored: scored, overlap: null });
+  }
+
+  // Second signal: demographics of each earlier title vs the artist (one request).
+  let demographicsOk = false;
+  try {
+    const demo = await client.demographics([entity.id, ...new Set(signals)]);
+    const mine = demo.get(entity.id);
+    for (const d of doors) {
+      const theirs = d.signalId && demo.get(d.signalId);
+      if (mine && theirs) { d.overlap = +audienceOverlap(theirs, mine).toFixed(3); demographicsOk = true; }
+    }
+  } catch (e) {
+    warnings.push(`Demographics unavailable: ${e.message}`);
+  }
+
+  // Quiet check: Wikipedia page views (rule in src/quiet.js). Qloo trending is not used.
+  let quiet = null;
+  try {
+    quiet = await quietCheck(wikiFor(client), { title: artist.wikipedia, qid: entity.wikidata }, today);
+  } catch (e) {
+    warnings.push(`Wikipedia page views unavailable: ${e.message}`);
+  }
+  if (!quiet) quiet = quietFromRoyalty(artist.royaltyStatements) || { quiet: null, basis: 'pending', detail: 'Add royalty statements to judge.' };
+
+  return {
+    artistKey,
+    today,
+    bandSize: band.length,
+    quiet: { quiet: quiet.quiet, basis: quiet.basis, detail: quiet.detail, page: quiet.page || null, ratio: quiet.ratio ?? null, peakRatio: quiet.peakRatio ?? null, peakMonth: quiet.peakMonth || null, window: quiet.window || null, noWake: quiet.noWake ?? null, notRising: quiet.notRising ?? null },
+    demographicsOk,
+    doors,
+    warnings,
+  };
+}
+
+// One Wikimedia client per Qloo client; the mock Qloo gets a mock Wikimedia so tests stay offline.
+export function wikiFor(client) {
+  if (!client.wiki) {
+    client.wiki = client.mode === 'mock'
+      ? new Wiki({ fetchImpl: makeMockWikiFetch(), cacheDir: path.join(client.cacheRoot, 'wikimedia-mock'), reqPerSec: 1000 })
+      : new Wiki({ cacheDir: path.join(client.cacheRoot, 'wikimedia') });
+  }
+  return client.wiki;
+}
+
+// Monthly views for the 36-month window plus the current month (the rule ignores incomplete months).
+export async function pageviewsFor(wiki, title, today) {
+  const { from, to } = ruleWindow(today);
+  return wiki.monthly(title, from, addMonths(to, 1));
+}
+
+// The artist's quiet verdict from English Wikipedia page views (one request per artist).
+export async function quietCheck(wiki, { title, qid }, today) {
+  const page = title || (qid ? (await wiki.titlesFor([qid])).get(qid) : null);
+  if (!page) return null;
+  const own = quietFromPageviews(await pageviewsFor(wiki, page, today), today);
+  return own ? { ...own, page } : null;
+}
+
+// Decision part: cheap, per request. `manual` is the viewer's own share ({ publishingPct, masterPct }),
+// `overrides` the doors the viewer chose to knock anyway. Both live in the viewer's browser.
+export function manualRecord(artist, manual) {
+  if (!manual) return artist.clearance;
+  const p = Math.max(0, Math.min(100, Number(manual.publishingPct)));
+  const m = Math.max(0, Math.min(100, Number(manual.masterPct)));
+  if (Number.isNaN(p) || Number.isNaN(m)) return artist.clearance;
+  return { ...artist.clearance, manual: { persona: `You hold ${p}% of the song and ${m}% of the recording.`, publishingPct: p, masterPct: m } };
+}
+
+export function decideArtist(scored, { overrides = new Set(), manual = null } = {}) {
+  const artist = ARTISTS[scored.artistKey];
+  const record = manualRecord(artist, manual);
+  const clearance = classifyClearance(record);
+  const decided = decide(scored.doors.map((d) => ({ ...d, clearance })), { overrides });
+  return {
+    artist: { key: artist.key, name: artist.name, songs: artist.songs, persona: record.manual?.persona || null, manualPct: record.manual?.publishingPct ?? null, clearanceNote: artist.clearanceNote || '', sources: artist.sources || [] },
+    today: scored.today,
+    bandSize: scored.bandSize,
+    quiet: scored.quiet,
+    demographicsOk: scored.demographicsOk,
+    doors: decided.map(({ signalId, pct, ...d }) => ({ ...d, pctRounded: pct === null ? null : Math.round(pct) })),
+    warnings: scored.warnings,
+  };
+}
+
+export async function runArtist(client, artistKey, today, opts = {}) {
+  return decideArtist(await scoreArtist(client, artistKey, today), opts);
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sleeper Hit</title>
+  <meta name="description" content="Finds sequels whose audience loves a quiet artist more than popularity predicts, checks clearance, and drafts the pitch letter.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"></span>
+      <span>Sleeper Hit</span>
+    </div>
+    <label class="artist-pick">
+      <span class="sr">Artist</span>
+      <select id="artist"></select>
+    </label>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="today" aria-selected="true">Today</button>
+      <button role="tab" data-tab="outbox" aria-selected="false">Outbox <span id="outbox-count" class="count"></span></button>
+      <button role="tab" data-tab="trust" aria-selected="false">Trust</button>
+    </nav>
+    <div class="modes" id="modes"></div>
+  </header>
+
+  <main>
+    <section id="tab-today" class="tab" aria-live="polite">
+      <p class="loading" id="loading">Scoring today's doors with Qloo…</p>
+    </section>
+    <section id="tab-outbox" class="tab" hidden></section>
+    <section id="tab-trust" class="tab" hidden></section>
+  </main>
+
+  <footer class="foot">
+    Qloo describes aggregate audiences, not what a supervisor will pick. Clearance categories set priorities; they are not legal advice. Nothing here sends email.
+  </footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

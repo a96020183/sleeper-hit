@@ -1,0 +1,123 @@
+{
+  "name": "Sleeper Hit backtest v2 (pre-registered)",
+  "writtenAt": "2026-10-23",
+  "status": "Written and committed before any v2 list was collected or any v2 number was computed. scripts/backtest-v2.js refuses to run if this file differs from the registered commit.",
+  "replaces": "Backtest v1 (7 pairs, answer key from Tunefind). Tunefind lists are no longer used anywhere: its robots.txt blocks ClaudeBot.",
+  "question": "Does the earlier title's Qloo audience rank the artists its sequel newly used higher than (a) Qloo popularity and (b) an LLM given both titles? Second, pre-registered at the same time: is any advantage concentrated in the less popular part of the pool, or in titles and artists that appeared after the LLM's training cutoff?",
+
+  "sources": {
+    "allowed": [
+      "Netflix Tudum articles that list a season's songs (netflix.com robots.txt allows Claude-User and ClaudeBot)",
+      "MusicBrainz web service /ws/2 (open data, CC0 core data). One request per 1.1 s or slower, descriptive User-Agent. Note: musicbrainz.org/robots.txt has 'Disallow: /ws' for generic crawlers; MusicBrainz documents /ws/2 for programmatic clients with these rate rules. We make targeted lookups only, no crawling.",
+      "Studio or label press releases, if a list is missing elsewhere"
+    ],
+    "notUsed": [
+      "Tunefind (robots.txt blocks ClaudeBot)",
+      "iTunes Search API (itunes.apple.com robots.txt disallows /search)",
+      "Any site behind bot protection"
+    ]
+  },
+
+  "candidates": {
+    "order": "Processed in this order. A candidate is included when both rules below resolve and the projected live Qloo calls stay within budget. Excluded candidates are listed with the reason.",
+    "budget": "Live Qloo calls for this backtest at most 1,400 (hard cap 1,500). A new earlier-title signal costs about 62 calls (search plus 60 scoring calls for 3,000 artists); signals already cached from v1 cost nothing.",
+    "list": [
+      { "id": "spider-verse-2", "franchise": "spider-verse", "kind": "film", "earlier": "Spider-Man: Into the Spider-Verse (2018)", "later": "Spider-Man: Across the Spider-Verse (2023-06-02)" },
+      { "id": "fast-x", "franchise": "fast", "kind": "film", "earlier": "F9 (2021)", "later": "Fast X (2023-05-19)" },
+      { "id": "angry-birds-2", "franchise": "angry-birds", "kind": "film", "earlier": "The Angry Birds Movie (2016)", "later": "The Angry Birds Movie 2 (2019-08-13)" },
+      { "id": "gta-v", "franchise": "gta", "kind": "game", "earlier": "Grand Theft Auto IV (2008)", "later": "Grand Theft Auto V (2013-09-17)" },
+      { "id": "sonic-3", "franchise": "sonic", "kind": "film", "earlier": "Sonic the Hedgehog 2 (2022)", "later": "Sonic the Hedgehog 3 (2024-12-20)" },
+      { "id": "gxk-new-empire", "franchise": "monsterverse", "kind": "film", "earlier": "Godzilla vs. Kong (2021)", "later": "Godzilla x Kong: The New Empire (2024-03-29)" },
+      { "id": "ice-age-5", "franchise": "ice-age", "kind": "film", "earlier": "Ice Age: Continental Drift (2012)", "later": "Ice Age: Collision Course (2016-07-22)" },
+      { "id": "deadpool-3", "franchise": "deadpool", "kind": "film", "earlier": "Deadpool 2 (2018)", "later": "Deadpool & Wolverine (2024-07-26)" },
+      { "id": "twisters", "franchise": "twister", "kind": "film", "earlier": "Twister (1996)", "later": "Twisters (2024-07-19)" },
+      { "id": "bad-boys-4", "franchise": "bad-boys", "kind": "film", "earlier": "Bad Boys for Life (2020)", "later": "Bad Boys: Ride or Die (2024-06-07)" },
+      { "id": "despicable-me-4", "franchise": "despicable-me", "kind": "film", "earlier": "Despicable Me 3 (2017)", "later": "Despicable Me 4 (2024-07-03)" },
+      { "id": "bridget-jones-4", "franchise": "bridget-jones", "kind": "film", "earlier": "Bridget Jones's Baby (2016)", "later": "Bridget Jones: Mad About the Boy (2025-02-13)" },
+      { "id": "freakier-friday", "franchise": "freaky-friday", "kind": "film", "earlier": "Freaky Friday (2003)", "later": "Freakier Friday (2025-08-08)" },
+      { "id": "stranger-things-5", "franchise": "stranger-things", "kind": "series", "earlier": "Stranger Things seasons 1-4", "later": "Stranger Things season 5 (2025-11-26)" },
+      { "id": "outer-banks-5", "franchise": "outer-banks", "kind": "series", "earlier": "Outer Banks seasons 1-4", "later": "Outer Banks season 5 (2026)" },
+      { "id": "nobody-wants-this-2", "franchise": "nobody-wants-this", "kind": "series", "earlier": "Nobody Wants This season 1", "later": "Nobody Wants This season 2 (2025-10-23)" },
+      { "id": "wednesday-2", "franchise": "wednesday", "kind": "series", "earlier": "Wednesday season 1", "later": "Wednesday season 2 (2025-08-06)" },
+      { "id": "bridgerton-4", "franchise": "bridgerton", "kind": "series", "earlier": "Bridgerton seasons 1-3", "later": "Bridgerton season 4 (2026-01-29)" },
+      { "id": "beef-2", "franchise": "beef", "kind": "series", "earlier": "BEEF season 1", "later": "BEEF season 2 (2026-04-16)" },
+      { "id": "guardians-2", "franchise": "guardians", "kind": "film", "earlier": "Guardians of the Galaxy (2014)", "later": "Guardians of the Galaxy Vol. 2 (2017-05-05)" },
+      { "id": "guardians-3", "franchise": "guardians", "kind": "film", "earlier": "Guardians of the Galaxy Vol. 2 (2017)", "later": "Guardians of the Galaxy Vol. 3 (2023-05-05)" },
+      { "id": "deadpool-2", "franchise": "deadpool", "kind": "film", "earlier": "Deadpool (2016)", "later": "Deadpool 2 (2018-05-18)" },
+      { "id": "twilight-2", "franchise": "twilight", "kind": "film", "earlier": "Twilight (2008)", "later": "The Twilight Saga: New Moon (2009-11-20)" },
+      { "id": "twilight-3", "franchise": "twilight", "kind": "film", "earlier": "The Twilight Saga: New Moon (2009)", "later": "The Twilight Saga: Eclipse (2010-06-30)" },
+      { "id": "twilight-4", "franchise": "twilight", "kind": "film", "earlier": "The Twilight Saga: Eclipse (2010)", "later": "The Twilight Saga: Breaking Dawn - Part 1 (2011-11-18)" },
+      { "id": "twilight-5", "franchise": "twilight", "kind": "film", "earlier": "The Twilight Saga: Breaking Dawn - Part 1 (2011)", "later": "The Twilight Saga: Breaking Dawn - Part 2 (2012-11-16)" },
+      { "id": "hunger-games-2", "franchise": "hunger-games", "kind": "film", "earlier": "The Hunger Games (2012)", "later": "The Hunger Games: Catching Fire (2013-11-22)" },
+      { "id": "hunger-games-3", "franchise": "hunger-games", "kind": "film", "earlier": "The Hunger Games: Catching Fire (2013)", "later": "The Hunger Games: Mockingjay - Part 1 (2014-11-21)" },
+      { "id": "fifty-shades-2", "franchise": "fifty-shades", "kind": "film", "earlier": "Fifty Shades of Grey (2015)", "later": "Fifty Shades Darker (2017-02-10)" },
+      { "id": "fifty-shades-3", "franchise": "fifty-shades", "kind": "film", "earlier": "Fifty Shades Darker (2017)", "later": "Fifty Shades Freed (2018-02-09)" },
+      { "id": "black-panther-2", "franchise": "black-panther", "kind": "film", "earlier": "Black Panther (2018)", "later": "Black Panther: Wakanda Forever (2022-11-11)" },
+      { "id": "fast-8", "franchise": "fast", "kind": "film", "earlier": "Furious 7 (2015)", "later": "The Fate of the Furious (2017-04-14)" },
+      { "id": "space-jam-2", "franchise": "space-jam", "kind": "film", "earlier": "Space Jam (1996)", "later": "Space Jam: A New Legacy (2021-07-16)" },
+      { "id": "spider-man-2", "franchise": "spider-man", "kind": "film", "earlier": "Spider-Man (2002)", "later": "Spider-Man 2 (2004-06-30)" },
+      { "id": "spider-man-3", "franchise": "spider-man", "kind": "film", "earlier": "Spider-Man 2 (2004)", "later": "Spider-Man 3 (2007-05-04)" },
+      { "id": "transformers-2", "franchise": "transformers", "kind": "film", "earlier": "Transformers (2007)", "later": "Transformers: Revenge of the Fallen (2009-06-24)" }
+    ]
+  },
+
+  "inclusion": {
+    "signal": "The earlier title resolves in Qloo by exact name (and year, where given). Films use urn:entity:movie, games urn:entity:videogame. A returning series is one Qloo entity across seasons, so for series the signal is the series itself and already includes the new season's audience (strong leak in Qloo's favour; series are reported separately).",
+    "laterList": "Films and games: the MusicBrainz release group with secondary type Soundtrack for the later title, first released within a year of the title, that is a compilation of songs by recording artists. Score-only albums ('Score', 'Original Score', composer-only) and cast-recording albums are rejected. Several qualifying song albums for one title are combined. Inside a release group, the official release with the most tracks is used. Series: the Tudum article(s) listing that season's songs.",
+    "earlierList": "Same rules for the earlier title (all earlier seasons for series, where Tudum lists them). If no earlier list exists, repeats are not removed and the pair is flagged.",
+    "artists": "Films and games: every artist in each track's MusicBrainz artist credit. Tudum: every artist named for a track; a credit is first matched whole, and only if the whole credit is not a pool name it is split on 'feat.', 'ft.', 'featuring', ' x ', ' & ', ' with ' and commas (never on 'and'). Where Tudum names the original artist of a cover, that artist counts too. 'Various Artists', '[unknown]', '[traditional]' and '<title> Cast' credits are dropped.",
+    "completeness": "A soundtrack album can include songs not used in the film and leave out songs that were. Every list is marked complete (Tudum per-episode list or full album) or partial; nothing is filled in by hand from memory.",
+    "pairCounts": "A pair enters the metrics when it has at least one positive.",
+    "sampleTarget": "Target at least 15 pairs with positives and at least 40 positives. If the target is not met, results are still reported and labelled underpowered."
+  },
+
+  "pool": "The same pool as the sealed forecast: the first 3,000 artists Qloo returns for filter.popularity.min=0.9, most popular first (cached; not the complete top 3,000).",
+  "positives": "Pool artists (normalised name match, src/baselines.js normName) credited on the later title's list and not credited on the earlier title's list.",
+
+  "methods": {
+    "popularity": "Qloo popularity order (whole pool).",
+    "llm": "gpt-4.1-mini, temperature 0, the sealed baseline prompt unchanged: 'Upcoming: <later> (follows <earlier>). From this list, pick the 50 artists most likely to have a song licensed in it or its trailers, most likely first.' with the 3,000 pool names. Shortlist of 50.",
+    "llmTail": "Same model and prompt, but the list is only the lowest popularity tertile (1,000 names). Shortlist of 50. Used only inside that tertile.",
+    "similarTitles": "What similar titles used: for each pool artist, the number of other candidate lists (earlier or later lists of other pairs) released before this pair's later title that credit the artist. Artists with a count above 0, ties by popularity; the rest tied at the bottom. The pair's own earlier list is not used (its artists are not positives by definition).",
+    "qlooRaw": "Qloo raw affinity, earlier title as signal, whole pool scored through filter.results.entities in chunks of 50.",
+    "qlooExcess": "Qloo excess affinity: affinity percentile inside 10 equal popularity bands, ties by raw affinity. This is the sealed forecast's score.",
+    "qlooTimesPop": "NEW Qloo use: raw affinity multiplied by Qloo popularity.",
+    "qlooBlend": "NEW Qloo use: average of the artist's rank by raw affinity and rank by popularity (rank fusion), ties by raw affinity."
+  },
+
+  "metrics": {
+    "auc": "Per pair, AUC over the pool (or stratum): probability that a positive outranks a non-positive, ties half. Shortlist methods put every unlisted artist in one tie at the bottom.",
+    "pooledAuc": "Positives-weighted mean of per-pair AUC (the same definition as the sealed forecast's settlement).",
+    "hits50": "Positives in each method's top 50, summed over pairs. Inside a stratum: the method's ranking restricted to that stratum, top 50.",
+    "bootstrap": "95% percentile interval from 10,000 resamples of franchises with replacement (pairs from one franchise move together), seed 20261023, mulberry32. Computed for each method's pooled AUC and hits@50, and for the differences Qloo variant minus popularity and minus LLM.",
+    "multiplicity": "Four Qloo variants are tested; intervals are not corrected for that. Stated next to the result."
+  },
+
+  "strata": {
+    "popularity": "Pool split into three tertiles by Qloo popularity order: high (ranks 1-1,000), mid (1,001-2,000), low (2,001-3,000). Every method is scored inside each tertile (positives and non-positives of that tertile only). All three tertiles are reported. Note: the whole pool is already popularity 0.9 or higher in Qloo, so 'low' means the least popular part of a popular pool, not the long tail.",
+    "kind": "Films and games vs series, reported separately (series signals leak).",
+    "afterCutoff": "LLM training cutoff: June 2024 (OpenAI model page for gpt-4.1-mini). Pair level: later title released on or after 2024-06-01 vs before.",
+    "emergingArtists": "Artist level, rule fixed now: an artist 'rose after the cutoff' if it has no English Wikipedia article (via the Wikidata id Qloo carries), or its mean daily English Wikipedia views (Wikimedia Pageviews API, agent=user, missing months count as 0) for 2023-06..2024-05 are below 25% of those for 2024-07..2025-06. AUC is computed for these positives against all non-positives of their pairs, and reported only if there are at least 10 such positives; otherwise only the count is reported."
+  },
+
+  "hypotheses": {
+    "H1": "Primary. A Qloo variant beats popularity and the LLM: the lower 95% bound of (Qloo - popularity) pooled AUC is above 0, AND the lower 95% bound of (Qloo - LLM) hits@50 is above 0. hits@50 is the comparison with the LLM because the LLM only names 50 artists, which caps its AUC near 0.5; (Qloo - LLM) pooled AUC is reported too but is structurally favourable to full rankings.",
+    "H2": "Popularity strata (added at the coordinator's request before any v2 number). In the low tertile a Qloo variant beats the LLM: lower 95% bound of (Qloo - llmTail) hits@50 inside the low tertile above 0. Also reported: (Qloo - popularity) pooled AUC inside each tertile, and the main LLM restricted to each tertile.",
+    "H3": "After the LLM cutoff: H1's two comparisons on pairs whose later title came out on or after 2024-06-01. Reported with intervals if those pairs have at least 10 positives; otherwise counts only."
+  },
+
+  "decision": {
+    "keepPrediction": "H1 holds for at least one Qloo variant: keep 'forecast' as the public claim.",
+    "downgrade": "H1 fails for every variant: draft a downgraded public claim for the user to decide. H2 or H3 holding would narrow the claim to that segment, not restore the general claim.",
+    "notChangedHere": "The backtest does not change any public wording by itself; the user decides."
+  },
+
+  "knownBiases": [
+    "Qloo describes audiences as of today, so fans of an earlier title may already reflect the sequel's songs (favours Qloo). For series the signal includes the new season (strongly favours Qloo).",
+    "Most later titles came out before the LLM's training cutoff, so it may remember their soundtracks (favours the LLM before the cutoff).",
+    "Soundtrack albums are not the same as songs used on screen.",
+    "Pairs from one franchise are not independent; the bootstrap resamples franchises.",
+    "The pool is the popular end of Qloo (popularity 0.9 or higher), so long-tail artists are not tested."
+  ],
+  "exploratory": "Anything not written above is exploratory and labelled so."
+}

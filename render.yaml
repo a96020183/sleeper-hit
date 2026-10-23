@@ -1,0 +1,22 @@
+# Render Blueprint. Free plan: the disk is temporary and the service sleeps when idle.
+# The app keeps no user data on the server (outbox lives in the browser), and the private Qloo
+# cache refills itself after a restart. Set the secrets in the Render dashboard; never commit them.
+services:
+  - type: web
+    name: sleeper-hit
+    runtime: node
+    plan: free
+    buildCommand: "echo no build step"
+    startCommand: "npm start"
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: QLOO_API_KEY
+        sync: false
+      - key: QLOO_BASE_URL
+        value: https://hackathon.api.qloo.com
+      - key: QLOO_REQ_PER_SEC
+        value: "4"
+      - key: OPENAI_API_KEY
+        sync: false

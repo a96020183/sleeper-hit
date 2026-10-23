@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+.private/
+node_modules/
+進度.md
+*.log

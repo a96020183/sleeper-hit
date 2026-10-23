@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-23T07:48:17.434Z",
+  "endpoint": "/v2/trending (filter.type=urn:entity:artist, weekly series)",
+  "artists": 25,
+  "demoArtists": [
+    "The Verve",
+    "Iggy Pop",
+    "Air Supply",
+    "Culture Club"
+  ],
+  "windows": [
+    {
+      "start": "2023-09-01",
+      "end": "2024-02-29",
+      "series": 25,
+      "answered": 20,
+      "changing": 20,
+      "firstDate": "2023-09-11",
+      "lastDate": "2024-02-26"
+    },
+    {
+      "start": "2024-03-01",
+      "end": "2024-08-31",
+      "series": 25,
+      "answered": 20,
+      "changing": 20,
+      "firstDate": "2024-03-11",
+      "lastDate": "2024-08-30"
+    },
+    {
+      "start": "2024-09-01",
+      "end": "2025-02-28",
+      "series": 25,
+      "answered": 20,
+      "changing": 20,
+      "firstDate": "2024-09-02",
+      "lastDate": "2025-02-23"
+    },
+    {
+      "start": "2025-03-01",
+      "end": "2025-10-16",
+      "series": 25,
+      "answered": 0,
+      "changing": 0,
+      "firstDate": null,
+      "lastDate": null
+    },
+    {
+      "start": "2025-10-17",
+      "end": "2026-10-22",
+      "series": 25,
+      "answered": 25,
+      "changing": 0,
+      "firstDate": "2025-11-07",
+      "lastDate": "2026-10-16"
+    }
+  ],
+  "flatNow": {
+    "series": 25,
+    "changing": 0
+  },
+  "todayKeepsDec2024Order": 0.98,
+  "knownWakeUp": {
+    "name": "Tom Petty",
+    "event": "2023-12-05",
+    "what": "GTA VI trailer 1 used \"Love Is a Long Road\"",
+    "found": true,
+    "peakWeek": "2024-02-23",
+    "daysFromEvent": 80,
+    "foldVsMedian": 1.03
+  },
+  "verdict": "not usable for \"quiet now\": every series since Oct 17 2025 holds one repeated value"
+}

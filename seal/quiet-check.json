@@ -1,0 +1,145 @@
+{
+  "at": "2026-10-23T08:33:25.734Z",
+  "source": "Wikimedia Pageviews API, en.wikipedia, all-access, agent=user, monthly",
+  "rule": {
+    "months": 36,
+    "noSpikeMonths": 24,
+    "spikeX": 1.5,
+    "recentMonths": 3,
+    "recentMaxX": 1,
+    "minMonths": 33
+  },
+  "demo": [
+    {
+      "artist": "The Clash",
+      "page": "The Clash",
+      "asOf": "2026-10-23",
+      "quiet": true,
+      "ratio": 0.93,
+      "peakRatio": 1.17,
+      "peakMonth": "2025-12",
+      "window": {
+        "from": "2023-10",
+        "to": "2026-09"
+      },
+      "noWake": true,
+      "notRising": true
+    },
+    {
+      "artist": "The Verve",
+      "page": "The Verve",
+      "asOf": "2026-10-23",
+      "quiet": false,
+      "ratio": 0.85,
+      "peakRatio": 2.32,
+      "peakMonth": "2025-07",
+      "window": {
+        "from": "2023-10",
+        "to": "2026-09"
+      },
+      "noWake": false,
+      "notRising": true
+    },
+    {
+      "artist": "Iggy Pop",
+      "page": "Iggy Pop",
+      "asOf": "2026-10-23",
+      "quiet": false,
+      "ratio": 0.88,
+      "peakRatio": 1.93,
+      "peakMonth": "2026-04",
+      "window": {
+        "from": "2023-10",
+        "to": "2026-09"
+      },
+      "noWake": false,
+      "notRising": true
+    },
+    {
+      "artist": "Air Supply",
+      "page": "Air Supply",
+      "asOf": "2026-10-23",
+      "quiet": false,
+      "ratio": 0.83,
+      "peakRatio": 1.69,
+      "peakMonth": "2025-12",
+      "window": {
+        "from": "2023-10",
+        "to": "2026-09"
+      },
+      "noWake": false,
+      "notRising": true
+    },
+    {
+      "artist": "Culture Club",
+      "page": "Culture Club",
+      "asOf": "2026-10-23",
+      "quiet": false,
+      "ratio": 1.07,
+      "peakRatio": 1.41,
+      "peakMonth": "2024-12",
+      "window": {
+        "from": "2023-10",
+        "to": "2026-09"
+      },
+      "noWake": true,
+      "notRising": false
+    }
+  ],
+  "knownWakeUps": [
+    {
+      "page": "Kate Bush",
+      "asOf": "2022-09-01",
+      "eventMonth": "2022-05",
+      "event": "\"Running Up That Hill\" in Stranger Things 4, May 2022",
+      "quiet": false,
+      "ratio": 5.61,
+      "peakRatio": 9.64,
+      "peakMonth": "2022-06",
+      "window": {
+        "from": "2019-09",
+        "to": "2022-08"
+      },
+      "noWake": false,
+      "notRising": false,
+      "caught": true,
+      "peakIsEvent": true
+    },
+    {
+      "page": "Tom Petty",
+      "asOf": "2024-01-15",
+      "eventMonth": "2023-12",
+      "event": "\"Love Is a Long Road\" in the GTA VI trailer, Dec 5 2023",
+      "quiet": false,
+      "ratio": 1.36,
+      "peakRatio": 1.84,
+      "peakMonth": "2023-12",
+      "window": {
+        "from": "2021-01",
+        "to": "2023-12"
+      },
+      "noWake": false,
+      "notRising": false,
+      "caught": true,
+      "peakIsEvent": true
+    },
+    {
+      "page": "The Pointer Sisters",
+      "asOf": "2025-07-01",
+      "eventMonth": "2025-05",
+      "event": "\"Hot Together\" in GTA VI trailer 2, May 6 2025",
+      "quiet": false,
+      "ratio": 0.94,
+      "peakRatio": 1.66,
+      "peakMonth": "2024-01",
+      "window": {
+        "from": "2022-07",
+        "to": "2025-06"
+      },
+      "noWake": false,
+      "notRising": true,
+      "caught": true,
+      "peakIsEvent": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-23T08:02:31.913Z",
+  "mode": "live",
+  "poolSize": 3000,
+  "titles": 12,
+  "medianSpearman": 0.158,
+  "medianTau": 0.2,
+  "verdict": "pass",
+  "why": "",
+  "expectedPositivesTier1UpperBound": 1
+}
