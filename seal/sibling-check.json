@@ -1,0 +1,338 @@
+{
+  "at": "2026-10-23T09:56:53.731Z",
+  "registeredCommit": "8893210",
+  "signals": 44,
+  "siblingPairs": 19,
+  "randomPairs": 923,
+  "skipped": [],
+  "results": {
+    "qlooRaw": {
+      "siblingMeanJaccard": 0.2284,
+      "randomMeanJaccard": 0.052,
+      "ratio": 4.39,
+      "p": 0.0001,
+      "pass": true,
+      "yearConfoundSpearman": -0.164,
+      "perSibling": [
+        {
+          "a": "Twilight (2008)",
+          "b": "The Twilight Saga: New Moon (2009)",
+          "jaccard50": 0.282
+        },
+        {
+          "a": "The Twilight Saga: New Moon (2009)",
+          "b": "The Twilight Saga: Eclipse (2010)",
+          "jaccard50": 0.471
+        },
+        {
+          "a": "The Twilight Saga: Eclipse (2010)",
+          "b": "The Twilight Saga: Breaking Dawn - Part 1 (2011)",
+          "jaccard50": 0.37
+        },
+        {
+          "a": "The Hunger Games (2012)",
+          "b": "The Hunger Games: Catching Fire (2013)",
+          "jaccard50": 0.538
+        },
+        {
+          "a": "Fifty Shades of Grey (2015)",
+          "b": "Fifty Shades Darker (2017)",
+          "jaccard50": 0.408
+        },
+        {
+          "a": "Guardians of the Galaxy (2014)",
+          "b": "Guardians of the Galaxy Vol. 2 (2017)",
+          "jaccard50": 0
+        },
+        {
+          "a": "Deadpool (2016)",
+          "b": "Deadpool 2 (2018)",
+          "jaccard50": 0.163
+        },
+        {
+          "a": "Spider-Man: Into the Spider-Verse (2018)",
+          "b": "Spider-Man: Across the Spider-Verse (2023)",
+          "jaccard50": 0.235
+        },
+        {
+          "a": "Furious 7 (2015)",
+          "b": "F9 (2021)",
+          "jaccard50": 0.515
+        },
+        {
+          "a": "F9 (2021)",
+          "b": "Fast X (2023)",
+          "jaccard50": 0.02
+        },
+        {
+          "a": "Sonic the Hedgehog 2 (2022)",
+          "b": "Sonic the Hedgehog 3 (2024)",
+          "jaccard50": 0
+        },
+        {
+          "a": "Godzilla vs. Kong (2021)",
+          "b": "Godzilla x Kong: The New Empire (2024)",
+          "jaccard50": 0
+        },
+        {
+          "a": "The Angry Birds Movie (2016)",
+          "b": "The Angry Birds Movie 2 (2019)",
+          "jaccard50": 0.163
+        },
+        {
+          "a": "Ice Age: Continental Drift (2012)",
+          "b": "Ice Age: Collision Course (2016)",
+          "jaccard50": 0
+        },
+        {
+          "a": "Grand Theft Auto IV (2008)",
+          "b": "Grand Theft Auto V (2013)",
+          "jaccard50": 0.22
+        },
+        {
+          "a": "Grand Theft Auto V (2013)",
+          "b": "Red Dead Redemption 2 (2018)",
+          "jaccard50": 0.02
+        },
+        {
+          "a": "Bridgerton (2020)",
+          "b": "The Gilded Age (2022)",
+          "jaccard50": 0.25
+        },
+        {
+          "a": "Bridgerton (2020)",
+          "b": "The Empress (2022)",
+          "jaccard50": 0.333
+        },
+        {
+          "a": "Stranger Things (2016)",
+          "b": "Wednesday (2022)",
+          "jaccard50": 0.351
+        }
+      ],
+      "siblingMeanSpearman": 0.674,
+      "randomMeanSpearman": 0.26
+    },
+    "qlooExcess": {
+      "siblingMeanJaccard": 0.2008,
+      "randomMeanJaccard": 0.0441,
+      "ratio": 4.55,
+      "p": 0.0001,
+      "pass": true,
+      "yearConfoundSpearman": -0.186,
+      "perSibling": [
+        {
+          "a": "Twilight (2008)",
+          "b": "The Twilight Saga: New Moon (2009)",
+          "jaccard50": 0.25
+        },
+        {
+          "a": "The Twilight Saga: New Moon (2009)",
+          "b": "The Twilight Saga: Eclipse (2010)",
+          "jaccard50": 0.282
+        },
+        {
+          "a": "The Twilight Saga: Eclipse (2010)",
+          "b": "The Twilight Saga: Breaking Dawn - Part 1 (2011)",
+          "jaccard50": 0.37
+        },
+        {
+          "a": "The Hunger Games (2012)",
+          "b": "The Hunger Games: Catching Fire (2013)",
+          "jaccard50": 0.449
+        },
+        {
+          "a": "Fifty Shades of Grey (2015)",
+          "b": "Fifty Shades Darker (2017)",
+          "jaccard50": 0.449
+        },
+        {
+          "a": "Guardians of the Galaxy (2014)",
+          "b": "Guardians of the Galaxy Vol. 2 (2017)",
+          "jaccard50": 0
+        },
+        {
+          "a": "Deadpool (2016)",
+          "b": "Deadpool 2 (2018)",
+          "jaccard50": 0.053
+        },
+        {
+          "a": "Spider-Man: Into the Spider-Verse (2018)",
+          "b": "Spider-Man: Across the Spider-Verse (2023)",
+          "jaccard50": 0.299
+        },
+        {
+          "a": "Furious 7 (2015)",
+          "b": "F9 (2021)",
+          "jaccard50": 0.408
+        },
+        {
+          "a": "F9 (2021)",
+          "b": "Fast X (2023)",
+          "jaccard50": 0.01
+        },
+        {
+          "a": "Sonic the Hedgehog 2 (2022)",
+          "b": "Sonic the Hedgehog 3 (2024)",
+          "jaccard50": 0
+        },
+        {
+          "a": "Godzilla vs. Kong (2021)",
+          "b": "Godzilla x Kong: The New Empire (2024)",
+          "jaccard50": 0.01
+        },
+        {
+          "a": "The Angry Birds Movie (2016)",
+          "b": "The Angry Birds Movie 2 (2019)",
+          "jaccard50": 0.149
+        },
+        {
+          "a": "Ice Age: Continental Drift (2012)",
+          "b": "Ice Age: Collision Course (2016)",
+          "jaccard50": 0
+        },
+        {
+          "a": "Grand Theft Auto IV (2008)",
+          "b": "Grand Theft Auto V (2013)",
+          "jaccard50": 0.176
+        },
+        {
+          "a": "Grand Theft Auto V (2013)",
+          "b": "Red Dead Redemption 2 (2018)",
+          "jaccard50": 0.01
+        },
+        {
+          "a": "Bridgerton (2020)",
+          "b": "The Gilded Age (2022)",
+          "jaccard50": 0.25
+        },
+        {
+          "a": "Bridgerton (2020)",
+          "b": "The Empress (2022)",
+          "jaccard50": 0.333
+        },
+        {
+          "a": "Stranger Things (2016)",
+          "b": "Wednesday (2022)",
+          "jaccard50": 0.316
+        }
+      ],
+      "siblingMeanSpearman": 0.657,
+      "randomMeanSpearman": 0.223
+    },
+    "llm": {
+      "siblingMeanJaccard": 0.5249,
+      "randomMeanJaccard": 0.2988,
+      "ratio": 1.76,
+      "p": 0.0001,
+      "pass": false,
+      "yearConfoundSpearman": 0.113,
+      "perSibling": [
+        {
+          "a": "Twilight (2008)",
+          "b": "The Twilight Saga: New Moon (2009)",
+          "jaccard50": 0.63
+        },
+        {
+          "a": "The Twilight Saga: New Moon (2009)",
+          "b": "The Twilight Saga: Eclipse (2010)",
+          "jaccard50": 0.532
+        },
+        {
+          "a": "The Twilight Saga: Eclipse (2010)",
+          "b": "The Twilight Saga: Breaking Dawn - Part 1 (2011)",
+          "jaccard50": 0.727
+        },
+        {
+          "a": "The Hunger Games (2012)",
+          "b": "The Hunger Games: Catching Fire (2013)",
+          "jaccard50": 0.574
+        },
+        {
+          "a": "Fifty Shades of Grey (2015)",
+          "b": "Fifty Shades Darker (2017)",
+          "jaccard50": 0.316
+        },
+        {
+          "a": "Guardians of the Galaxy (2014)",
+          "b": "Guardians of the Galaxy Vol. 2 (2017)",
+          "jaccard50": 0.411
+        },
+        {
+          "a": "Deadpool (2016)",
+          "b": "Deadpool 2 (2018)",
+          "jaccard50": 0.68
+        },
+        {
+          "a": "Spider-Man: Into the Spider-Verse (2018)",
+          "b": "Spider-Man: Across the Spider-Verse (2023)",
+          "jaccard50": 0.32
+        },
+        {
+          "a": "Furious 7 (2015)",
+          "b": "F9 (2021)",
+          "jaccard50": 0.808
+        },
+        {
+          "a": "F9 (2021)",
+          "b": "Fast X (2023)",
+          "jaccard50": 0.813
+        },
+        {
+          "a": "Sonic the Hedgehog 2 (2022)",
+          "b": "Sonic the Hedgehog 3 (2024)",
+          "jaccard50": 0.778
+        },
+        {
+          "a": "Godzilla vs. Kong (2021)",
+          "b": "Godzilla x Kong: The New Empire (2024)",
+          "jaccard50": 0.639
+        },
+        {
+          "a": "The Angry Birds Movie (2016)",
+          "b": "The Angry Birds Movie 2 (2019)",
+          "jaccard50": 0.719
+        },
+        {
+          "a": "Ice Age: Continental Drift (2012)",
+          "b": "Ice Age: Collision Course (2016)",
+          "jaccard50": 0.216
+        },
+        {
+          "a": "Grand Theft Auto IV (2008)",
+          "b": "Grand Theft Auto V (2013)",
+          "jaccard50": 0.477
+        },
+        {
+          "a": "Grand Theft Auto V (2013)",
+          "b": "Red Dead Redemption 2 (2018)",
+          "jaccard50": 0.159
+        },
+        {
+          "a": "Bridgerton (2020)",
+          "b": "The Gilded Age (2022)",
+          "jaccard50": 0.394
+        },
+        {
+          "a": "Bridgerton (2020)",
+          "b": "The Empress (2022)",
+          "jaccard50": 0.441
+        },
+        {
+          "a": "Stranger Things (2016)",
+          "b": "Wednesday (2022)",
+          "jaccard50": 0.339
+        }
+      ]
+    }
+  },
+  "usage": {
+    "qlooLive": 183,
+    "openai": {
+      "calls": 44,
+      "cached": 0,
+      "inputTokens": 555332,
+      "outputTokens": 9692
+    }
+  }
+}

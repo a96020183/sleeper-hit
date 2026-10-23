@@ -1,0 +1,3241 @@
+{
+  "at": "2026-10-23T10:06:52.028Z",
+  "registeredCommit": "034f21e",
+  "pool": 3000,
+  "topK": 50,
+  "candidates": 36,
+  "pairsScored": 26,
+  "positives": 249,
+  "excluded": [
+    {
+      "id": "angry-birds-2",
+      "why": "no lawful list for the later title"
+    },
+    {
+      "id": "sonic-3",
+      "why": "no lawful list for the later title"
+    },
+    {
+      "id": "gxk-new-empire",
+      "why": "no lawful list for the later title"
+    },
+    {
+      "id": "despicable-me-4",
+      "why": "no lawful list for the later title"
+    },
+    {
+      "id": "bridget-jones-4",
+      "why": "no lawful list for the later title"
+    },
+    {
+      "id": "freakier-friday",
+      "why": "no positives (0 pool artists on the later list, all repeats)"
+    },
+    {
+      "id": "space-jam-2",
+      "why": "Qloo budget reached"
+    },
+    {
+      "id": "spider-man-2",
+      "why": "Qloo budget reached"
+    },
+    {
+      "id": "spider-man-3",
+      "why": "Qloo budget reached"
+    },
+    {
+      "id": "transformers-2",
+      "why": "Qloo budget reached"
+    }
+  ],
+  "overall": {
+    "pairs": 26,
+    "franchises": 18,
+    "positives": 249,
+    "llmComparedWith": "llm",
+    "pooledAuc": {
+      "popularity": {
+        "value": 0.686,
+        "lo": 0.621,
+        "hi": 0.731
+      },
+      "llm": {
+        "value": 0.539,
+        "lo": 0.524,
+        "hi": 0.554
+      },
+      "similarTitles": {
+        "value": 0.559,
+        "lo": 0.534,
+        "hi": 0.599
+      },
+      "qlooRaw": {
+        "value": 0.757,
+        "lo": 0.675,
+        "hi": 0.827
+      },
+      "qlooExcess": {
+        "value": 0.714,
+        "lo": 0.635,
+        "hi": 0.793
+      },
+      "qlooTimesPop": {
+        "value": 0.761,
+        "lo": 0.68,
+        "hi": 0.83
+      },
+      "qlooBlend": {
+        "value": 0.768,
+        "lo": 0.7,
+        "hi": 0.816
+      }
+    },
+    "hits": {
+      "popularity": {
+        "value": 12,
+        "lo": 6,
+        "hi": 19
+      },
+      "llm": {
+        "value": 23,
+        "lo": 12,
+        "hi": 36
+      },
+      "similarTitles": {
+        "value": 15,
+        "lo": 8,
+        "hi": 23
+      },
+      "qlooRaw": {
+        "value": 37,
+        "lo": 17,
+        "hi": 61
+      },
+      "qlooExcess": {
+        "value": 28,
+        "lo": 14,
+        "hi": 43
+      },
+      "qlooTimesPop": {
+        "value": 37,
+        "lo": 18,
+        "hi": 60
+      },
+      "qlooBlend": {
+        "value": 33,
+        "lo": 17,
+        "hi": 53
+      }
+    },
+    "qlooVs": {
+      "qlooRaw": {
+        "aucMinusPopularity": {
+          "value": 0.07,
+          "lo": 0,
+          "hi": 0.168
+        },
+        "aucMinusLlm": {
+          "value": 0.218,
+          "lo": 0.146,
+          "hi": 0.281
+        },
+        "hitsMinusLlm": {
+          "value": 14,
+          "lo": -2,
+          "hi": 32
+        },
+        "hitsMinusPopularity": {
+          "value": 25,
+          "lo": 5,
+          "hi": 49
+        }
+      },
+      "qlooExcess": {
+        "aucMinusPopularity": {
+          "value": 0.028,
+          "lo": -0.047,
+          "hi": 0.141
+        },
+        "aucMinusLlm": {
+          "value": 0.175,
+          "lo": 0.106,
+          "hi": 0.248
+        },
+        "hitsMinusLlm": {
+          "value": 5,
+          "lo": -10,
+          "hi": 20
+        },
+        "hitsMinusPopularity": {
+          "value": 16,
+          "lo": 1,
+          "hi": 33
+        }
+      },
+      "qlooTimesPop": {
+        "aucMinusPopularity": {
+          "value": 0.075,
+          "lo": 0.006,
+          "hi": 0.171
+        },
+        "aucMinusLlm": {
+          "value": 0.222,
+          "lo": 0.15,
+          "hi": 0.284
+        },
+        "hitsMinusLlm": {
+          "value": 14,
+          "lo": -2,
+          "hi": 31
+        },
+        "hitsMinusPopularity": {
+          "value": 25,
+          "lo": 6,
+          "hi": 48
+        }
+      },
+      "qlooBlend": {
+        "aucMinusPopularity": {
+          "value": 0.082,
+          "lo": 0.042,
+          "hi": 0.137
+        },
+        "aucMinusLlm": {
+          "value": 0.229,
+          "lo": 0.171,
+          "hi": 0.27
+        },
+        "hitsMinusLlm": {
+          "value": 10,
+          "lo": 3,
+          "hi": 19
+        },
+        "hitsMinusPopularity": {
+          "value": 21,
+          "lo": 9,
+          "hi": 36
+        }
+      }
+    }
+  },
+  "byTertile": {
+    "high": {
+      "pairs": 24,
+      "franchises": 16,
+      "positives": 155,
+      "llmComparedWith": "llm",
+      "pooledAuc": {
+        "popularity": {
+          "value": 0.623,
+          "lo": 0.573,
+          "hi": 0.666
+        },
+        "llm": {
+          "value": 0.553,
+          "lo": 0.53,
+          "hi": 0.578
+        },
+        "similarTitles": {
+          "value": 0.544,
+          "lo": 0.521,
+          "hi": 0.579
+        },
+        "qlooRaw": {
+          "value": 0.705,
+          "lo": 0.603,
+          "hi": 0.793
+        },
+        "qlooExcess": {
+          "value": 0.686,
+          "lo": 0.59,
+          "hi": 0.773
+        },
+        "qlooTimesPop": {
+          "value": 0.705,
+          "lo": 0.604,
+          "hi": 0.793
+        },
+        "qlooBlend": {
+          "value": 0.71,
+          "lo": 0.613,
+          "hi": 0.786
+        }
+      },
+      "hits": {
+        "popularity": {
+          "value": 12,
+          "lo": 6,
+          "hi": 19
+        },
+        "llm": {
+          "value": 23,
+          "lo": 12,
+          "hi": 35
+        },
+        "similarTitles": {
+          "value": 14,
+          "lo": 7,
+          "hi": 23
+        },
+        "qlooRaw": {
+          "value": 39,
+          "lo": 21,
+          "hi": 61
+        },
+        "qlooExcess": {
+          "value": 36,
+          "lo": 19,
+          "hi": 57
+        },
+        "qlooTimesPop": {
+          "value": 39,
+          "lo": 21,
+          "hi": 61
+        },
+        "qlooBlend": {
+          "value": 33,
+          "lo": 17,
+          "hi": 52
+        }
+      },
+      "qlooVs": {
+        "qlooRaw": {
+          "aucMinusPopularity": {
+            "value": 0.082,
+            "lo": 0.002,
+            "hi": 0.167
+          },
+          "aucMinusLlm": {
+            "value": 0.152,
+            "lo": 0.063,
+            "hi": 0.226
+          },
+          "hitsMinusLlm": {
+            "value": 16,
+            "lo": 2,
+            "hi": 33
+          },
+          "hitsMinusPopularity": {
+            "value": 27,
+            "lo": 9,
+            "hi": 50
+          }
+        },
+        "qlooExcess": {
+          "aucMinusPopularity": {
+            "value": 0.062,
+            "lo": -0.016,
+            "hi": 0.152
+          },
+          "aucMinusLlm": {
+            "value": 0.133,
+            "lo": 0.05,
+            "hi": 0.208
+          },
+          "hitsMinusLlm": {
+            "value": 13,
+            "lo": -1,
+            "hi": 29
+          },
+          "hitsMinusPopularity": {
+            "value": 24,
+            "lo": 7,
+            "hi": 46
+          }
+        },
+        "qlooTimesPop": {
+          "aucMinusPopularity": {
+            "value": 0.082,
+            "lo": 0.003,
+            "hi": 0.167
+          },
+          "aucMinusLlm": {
+            "value": 0.153,
+            "lo": 0.064,
+            "hi": 0.227
+          },
+          "hitsMinusLlm": {
+            "value": 16,
+            "lo": 2,
+            "hi": 33
+          },
+          "hitsMinusPopularity": {
+            "value": 27,
+            "lo": 9,
+            "hi": 50
+          }
+        },
+        "qlooBlend": {
+          "aucMinusPopularity": {
+            "value": 0.087,
+            "lo": 0.018,
+            "hi": 0.156
+          },
+          "aucMinusLlm": {
+            "value": 0.157,
+            "lo": 0.074,
+            "hi": 0.219
+          },
+          "hitsMinusLlm": {
+            "value": 10,
+            "lo": 3,
+            "hi": 19
+          },
+          "hitsMinusPopularity": {
+            "value": 21,
+            "lo": 9,
+            "hi": 35
+          }
+        }
+      }
+    },
+    "mid": {
+      "pairs": 20,
+      "franchises": 14,
+      "positives": 57,
+      "llmComparedWith": "llm",
+      "pooledAuc": {
+        "popularity": {
+          "value": 0.547,
+          "lo": 0.462,
+          "hi": 0.628
+        },
+        "llm": {
+          "value": 0.5,
+          "lo": 0.5,
+          "hi": 0.5
+        },
+        "similarTitles": {
+          "value": 0.56,
+          "lo": 0.52,
+          "hi": 0.624
+        },
+        "qlooRaw": {
+          "value": 0.792,
+          "lo": 0.713,
+          "hi": 0.869
+        },
+        "qlooExcess": {
+          "value": 0.786,
+          "lo": 0.701,
+          "hi": 0.867
+        },
+        "qlooTimesPop": {
+          "value": 0.793,
+          "lo": 0.713,
+          "hi": 0.869
+        },
+        "qlooBlend": {
+          "value": 0.786,
+          "lo": 0.719,
+          "hi": 0.849
+        }
+      },
+      "hits": {
+        "popularity": {
+          "value": 4,
+          "lo": 0,
+          "hi": 9
+        },
+        "llm": {
+          "value": 0,
+          "lo": 0,
+          "hi": 0
+        },
+        "similarTitles": {
+          "value": 7,
+          "lo": 2,
+          "hi": 14
+        },
+        "qlooRaw": {
+          "value": 16,
+          "lo": 6,
+          "hi": 27
+        },
+        "qlooExcess": {
+          "value": 16,
+          "lo": 6,
+          "hi": 27
+        },
+        "qlooTimesPop": {
+          "value": 16,
+          "lo": 6,
+          "hi": 27
+        },
+        "qlooBlend": {
+          "value": 11,
+          "lo": 6,
+          "hi": 17
+        }
+      },
+      "qlooVs": {
+        "qlooRaw": {
+          "aucMinusPopularity": {
+            "value": 0.245,
+            "lo": 0.119,
+            "hi": 0.385
+          },
+          "aucMinusLlm": {
+            "value": 0.292,
+            "lo": 0.213,
+            "hi": 0.369
+          },
+          "hitsMinusLlm": {
+            "value": 16,
+            "lo": 6,
+            "hi": 27
+          },
+          "hitsMinusPopularity": {
+            "value": 12,
+            "lo": 3,
+            "hi": 23
+          }
+        },
+        "qlooExcess": {
+          "aucMinusPopularity": {
+            "value": 0.239,
+            "lo": 0.106,
+            "hi": 0.384
+          },
+          "aucMinusLlm": {
+            "value": 0.286,
+            "lo": 0.202,
+            "hi": 0.367
+          },
+          "hitsMinusLlm": {
+            "value": 16,
+            "lo": 6,
+            "hi": 27
+          },
+          "hitsMinusPopularity": {
+            "value": 12,
+            "lo": 3,
+            "hi": 23
+          }
+        },
+        "qlooTimesPop": {
+          "aucMinusPopularity": {
+            "value": 0.246,
+            "lo": 0.12,
+            "hi": 0.385
+          },
+          "aucMinusLlm": {
+            "value": 0.293,
+            "lo": 0.213,
+            "hi": 0.369
+          },
+          "hitsMinusLlm": {
+            "value": 16,
+            "lo": 6,
+            "hi": 27
+          },
+          "hitsMinusPopularity": {
+            "value": 12,
+            "lo": 3,
+            "hi": 23
+          }
+        },
+        "qlooBlend": {
+          "aucMinusPopularity": {
+            "value": 0.238,
+            "lo": 0.133,
+            "hi": 0.354
+          },
+          "aucMinusLlm": {
+            "value": 0.286,
+            "lo": 0.219,
+            "hi": 0.349
+          },
+          "hitsMinusLlm": {
+            "value": 11,
+            "lo": 6,
+            "hi": 17
+          },
+          "hitsMinusPopularity": {
+            "value": 7,
+            "lo": 1,
+            "hi": 14
+          }
+        }
+      }
+    },
+    "low": {
+      "pairs": 19,
+      "franchises": 15,
+      "positives": 37,
+      "llmComparedWith": "llmTail",
+      "pooledAuc": {
+        "popularity": {
+          "value": 0.502,
+          "lo": 0.354,
+          "hi": 0.65
+        },
+        "llm": {
+          "value": 0.5,
+          "lo": 0.5,
+          "hi": 0.5
+        },
+        "similarTitles": {
+          "value": 0.555,
+          "lo": 0.492,
+          "hi": 0.623
+        },
+        "qlooRaw": {
+          "value": 0.724,
+          "lo": 0.584,
+          "hi": 0.875
+        },
+        "qlooExcess": {
+          "value": 0.729,
+          "lo": 0.592,
+          "hi": 0.878
+        },
+        "qlooTimesPop": {
+          "value": 0.724,
+          "lo": 0.583,
+          "hi": 0.876
+        },
+        "qlooBlend": {
+          "value": 0.708,
+          "lo": 0.547,
+          "hi": 0.871
+        },
+        "llmTail": {
+          "value": 0.646,
+          "lo": 0.544,
+          "hi": 0.774
+        }
+      },
+      "hits": {
+        "popularity": {
+          "value": 1,
+          "lo": 0,
+          "hi": 3
+        },
+        "llm": {
+          "value": 0,
+          "lo": 0,
+          "hi": 0
+        },
+        "similarTitles": {
+          "value": 6,
+          "lo": 1,
+          "hi": 12
+        },
+        "qlooRaw": {
+          "value": 12,
+          "lo": 7,
+          "hi": 17
+        },
+        "qlooExcess": {
+          "value": 12,
+          "lo": 7,
+          "hi": 17
+        },
+        "qlooTimesPop": {
+          "value": 13,
+          "lo": 8,
+          "hi": 18
+        },
+        "qlooBlend": {
+          "value": 12,
+          "lo": 5,
+          "hi": 20
+        },
+        "llmTail": {
+          "value": 12,
+          "lo": 5,
+          "hi": 21
+        }
+      },
+      "qlooVs": {
+        "qlooRaw": {
+          "aucMinusPopularity": {
+            "value": 0.222,
+            "lo": 0.104,
+            "hi": 0.363
+          },
+          "aucMinusLlm": {
+            "value": 0.079,
+            "lo": -0.024,
+            "hi": 0.199
+          },
+          "hitsMinusLlm": {
+            "value": 0,
+            "lo": -7,
+            "hi": 7
+          },
+          "hitsMinusPopularity": {
+            "value": 11,
+            "lo": 5,
+            "hi": 17
+          }
+        },
+        "qlooExcess": {
+          "aucMinusPopularity": {
+            "value": 0.227,
+            "lo": 0.105,
+            "hi": 0.369
+          },
+          "aucMinusLlm": {
+            "value": 0.084,
+            "lo": -0.018,
+            "hi": 0.205
+          },
+          "hitsMinusLlm": {
+            "value": 0,
+            "lo": -7,
+            "hi": 7
+          },
+          "hitsMinusPopularity": {
+            "value": 11,
+            "lo": 5,
+            "hi": 17
+          }
+        },
+        "qlooTimesPop": {
+          "aucMinusPopularity": {
+            "value": 0.222,
+            "lo": 0.105,
+            "hi": 0.363
+          },
+          "aucMinusLlm": {
+            "value": 0.078,
+            "lo": -0.025,
+            "hi": 0.2
+          },
+          "hitsMinusLlm": {
+            "value": 1,
+            "lo": -6,
+            "hi": 8
+          },
+          "hitsMinusPopularity": {
+            "value": 12,
+            "lo": 6,
+            "hi": 18
+          }
+        },
+        "qlooBlend": {
+          "aucMinusPopularity": {
+            "value": 0.206,
+            "lo": 0.102,
+            "hi": 0.335
+          },
+          "aucMinusLlm": {
+            "value": 0.062,
+            "lo": -0.053,
+            "hi": 0.189
+          },
+          "hitsMinusLlm": {
+            "value": 0,
+            "lo": -7,
+            "hi": 8
+          },
+          "hitsMinusPopularity": {
+            "value": 11,
+            "lo": 4,
+            "hi": 19
+          }
+        }
+      }
+    }
+  },
+  "films": {
+    "pairs": 20,
+    "franchises": 12,
+    "positives": 178,
+    "llmComparedWith": "llm",
+    "pooledAuc": {
+      "popularity": {
+        "value": 0.661,
+        "lo": 0.56,
+        "hi": 0.72
+      },
+      "llm": {
+        "value": 0.538,
+        "lo": 0.519,
+        "hi": 0.552
+      },
+      "similarTitles": {
+        "value": 0.558,
+        "lo": 0.526,
+        "hi": 0.619
+      },
+      "qlooRaw": {
+        "value": 0.769,
+        "lo": 0.658,
+        "hi": 0.868
+      },
+      "qlooExcess": {
+        "value": 0.728,
+        "lo": 0.624,
+        "hi": 0.846
+      },
+      "qlooTimesPop": {
+        "value": 0.771,
+        "lo": 0.66,
+        "hi": 0.869
+      },
+      "qlooBlend": {
+        "value": 0.757,
+        "lo": 0.66,
+        "hi": 0.822
+      }
+    },
+    "hits": {
+      "popularity": {
+        "value": 7,
+        "lo": 2,
+        "hi": 14
+      },
+      "llm": {
+        "value": 16,
+        "lo": 6,
+        "hi": 28
+      },
+      "similarTitles": {
+        "value": 12,
+        "lo": 6,
+        "hi": 19
+      },
+      "qlooRaw": {
+        "value": 33,
+        "lo": 14.975,
+        "hi": 55
+      },
+      "qlooExcess": {
+        "value": 23,
+        "lo": 11,
+        "hi": 36
+      },
+      "qlooTimesPop": {
+        "value": 32,
+        "lo": 14,
+        "hi": 52.025
+      },
+      "qlooBlend": {
+        "value": 23,
+        "lo": 8,
+        "hi": 43
+      }
+    },
+    "qlooVs": {
+      "qlooRaw": {
+        "aucMinusPopularity": {
+          "value": 0.108,
+          "lo": 0.027,
+          "hi": 0.251
+        },
+        "aucMinusLlm": {
+          "value": 0.231,
+          "lo": 0.134,
+          "hi": 0.323
+        },
+        "hitsMinusLlm": {
+          "value": 17,
+          "lo": 3,
+          "hi": 33
+        },
+        "hitsMinusPopularity": {
+          "value": 26,
+          "lo": 8,
+          "hi": 48
+        }
+      },
+      "qlooExcess": {
+        "aucMinusPopularity": {
+          "value": 0.067,
+          "lo": -0.021,
+          "hi": 0.236
+        },
+        "aucMinusLlm": {
+          "value": 0.19,
+          "lo": 0.099,
+          "hi": 0.301
+        },
+        "hitsMinusLlm": {
+          "value": 7,
+          "lo": -5,
+          "hi": 19
+        },
+        "hitsMinusPopularity": {
+          "value": 16,
+          "lo": 3,
+          "hi": 31
+        }
+      },
+      "qlooTimesPop": {
+        "aucMinusPopularity": {
+          "value": 0.11,
+          "lo": 0.031,
+          "hi": 0.252
+        },
+        "aucMinusLlm": {
+          "value": 0.234,
+          "lo": 0.137,
+          "hi": 0.324
+        },
+        "hitsMinusLlm": {
+          "value": 16,
+          "lo": 3,
+          "hi": 31
+        },
+        "hitsMinusPopularity": {
+          "value": 25,
+          "lo": 8,
+          "hi": 46
+        }
+      },
+      "qlooBlend": {
+        "aucMinusPopularity": {
+          "value": 0.096,
+          "lo": 0.046,
+          "hi": 0.176
+        },
+        "aucMinusLlm": {
+          "value": 0.219,
+          "lo": 0.135,
+          "hi": 0.276
+        },
+        "hitsMinusLlm": {
+          "value": 7,
+          "lo": 0,
+          "hi": 16
+        },
+        "hitsMinusPopularity": {
+          "value": 16,
+          "lo": 5,
+          "hi": 30
+        }
+      }
+    }
+  },
+  "series": {
+    "pairs": 6,
+    "franchises": 6,
+    "positives": 71,
+    "llmComparedWith": "llm",
+    "pooledAuc": {
+      "popularity": {
+        "value": 0.748,
+        "lo": 0.689,
+        "hi": 0.784
+      },
+      "llm": {
+        "value": 0.542,
+        "lo": 0.512,
+        "hi": 0.586
+      },
+      "similarTitles": {
+        "value": 0.56,
+        "lo": 0.524,
+        "hi": 0.603
+      },
+      "qlooRaw": {
+        "value": 0.726,
+        "lo": 0.625,
+        "hi": 0.801
+      },
+      "qlooExcess": {
+        "value": 0.678,
+        "lo": 0.576,
+        "hi": 0.759
+      },
+      "qlooTimesPop": {
+        "value": 0.734,
+        "lo": 0.637,
+        "hi": 0.807
+      },
+      "qlooBlend": {
+        "value": 0.796,
+        "lo": 0.734,
+        "hi": 0.834
+      }
+    },
+    "hits": {
+      "popularity": {
+        "value": 5,
+        "lo": 2,
+        "hi": 8
+      },
+      "llm": {
+        "value": 7,
+        "lo": 2,
+        "hi": 12
+      },
+      "similarTitles": {
+        "value": 3,
+        "lo": 1,
+        "hi": 5
+      },
+      "qlooRaw": {
+        "value": 4,
+        "lo": 0,
+        "hi": 8
+      },
+      "qlooExcess": {
+        "value": 5,
+        "lo": 0,
+        "hi": 11
+      },
+      "qlooTimesPop": {
+        "value": 5,
+        "lo": 0,
+        "hi": 11
+      },
+      "qlooBlend": {
+        "value": 10,
+        "lo": 4,
+        "hi": 17
+      }
+    },
+    "qlooVs": {
+      "qlooRaw": {
+        "aucMinusPopularity": {
+          "value": -0.023,
+          "lo": -0.127,
+          "hi": 0.073
+        },
+        "aucMinusLlm": {
+          "value": 0.184,
+          "lo": 0.097,
+          "hi": 0.247
+        },
+        "hitsMinusLlm": {
+          "value": -3,
+          "lo": -10,
+          "hi": 2
+        },
+        "hitsMinusPopularity": {
+          "value": -1,
+          "lo": -6,
+          "hi": 4
+        }
+      },
+      "qlooExcess": {
+        "aucMinusPopularity": {
+          "value": -0.07,
+          "lo": -0.18,
+          "hi": 0.04
+        },
+        "aucMinusLlm": {
+          "value": 0.136,
+          "lo": 0.048,
+          "hi": 0.203
+        },
+        "hitsMinusLlm": {
+          "value": -2,
+          "lo": -10,
+          "hi": 5
+        },
+        "hitsMinusPopularity": {
+          "value": 0,
+          "lo": -6,
+          "hi": 6
+        }
+      },
+      "qlooTimesPop": {
+        "aucMinusPopularity": {
+          "value": -0.014,
+          "lo": -0.115,
+          "hi": 0.08
+        },
+        "aucMinusLlm": {
+          "value": 0.193,
+          "lo": 0.109,
+          "hi": 0.253
+        },
+        "hitsMinusLlm": {
+          "value": -2,
+          "lo": -10,
+          "hi": 5
+        },
+        "hitsMinusPopularity": {
+          "value": 0,
+          "lo": -6,
+          "hi": 6
+        }
+      },
+      "qlooBlend": {
+        "aucMinusPopularity": {
+          "value": 0.048,
+          "lo": -0.008,
+          "hi": 0.101
+        },
+        "aucMinusLlm": {
+          "value": 0.255,
+          "lo": 0.207,
+          "hi": 0.282
+        },
+        "hitsMinusLlm": {
+          "value": 3,
+          "lo": 1,
+          "hi": 5
+        },
+        "hitsMinusPopularity": {
+          "value": 5,
+          "lo": 1,
+          "hi": 10
+        }
+      }
+    }
+  },
+  "afterCutoff": {
+    "pairs": 9,
+    "franchises": 9,
+    "positives": 84,
+    "llmComparedWith": "llm",
+    "pooledAuc": {
+      "popularity": {
+        "value": 0.711,
+        "lo": 0.618,
+        "hi": 0.759
+      },
+      "llm": {
+        "value": 0.54,
+        "lo": 0.514,
+        "hi": 0.575
+      },
+      "similarTitles": {
+        "value": 0.566,
+        "lo": 0.532,
+        "hi": 0.613
+      },
+      "qlooRaw": {
+        "value": 0.701,
+        "lo": 0.595,
+        "hi": 0.782
+      },
+      "qlooExcess": {
+        "value": 0.656,
+        "lo": 0.546,
+        "hi": 0.746
+      },
+      "qlooTimesPop": {
+        "value": 0.708,
+        "lo": 0.603,
+        "hi": 0.788
+      },
+      "qlooBlend": {
+        "value": 0.757,
+        "lo": 0.657,
+        "hi": 0.814
+      }
+    },
+    "hits": {
+      "popularity": {
+        "value": 6,
+        "lo": 2,
+        "hi": 10
+      },
+      "llm": {
+        "value": 8,
+        "lo": 3,
+        "hi": 14
+      },
+      "similarTitles": {
+        "value": 4,
+        "lo": 1,
+        "hi": 7
+      },
+      "qlooRaw": {
+        "value": 6,
+        "lo": 2,
+        "hi": 11
+      },
+      "qlooExcess": {
+        "value": 6,
+        "lo": 1,
+        "hi": 13
+      },
+      "qlooTimesPop": {
+        "value": 7,
+        "lo": 2,
+        "hi": 13
+      },
+      "qlooBlend": {
+        "value": 11,
+        "lo": 4,
+        "hi": 19
+      }
+    },
+    "qlooVs": {
+      "qlooRaw": {
+        "aucMinusPopularity": {
+          "value": -0.01,
+          "lo": -0.102,
+          "hi": 0.099
+        },
+        "aucMinusLlm": {
+          "value": 0.161,
+          "lo": 0.063,
+          "hi": 0.235
+        },
+        "hitsMinusLlm": {
+          "value": -2,
+          "lo": -9,
+          "hi": 4
+        },
+        "hitsMinusPopularity": {
+          "value": 0,
+          "lo": -6,
+          "hi": 5
+        }
+      },
+      "qlooExcess": {
+        "aucMinusPopularity": {
+          "value": -0.055,
+          "lo": -0.153,
+          "hi": 0.072
+        },
+        "aucMinusLlm": {
+          "value": 0.116,
+          "lo": 0.013,
+          "hi": 0.2
+        },
+        "hitsMinusLlm": {
+          "value": -2,
+          "lo": -10,
+          "hi": 5
+        },
+        "hitsMinusPopularity": {
+          "value": 0,
+          "lo": -7,
+          "hi": 7
+        }
+      },
+      "qlooTimesPop": {
+        "aucMinusPopularity": {
+          "value": -0.003,
+          "lo": -0.092,
+          "hi": 0.103
+        },
+        "aucMinusLlm": {
+          "value": 0.168,
+          "lo": 0.07,
+          "hi": 0.241
+        },
+        "hitsMinusLlm": {
+          "value": -1,
+          "lo": -9,
+          "hi": 6
+        },
+        "hitsMinusPopularity": {
+          "value": 1,
+          "lo": -5,
+          "hi": 7
+        }
+      },
+      "qlooBlend": {
+        "aucMinusPopularity": {
+          "value": 0.046,
+          "lo": -0.006,
+          "hi": 0.101
+        },
+        "aucMinusLlm": {
+          "value": 0.217,
+          "lo": 0.123,
+          "hi": 0.269
+        },
+        "hitsMinusLlm": {
+          "value": 3,
+          "lo": 0,
+          "hi": 6
+        },
+        "hitsMinusPopularity": {
+          "value": 5,
+          "lo": 0,
+          "hi": 10
+        }
+      }
+    }
+  },
+  "beforeCutoff": {
+    "pairs": 17,
+    "franchises": 10,
+    "positives": 165,
+    "llmComparedWith": "llm",
+    "pooledAuc": {
+      "popularity": {
+        "value": 0.673,
+        "lo": 0.573,
+        "hi": 0.727
+      },
+      "llm": {
+        "value": 0.538,
+        "lo": 0.517,
+        "hi": 0.554
+      },
+      "similarTitles": {
+        "value": 0.555,
+        "lo": 0.523,
+        "hi": 0.62
+      },
+      "qlooRaw": {
+        "value": 0.785,
+        "lo": 0.685,
+        "hi": 0.874
+      },
+      "qlooExcess": {
+        "value": 0.743,
+        "lo": 0.65,
+        "hi": 0.85
+      },
+      "qlooTimesPop": {
+        "value": 0.788,
+        "lo": 0.688,
+        "hi": 0.875
+      },
+      "qlooBlend": {
+        "value": 0.774,
+        "lo": 0.684,
+        "hi": 0.829
+      }
+    },
+    "hits": {
+      "popularity": {
+        "value": 6,
+        "lo": 1,
+        "hi": 12
+      },
+      "llm": {
+        "value": 15,
+        "lo": 6,
+        "hi": 26
+      },
+      "similarTitles": {
+        "value": 11,
+        "lo": 5,
+        "hi": 17
+      },
+      "qlooRaw": {
+        "value": 31,
+        "lo": 13,
+        "hi": 51
+      },
+      "qlooExcess": {
+        "value": 22,
+        "lo": 11,
+        "hi": 34
+      },
+      "qlooTimesPop": {
+        "value": 30,
+        "lo": 13,
+        "hi": 49
+      },
+      "qlooBlend": {
+        "value": 22,
+        "lo": 8,
+        "hi": 41
+      }
+    },
+    "qlooVs": {
+      "qlooRaw": {
+        "aucMinusPopularity": {
+          "value": 0.112,
+          "lo": 0.031,
+          "hi": 0.252
+        },
+        "aucMinusLlm": {
+          "value": 0.247,
+          "lo": 0.16,
+          "hi": 0.327
+        },
+        "hitsMinusLlm": {
+          "value": 16,
+          "lo": 2,
+          "hi": 31
+        },
+        "hitsMinusPopularity": {
+          "value": 25,
+          "lo": 7,
+          "hi": 46
+        }
+      },
+      "qlooExcess": {
+        "aucMinusPopularity": {
+          "value": 0.07,
+          "lo": -0.019,
+          "hi": 0.238
+        },
+        "aucMinusLlm": {
+          "value": 0.205,
+          "lo": 0.125,
+          "hi": 0.306
+        },
+        "hitsMinusLlm": {
+          "value": 7,
+          "lo": -5,
+          "hi": 19
+        },
+        "hitsMinusPopularity": {
+          "value": 16,
+          "lo": 4,
+          "hi": 29.025
+        }
+      },
+      "qlooTimesPop": {
+        "aucMinusPopularity": {
+          "value": 0.114,
+          "lo": 0.035,
+          "hi": 0.253
+        },
+        "aucMinusLlm": {
+          "value": 0.249,
+          "lo": 0.164,
+          "hi": 0.328
+        },
+        "hitsMinusLlm": {
+          "value": 15,
+          "lo": 2,
+          "hi": 29
+        },
+        "hitsMinusPopularity": {
+          "value": 24,
+          "lo": 7,
+          "hi": 43
+        }
+      },
+      "qlooBlend": {
+        "aucMinusPopularity": {
+          "value": 0.1,
+          "lo": 0.052,
+          "hi": 0.179
+        },
+        "aucMinusLlm": {
+          "value": 0.236,
+          "lo": 0.162,
+          "hi": 0.282
+        },
+        "hitsMinusLlm": {
+          "value": 7,
+          "lo": 0,
+          "hi": 16
+        },
+        "hitsMinusPopularity": {
+          "value": 16,
+          "lo": 5,
+          "hi": 29
+        }
+      }
+    }
+  },
+  "emergingArtists": {
+    "positives": 9,
+    "names": [
+      "Future",
+      "Sean Paul",
+      "Iron Maiden",
+      "Bonobo",
+      "Chappell Roan",
+      "Lady Gaga",
+      "Phoenix",
+      "Heart",
+      "Rainbow"
+    ]
+  },
+  "hypotheses": {
+    "H1": {
+      "qlooRaw": {
+        "holds": false,
+        "aucMinusPopularityLo": 0,
+        "hitsMinusLlmLo": -2
+      },
+      "qlooExcess": {
+        "holds": false,
+        "aucMinusPopularityLo": -0.047,
+        "hitsMinusLlmLo": -10
+      },
+      "qlooTimesPop": {
+        "holds": false,
+        "aucMinusPopularityLo": 0.006,
+        "hitsMinusLlmLo": -2
+      },
+      "qlooBlend": {
+        "holds": true,
+        "aucMinusPopularityLo": 0.042,
+        "hitsMinusLlmLo": 3
+      }
+    },
+    "H2": {
+      "qlooRaw": {
+        "holds": false,
+        "hitsMinusLlmTailLo": -7
+      },
+      "qlooExcess": {
+        "holds": false,
+        "hitsMinusLlmTailLo": -7
+      },
+      "qlooTimesPop": {
+        "holds": false,
+        "hitsMinusLlmTailLo": -6
+      },
+      "qlooBlend": {
+        "holds": false,
+        "hitsMinusLlmTailLo": -7
+      }
+    },
+    "H3": {
+      "qlooRaw": {
+        "holds": false,
+        "aucMinusPopularityLo": -0.102,
+        "hitsMinusLlmLo": -9
+      },
+      "qlooExcess": {
+        "holds": false,
+        "aucMinusPopularityLo": -0.153,
+        "hitsMinusLlmLo": -10
+      },
+      "qlooTimesPop": {
+        "holds": false,
+        "aucMinusPopularityLo": -0.092,
+        "hitsMinusLlmLo": -9
+      },
+      "qlooBlend": {
+        "holds": false,
+        "aucMinusPopularityLo": -0.006,
+        "hitsMinusLlmLo": 0
+      }
+    }
+  },
+  "llm": {
+    "model": "gpt-4.1-mini",
+    "status": "ready",
+    "tailStatus": "ready"
+  },
+  "perPair": [
+    {
+      "id": "spider-verse-2",
+      "kind": "film",
+      "franchise": "spider-verse",
+      "later": "Spider-Man: Across the Spider-Verse",
+      "laterDate": "2023-06-02",
+      "signal": "Spider-Man: Into the Spider-Verse",
+      "sources": [
+        "https://musicbrainz.org/release/4d7f19a6-3c6b-4ca6-b067-09976ee5024c"
+      ],
+      "repeatsRemoved": true,
+      "positives": 7,
+      "positivesByTertile": {
+        "high": 3,
+        "mid": 3,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.622,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.947,
+          "hits": 1,
+          "hitNames": [
+            "Future"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.983,
+          "hits": 3,
+          "hitNames": [
+            "James Blake",
+            "A$AP Rocky",
+            "Future"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.979,
+          "hits": 2,
+          "hitNames": [
+            "A$AP Rocky",
+            "21 Savage"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.983,
+          "hits": 3,
+          "hitNames": [
+            "James Blake",
+            "A$AP Rocky",
+            "Future"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.868,
+          "hits": 1,
+          "hitNames": [
+            "NAS"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fast-x",
+      "kind": "film",
+      "franchise": "fast",
+      "later": "Fast X",
+      "laterDate": "2023-05-19",
+      "signal": "F9",
+      "sources": [
+        "https://musicbrainz.org/release/48670f26-df63-4e80-b0cc-213882f13afc"
+      ],
+      "repeatsRemoved": false,
+      "positives": 6,
+      "positivesByTertile": {
+        "high": 2,
+        "mid": 2,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.512,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.705,
+          "hits": 2,
+          "hitNames": [
+            "Skrillex",
+            "J Balvin"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.89,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.882,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.89,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.754,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "gta-v",
+      "kind": "game",
+      "franchise": "gta",
+      "later": "Grand Theft Auto V",
+      "laterDate": "2013-09-17",
+      "signal": "Grand Theft Auto IV",
+      "sources": [
+        "https://musicbrainz.org/release/bfe12585-55c7-46cc-8eb7-8bd81e3f596e",
+        "https://musicbrainz.org/release/e22f8d3b-1f58-4875-99c2-fa79bb82010e",
+        "https://musicbrainz.org/release/00aa415a-2b2a-4d1d-aac5-a0ca83d0dcc3"
+      ],
+      "repeatsRemoved": true,
+      "positives": 13,
+      "positivesByTertile": {
+        "high": 6,
+        "mid": 3,
+        "low": 4
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.569,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.474,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.429,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.417,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.434,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.516,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "ice-age-5",
+      "kind": "film",
+      "franchise": "ice-age",
+      "later": "Ice Age: Collision Course",
+      "laterDate": "2016-07-22",
+      "signal": "Ice Age: Continental Drift",
+      "sources": [
+        "https://musicbrainz.org/release/eb7b252d-e6af-4c05-b313-a66b835db7d8"
+      ],
+      "repeatsRemoved": false,
+      "positives": 1,
+      "positivesByTertile": {
+        "high": 0,
+        "mid": 0,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.195,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.461,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.835,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.954,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.817,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.534,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "deadpool-3",
+      "kind": "film",
+      "franchise": "deadpool",
+      "later": "Deadpool & Wolverine",
+      "laterDate": "2024-07-26",
+      "signal": "Deadpool 2",
+      "sources": [
+        "https://musicbrainz.org/release/f435a26f-71ee-415a-9e1f-e61de22c991f"
+      ],
+      "repeatsRemoved": true,
+      "positives": 9,
+      "positivesByTertile": {
+        "high": 6,
+        "mid": 0,
+        "low": 3
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.606,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "llm": {
+          "auc": 0.549,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.568,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.485,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.401,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.489,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.557,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        }
+      }
+    },
+    {
+      "id": "twisters",
+      "kind": "film",
+      "franchise": "twister",
+      "later": "Twisters",
+      "laterDate": "2024-07-19",
+      "signal": "Twister",
+      "sources": [
+        "https://musicbrainz.org/release/4a696cf6-2960-4bac-a552-7898b91bc421"
+      ],
+      "repeatsRemoved": true,
+      "positives": 2,
+      "positivesByTertile": {
+        "high": 0,
+        "mid": 0,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.129,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.898,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.503,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.692,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.485,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.261,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "bad-boys-4",
+      "kind": "film",
+      "franchise": "bad-boys",
+      "later": "Bad Boys: Ride or Die",
+      "laterDate": "2024-06-07",
+      "signal": "Bad Boys for Life",
+      "sources": [
+        "https://musicbrainz.org/release/0d8f1cbc-9e3d-43fe-abf3-e68fd93ba1f6"
+      ],
+      "repeatsRemoved": true,
+      "positives": 2,
+      "positivesByTertile": {
+        "high": 1,
+        "mid": 0,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.442,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.447,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.987,
+          "hits": 1,
+          "hitNames": [
+            "Becky G"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.983,
+          "hits": 1,
+          "hitNames": [
+            "Becky G"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.989,
+          "hits": 1,
+          "hitNames": [
+            "Becky G"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.767,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "stranger-things-5",
+      "kind": "series",
+      "franchise": "stranger-things",
+      "later": "Stranger Things season 5",
+      "laterDate": "2025-11-26",
+      "signal": "Stranger Things",
+      "sources": [
+        "https://www.netflix.com/tudum/articles/stranger-things-every-song"
+      ],
+      "repeatsRemoved": true,
+      "positives": 9,
+      "positivesByTertile": {
+        "high": 7,
+        "mid": 1,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.815,
+          "hits": 2,
+          "hitNames": [
+            "David Bowie",
+            "Michael Jackson"
+          ]
+        },
+        "llm": {
+          "auc": 0.658,
+          "hits": 3,
+          "hitNames": [
+            "David Bowie",
+            "Michael Jackson",
+            "Pixies"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.614,
+          "hits": 1,
+          "hitNames": [
+            "Fleetwood Mac"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.847,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.812,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.853,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.879,
+          "hits": 4,
+          "hitNames": [
+            "David Bowie",
+            "Pixies",
+            "Fleetwood Mac",
+            "ABBA"
+          ]
+        }
+      }
+    },
+    {
+      "id": "outer-banks-5",
+      "kind": "series",
+      "franchise": "outer-banks",
+      "later": "Outer Banks season 5",
+      "laterDate": "2026-08-20",
+      "signal": "Outer Banks",
+      "sources": [
+        "https://www.netflix.com/tudum/articles/outer-banks-soundtrack"
+      ],
+      "repeatsRemoved": true,
+      "positives": 8,
+      "positivesByTertile": {
+        "high": 5,
+        "mid": 3,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.721,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.493,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.494,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.486,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.439,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.501,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.642,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "nobody-wants-this-2",
+      "kind": "series",
+      "franchise": "nobody-wants-this",
+      "later": "Nobody Wants This season 2",
+      "laterDate": "2025-10-23",
+      "signal": "Nobody Wants This",
+      "sources": [
+        "https://www.netflix.com/tudum/articles/nobody-wants-this-season-2-soundtrack-tracklisting",
+        "https://www.netflix.com/tudum/articles/nobody-wants-this-season-2-soundtrack-interview"
+      ],
+      "repeatsRemoved": true,
+      "positives": 6,
+      "positivesByTertile": {
+        "high": 2,
+        "mid": 2,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.57,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.535,
+          "hits": 1,
+          "hitNames": [
+            "Taylor Swift"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.804,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.796,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.809,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.766,
+          "hits": 1,
+          "hitNames": [
+            "Taylor Swift"
+          ]
+        }
+      }
+    },
+    {
+      "id": "wednesday-2",
+      "kind": "series",
+      "franchise": "wednesday",
+      "later": "Wednesday season 2",
+      "laterDate": "2025-08-06",
+      "signal": "Wednesday",
+      "sources": [
+        "https://www.netflix.com/tudum/articles/wednesday-season-2-soundtrack"
+      ],
+      "repeatsRemoved": false,
+      "positives": 14,
+      "positivesByTertile": {
+        "high": 11,
+        "mid": 3,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.799,
+          "hits": 1,
+          "hitNames": [
+            "Lady Gaga"
+          ]
+        },
+        "llm": {
+          "auc": 0.527,
+          "hits": 1,
+          "hitNames": [
+            "Lady Gaga"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.514,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.626,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.566,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.641,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.779,
+          "hits": 1,
+          "hitNames": [
+            "Lady Gaga"
+          ]
+        }
+      }
+    },
+    {
+      "id": "bridgerton-4",
+      "kind": "series",
+      "franchise": "bridgerton",
+      "later": "Bridgerton season 4",
+      "laterDate": "2026-01-29",
+      "signal": "Bridgerton",
+      "sources": [
+        "https://www.netflix.com/tudum/articles/bridgerton-season-4-soundtrack-pop-song-covers"
+      ],
+      "repeatsRemoved": true,
+      "positives": 9,
+      "positivesByTertile": {
+        "high": 5,
+        "mid": 4,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.728,
+          "hits": 1,
+          "hitNames": [
+            "Paramore"
+          ]
+        },
+        "llm": {
+          "auc": 0.547,
+          "hits": 1,
+          "hitNames": [
+            "Paramore"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.656,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.776,
+          "hits": 2,
+          "hitNames": [
+            "Olivia Rodrigo",
+            "Camila Cabello"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.717,
+          "hits": 3,
+          "hitNames": [
+            "Olivia Rodrigo",
+            "Camila Cabello",
+            "Lord Huron"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.782,
+          "hits": 3,
+          "hitNames": [
+            "Charli XCX",
+            "Olivia Rodrigo",
+            "Camila Cabello"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.814,
+          "hits": 1,
+          "hitNames": [
+            "Paramore"
+          ]
+        }
+      }
+    },
+    {
+      "id": "beef-2",
+      "kind": "series",
+      "franchise": "beef",
+      "later": "BEEF season 2",
+      "laterDate": "2026-04-16",
+      "signal": "Beef",
+      "sources": [
+        "https://www.netflix.com/tudum/articles/finneas-oconnell-beef-season-2-music-composer"
+      ],
+      "repeatsRemoved": true,
+      "positives": 25,
+      "positivesByTertile": {
+        "high": 19,
+        "mid": 4,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.755,
+          "hits": 1,
+          "hitNames": [
+            "Daft Punk"
+          ]
+        },
+        "llm": {
+          "auc": 0.533,
+          "hits": 2,
+          "hitNames": [
+            "Bruno Mars",
+            "Billie Eilish"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.559,
+          "hits": 1,
+          "hitNames": [
+            "Bruno Mars"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.778,
+          "hits": 2,
+          "hitNames": [
+            "Tame Impala",
+            "Father John Misty"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.726,
+          "hits": 2,
+          "hitNames": [
+            "Tame Impala",
+            "Father John Misty"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.784,
+          "hits": 2,
+          "hitNames": [
+            "Tame Impala",
+            "Father John Misty"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.826,
+          "hits": 3,
+          "hitNames": [
+            "Yeah Yeah Yeahs",
+            "Tame Impala",
+            "LCD Soundsystem"
+          ]
+        }
+      }
+    },
+    {
+      "id": "guardians-2",
+      "kind": "film",
+      "franchise": "guardians",
+      "later": "Guardians of the Galaxy Vol. 2",
+      "laterDate": "2017-05-05",
+      "signal": "Guardians of the Galaxy",
+      "sources": [
+        "https://musicbrainz.org/release/eb7c1cf5-d1d0-410a-be9f-c81c30e23952"
+      ],
+      "repeatsRemoved": true,
+      "positives": 8,
+      "positivesByTertile": {
+        "high": 4,
+        "mid": 2,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.571,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.515,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.953,
+          "hits": 3,
+          "hitNames": [
+            "Fleetwood Mac",
+            "Electric Light Orchestra",
+            "George Harrison"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.961,
+          "hits": 4,
+          "hitNames": [
+            "Electric Light Orchestra",
+            "George Harrison",
+            "Cheap Trick",
+            "Sweet"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.95,
+          "hits": 3,
+          "hitNames": [
+            "Fleetwood Mac",
+            "Electric Light Orchestra",
+            "George Harrison"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.803,
+          "hits": 1,
+          "hitNames": [
+            "Fleetwood Mac"
+          ]
+        }
+      }
+    },
+    {
+      "id": "guardians-3",
+      "kind": "film",
+      "franchise": "guardians",
+      "later": "Guardians of the Galaxy Vol. 3",
+      "laterDate": "2023-05-05",
+      "signal": "Guardians of the Galaxy Vol. 2",
+      "sources": [
+        "https://musicbrainz.org/release/1ab8aec6-c855-43c9-94cf-b62f6259a6d6"
+      ],
+      "repeatsRemoved": true,
+      "positives": 11,
+      "positivesByTertile": {
+        "high": 8,
+        "mid": 3,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.816,
+          "hits": 1,
+          "hitNames": [
+            "Radiohead"
+          ]
+        },
+        "llm": {
+          "auc": 0.537,
+          "hits": 1,
+          "hitNames": [
+            "Radiohead"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.542,
+          "hits": 1,
+          "hitNames": [
+            "Florence + the Machine"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.667,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.538,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.679,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.797,
+          "hits": 1,
+          "hitNames": [
+            "Florence + the Machine"
+          ]
+        }
+      }
+    },
+    {
+      "id": "deadpool-2",
+      "kind": "film",
+      "franchise": "deadpool",
+      "later": "Deadpool 2",
+      "laterDate": "2018-05-18",
+      "signal": "Deadpool",
+      "sources": [
+        "https://musicbrainz.org/release/bfd873a1-d81b-46f5-90ba-0a93ce2c8ffe"
+      ],
+      "repeatsRemoved": true,
+      "positives": 14,
+      "positivesByTertile": {
+        "high": 6,
+        "mid": 5,
+        "low": 3
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.555,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.493,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.632,
+          "hits": 1,
+          "hitNames": [
+            "Tyler Bates"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.547,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.527,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.549,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.563,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "twilight-2",
+      "kind": "film",
+      "franchise": "twilight",
+      "later": "The Twilight Saga: New Moon",
+      "laterDate": "2009-11-20",
+      "signal": "Twilight",
+      "sources": [
+        "https://musicbrainz.org/release/6aacbc6e-770e-4238-a581-89a286ba8113"
+      ],
+      "repeatsRemoved": true,
+      "positives": 16,
+      "positivesByTertile": {
+        "high": 11,
+        "mid": 4,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.752,
+          "hits": 2,
+          "hitNames": [
+            "The Killers",
+            "Death Cab for Cutie"
+          ]
+        },
+        "llm": {
+          "auc": 0.556,
+          "hits": 2,
+          "hitNames": [
+            "The Killers",
+            "Death Cab for Cutie"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.514,
+          "hits": 1,
+          "hitNames": [
+            "The Killers"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.766,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.675,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.772,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.81,
+          "hits": 3,
+          "hitNames": [
+            "The Killers",
+            "Death Cab for Cutie",
+            "Lykke Li"
+          ]
+        }
+      }
+    },
+    {
+      "id": "twilight-3",
+      "kind": "film",
+      "franchise": "twilight",
+      "later": "The Twilight Saga: Eclipse",
+      "laterDate": "2010-06-30",
+      "signal": "The Twilight Saga: New Moon",
+      "sources": [
+        "https://musicbrainz.org/release/f7629c85-04ab-49b3-b634-acc9cb14e39c"
+      ],
+      "repeatsRemoved": true,
+      "positives": 17,
+      "positivesByTertile": {
+        "high": 14,
+        "mid": 2,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.799,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.554,
+          "hits": 2,
+          "hitNames": [
+            "The Black Keys",
+            "Florence + the Machine"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.479,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.747,
+          "hits": 2,
+          "hitNames": [
+            "Florence + the Machine",
+            "Sia"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.659,
+          "hits": 1,
+          "hitNames": [
+            "Florence + the Machine"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.753,
+          "hits": 2,
+          "hitNames": [
+            "Florence + the Machine",
+            "Sia"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.81,
+          "hits": 3,
+          "hitNames": [
+            "Vampire Weekend",
+            "Florence + the Machine",
+            "Sia"
+          ]
+        }
+      }
+    },
+    {
+      "id": "twilight-4",
+      "kind": "film",
+      "franchise": "twilight",
+      "later": "The Twilight Saga: Breaking Dawn - Part 1",
+      "laterDate": "2011-11-18",
+      "signal": "The Twilight Saga: Eclipse",
+      "sources": [
+        "https://musicbrainz.org/release/aa4b441e-fd24-4520-8509-7852e6535227"
+      ],
+      "repeatsRemoved": true,
+      "positives": 10,
+      "positivesByTertile": {
+        "high": 4,
+        "mid": 3,
+        "low": 3
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.578,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.577,
+          "hits": 1,
+          "hitNames": [
+            "Iron & Wine"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.83,
+          "hits": 1,
+          "hitNames": [
+            "Christina Perri"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.8,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooTimesPop": {
+          "auc": 0.829,
+          "hits": 1,
+          "hitNames": [
+            "Christina Perri"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.762,
+          "hits": 1,
+          "hitNames": [
+            "Bruno Mars"
+          ]
+        }
+      }
+    },
+    {
+      "id": "twilight-5",
+      "kind": "film",
+      "franchise": "twilight",
+      "later": "The Twilight Saga: Breaking Dawn - Part 2",
+      "laterDate": "2012-11-16",
+      "signal": "The Twilight Saga: Breaking Dawn - Part 1",
+      "sources": [
+        "https://musicbrainz.org/release/158ccc11-66f4-422b-8d11-821b11de0b88"
+      ],
+      "repeatsRemoved": true,
+      "positives": 6,
+      "positivesByTertile": {
+        "high": 5,
+        "mid": 1,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.868,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "llm": {
+          "auc": 0.575,
+          "hits": 1,
+          "hitNames": [
+            "Green Day"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.645,
+          "hits": 1,
+          "hitNames": [
+            "St. Vincent"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.798,
+          "hits": 1,
+          "hitNames": [
+            "Ellie Goulding"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.711,
+          "hits": 1,
+          "hitNames": [
+            "Ellie Goulding"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.808,
+          "hits": 1,
+          "hitNames": [
+            "Ellie Goulding"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.903,
+          "hits": 2,
+          "hitNames": [
+            "Green Day",
+            "Ellie Goulding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "hunger-games-2",
+      "kind": "film",
+      "franchise": "hunger-games",
+      "later": "The Hunger Games: Catching Fire",
+      "laterDate": "2013-11-22",
+      "signal": "The Hunger Games",
+      "sources": [
+        "https://musicbrainz.org/release/4f2cf18a-9a33-40e1-be36-042b083c5399"
+      ],
+      "repeatsRemoved": true,
+      "positives": 14,
+      "positivesByTertile": {
+        "high": 13,
+        "mid": 1,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.869,
+          "hits": 1,
+          "hitNames": [
+            "Coldplay"
+          ]
+        },
+        "llm": {
+          "auc": 0.638,
+          "hits": 4,
+          "hitNames": [
+            "Coldplay",
+            "Imagine Dragons",
+            "The National",
+            "The Lumineers"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.545,
+          "hits": 1,
+          "hitNames": [
+            "Sia"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.903,
+          "hits": 6,
+          "hitNames": [
+            "Coldplay",
+            "Sia",
+            "Imagine Dragons",
+            "Ellie Goulding",
+            "Lorde",
+            "Of Monsters and Men"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.835,
+          "hits": 1,
+          "hitNames": [
+            "Imagine Dragons"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.905,
+          "hits": 6,
+          "hitNames": [
+            "Coldplay",
+            "Sia",
+            "Imagine Dragons",
+            "Ellie Goulding",
+            "Lorde",
+            "Of Monsters and Men"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.914,
+          "hits": 5,
+          "hitNames": [
+            "Coldplay",
+            "Sia",
+            "Imagine Dragons",
+            "Ellie Goulding",
+            "Lorde"
+          ]
+        }
+      }
+    },
+    {
+      "id": "hunger-games-3",
+      "kind": "film",
+      "franchise": "hunger-games",
+      "later": "The Hunger Games: Mockingjay - Part 1",
+      "laterDate": "2014-11-21",
+      "signal": "The Hunger Games: Catching Fire",
+      "sources": [
+        "https://musicbrainz.org/release/09940256-f6a3-4cc2-87a2-941a78e4661f"
+      ],
+      "repeatsRemoved": true,
+      "positives": 15,
+      "positivesByTertile": {
+        "high": 9,
+        "mid": 4,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.643,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.505,
+          "hits": 1,
+          "hitNames": [
+            "Bat for Lashes"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.775,
+          "hits": 3,
+          "hitNames": [
+            "CHVRCHES",
+            "Tove Lo",
+            "HAIM"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.754,
+          "hits": 2,
+          "hitNames": [
+            "Tove Lo",
+            "HAIM"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.775,
+          "hits": 3,
+          "hitNames": [
+            "CHVRCHES",
+            "Tove Lo",
+            "HAIM"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.748,
+          "hits": 0,
+          "hitNames": []
+        }
+      }
+    },
+    {
+      "id": "fifty-shades-2",
+      "kind": "film",
+      "franchise": "fifty-shades",
+      "later": "Fifty Shades Darker",
+      "laterDate": "2017-02-10",
+      "signal": "Fifty Shades of Grey",
+      "sources": [
+        "https://musicbrainz.org/release/915d7abf-a01a-45c0-8785-4f1d707a6af1"
+      ],
+      "repeatsRemoved": true,
+      "positives": 10,
+      "positivesByTertile": {
+        "high": 7,
+        "mid": 1,
+        "low": 2
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.699,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.592,
+          "hits": 2,
+          "hitNames": [
+            "Taylor Swift",
+            "Nicki Minaj"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.559,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.958,
+          "hits": 5,
+          "hitNames": [
+            "Taylor Swift",
+            "Nicki Minaj",
+            "Tove Lo",
+            "ZAYN",
+            "Nick Jonas"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.946,
+          "hits": 3,
+          "hitNames": [
+            "Kygo",
+            "ZAYN",
+            "Nick Jonas"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.958,
+          "hits": 4,
+          "hitNames": [
+            "Taylor Swift",
+            "Nicki Minaj",
+            "Tove Lo",
+            "Nick Jonas"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.89,
+          "hits": 2,
+          "hitNames": [
+            "Taylor Swift",
+            "Nicki Minaj"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fifty-shades-3",
+      "kind": "film",
+      "franchise": "fifty-shades",
+      "later": "Fifty Shades Freed",
+      "laterDate": "2018-02-09",
+      "signal": "Fifty Shades Darker",
+      "sources": [
+        "https://musicbrainz.org/release/2629c0e7-5cd7-4c58-b9bf-41f2d88d540b"
+      ],
+      "repeatsRemoved": true,
+      "positives": 4,
+      "positivesByTertile": {
+        "high": 4,
+        "mid": 0,
+        "low": 0
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.858,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.492,
+          "hits": 0,
+          "hitNames": []
+        },
+        "similarTitles": {
+          "auc": 0.59,
+          "hits": 1,
+          "hitNames": [
+            "Ellie Goulding"
+          ]
+        },
+        "qlooRaw": {
+          "auc": 0.965,
+          "hits": 3,
+          "hitNames": [
+            "Ellie Goulding",
+            "Dua Lipa",
+            "Jessie J"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.946,
+          "hits": 2,
+          "hitNames": [
+            "Ellie Goulding",
+            "Jessie J"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.967,
+          "hits": 3,
+          "hitNames": [
+            "Ellie Goulding",
+            "Dua Lipa",
+            "Jessie J"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.972,
+          "hits": 1,
+          "hitNames": [
+            "Ellie Goulding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "black-panther-2",
+      "kind": "film",
+      "franchise": "black-panther",
+      "later": "Black Panther: Wakanda Forever",
+      "laterDate": "2022-11-11",
+      "signal": "Black Panther",
+      "sources": [
+        "https://musicbrainz.org/release/7a0dc3dc-16d6-4c63-8147-c4f65b2d9bba",
+        "https://musicbrainz.org/release/4c357d61-c481-4a22-851e-a8f140441a80"
+      ],
+      "repeatsRemoved": true,
+      "positives": 2,
+      "positivesByTertile": {
+        "high": 1,
+        "mid": 0,
+        "low": 1
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.552,
+          "hits": 1,
+          "hitNames": [
+            "Rihanna"
+          ]
+        },
+        "llm": {
+          "auc": 0.744,
+          "hits": 1,
+          "hitNames": [
+            "Rihanna"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.45,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.973,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooExcess": {
+          "auc": 0.979,
+          "hits": 1,
+          "hitNames": [
+            "PinkPantheress"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.974,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooBlend": {
+          "auc": 0.79,
+          "hits": 1,
+          "hitNames": [
+            "Rihanna"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fast-8",
+      "kind": "film",
+      "franchise": "fast",
+      "later": "The Fate of the Furious",
+      "laterDate": "2017-04-14",
+      "signal": "Furious 7",
+      "sources": [
+        "https://musicbrainz.org/release/41e6bdce-343d-4a50-a834-b28152922011"
+      ],
+      "repeatsRemoved": true,
+      "positives": 11,
+      "positivesByTertile": {
+        "high": 2,
+        "mid": 6,
+        "low": 3
+      },
+      "methods": {
+        "popularity": {
+          "auc": 0.441,
+          "hits": 0,
+          "hitNames": []
+        },
+        "llm": {
+          "auc": 0.584,
+          "hits": 2,
+          "hitNames": [
+            "Pitbull",
+            "Post Malone"
+          ]
+        },
+        "similarTitles": {
+          "auc": 0.461,
+          "hits": 0,
+          "hitNames": []
+        },
+        "qlooRaw": {
+          "auc": 0.96,
+          "hits": 4,
+          "hitNames": [
+            "Pitbull",
+            "Jeremih",
+            "G-Eazy",
+            "2 Chainz"
+          ]
+        },
+        "qlooExcess": {
+          "auc": 0.967,
+          "hits": 5,
+          "hitNames": [
+            "Pitbull",
+            "Jeremih",
+            "G-Eazy",
+            "2 Chainz",
+            "Migos"
+          ]
+        },
+        "qlooTimesPop": {
+          "auc": 0.958,
+          "hits": 4,
+          "hitNames": [
+            "Pitbull",
+            "Jeremih",
+            "G-Eazy",
+            "2 Chainz"
+          ]
+        },
+        "qlooBlend": {
+          "auc": 0.781,
+          "hits": 1,
+          "hitNames": [
+            "Pitbull"
+          ]
+        }
+      }
+    }
+  ],
+  "usage": {
+    "qlooLive": 1342,
+    "wikimediaLive": 222,
+    "openai": [
+      {
+        "calls": 26,
+        "cached": 0,
+        "inputTokens": 328480,
+        "outputTokens": 5200
+      },
+      {
+        "calls": 26,
+        "cached": 0,
+        "inputTokens": 113382,
+        "outputTokens": 45053
+      }
+    ]
+  }
+}

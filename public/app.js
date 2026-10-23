@@ -334,15 +334,29 @@ function renderTrust() {
     <p>Pass, fixed before the seal: pooled AUC 0.65 or higher and above popularity, the LLM and what similar titles used. 0.55 or lower, or not above popularity or the LLM, is a fail.</p>`;
 
   const b = t.backtest;
-  const names = { qloo: 'Qloo, beyond popularity', qlooRaw: 'Qloo, raw affinity', popularity: 'Popularity', llm: 'LLM only' };
-  const verdictText = { 'qloo-ahead': 'Qloo ahead', 'qloo-not-ahead': 'Qloo not ahead' };
+  const names = { popularity: 'Popularity', llm: 'LLM only', similarTitles: 'What similar titles used', qlooRaw: 'Qloo raw affinity', qlooExcess: 'Qloo excess affinity (card score)', qlooTimesPop: 'Qloo affinity x popularity', qlooBlend: 'Qloo affinity + popularity rank blend', llmTail: 'LLM, lower third only' };
+  const iv = (o, f = pct) => (o ? `${f(o.value)} <span class="src">[${f(o.lo)}, ${f(o.hi)}]</span>` : '–');
+  const n0 = (v) => (v === null || v === undefined ? '–' : String(Math.round(v)));
+  const sgn = (v) => (v === null || v === undefined ? '–' : `${v > 0 ? '+' : ''}${v.toFixed(2)}`);
+  const sgn0 = (v) => (v === null || v === undefined ? '–' : `${v > 0 ? '+' : ''}${Math.round(v)}`);
+  const methodTable = (s) => `<table><tr><th>Method</th><th>Pooled AUC</th><th>Hits in top 50</th></tr>${Object.keys(s.pooledAuc).map((k) => `<tr><td>${esc(names[k] || k)}</td><td>${iv(s.pooledAuc[k])}</td><td>${iv(s.hits[k], n0)}</td></tr>`).join('')}</table>`;
+  const h1 = b?.hypotheses?.H1 || {};
+  const passed = Object.entries(h1).filter(([, v]) => v?.holds).map(([k]) => names[k] || k);
+  const tert = b ? ['high', 'mid', 'low'].map((k) => {
+    const s = b.byTertile[k];
+    const best = s.qlooVs?.qlooExcess;
+    return `<tr><td>${k === 'high' ? 'Most popular third' : k === 'mid' ? 'Middle third' : 'Least popular third'}</td><td>${s.positives}</td><td>${iv(s.pooledAuc?.popularity)}</td><td>${iv(s.pooledAuc?.qlooExcess)}</td><td>${best ? `${sgn(best.aucMinusPopularity.value)} <span class="src">[${sgn(best.aucMinusPopularity.lo)}, ${sgn(best.aucMinusPopularity.hi)}]</span>` : '–'}</td><td>${best ? `${sgn0(best.hitsMinusLlm.value)} <span class="src">[${sgn0(best.hitsMinusLlm.lo)}, ${sgn0(best.hitsMinusLlm.hi)}]</span> vs ${esc(names[s.llmComparedWith])}` : '–'}</td></tr>`;
+  }).join('') : '';
+  const sc = t.siblingCheck;
+  const sib = sc ? `<p>Second registered check: do close sibling titles (${sc.siblingPairs} pairs, such as consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) get more similar artist rankings than unrelated pairs (${sc.randomPairs})? Bar set beforehand: top-50 overlap at least 3x random with p below 0.01. ${['qlooRaw', 'qlooExcess', 'llm'].map((k) => { const r = sc.results[k]; return `${esc(names[k])}: ${r.ratio}x, p ${r.p < 0.001 ? '< 0.001' : r.p}, ${r.pass ? 'passed' : 'not passed'}`; }).join('; ')}. The LLM names the same famous artists for most titles, so its unrelated lists already overlap a lot.</p>` : '';
   const backtest = b ? `
-    <p>Seven earlier titles, each with a later sequel whose licensed songs are already public. Question: did the earlier title's Qloo audience point to the artists the sequel used, better than an LLM told both titles, and better than popularity? The method was written down and hashed before scoring (registered ${t.backtestMethod ? new Date(t.backtestMethod.registeredAt).toUTCString() : '–'}, SHA-256 <span class="hash">${esc(t.backtestMethod?.sha256 || '')}</span>).</p>
-    <p>Result: <strong>${esc(verdictText[b.verdict] || b.verdict)}</strong>. ${b.positives} sequel artists were in the pool, across ${b.pairsWithPositives} of ${b.pairs} pairs. Hits in each method's top ${b.topK} of ${Number(b.pool).toLocaleString('en-US')}: ${Object.entries(b.totals).map(([k, v]) => `${names[k] || k} ${v.hits}`).join(', ')}. Mean AUC (0.5 = chance): ${Object.entries(b.totals).map(([k, v]) => `${names[k] || k} ${pct(v.meanAuc)}`).join(', ')}.</p>
-    <table><tr><th>Sequel</th><th>Qloo signal</th><th>Artists in pool</th>${Object.keys(b.totals).map((k) => `<th>${names[k] || k}, AUC</th>`).join('')}</tr>
-      ${b.perPair.map((p) => `<tr><td>${esc(p.later)}${p.partial ? ' <span class="src">partial list</span>' : ''}</td><td>${esc(p.signal)}</td><td>${p.positives}</td>${Object.keys(b.totals).map((k) => `<td>${p.positives ? pct(p.methods[k]?.auc) : '–'}</td>`).join('')}</tr>`).join('')}
-    </table>
-    <p>Known biases, written down before scoring: ${(t.backtestMethod?.knownBiases || []).map(esc).join(' ')} The sample is small; this is a check, not proof either way.</p>`
+    <p>${b.candidates} past sequels were listed and the whole method was committed (commit <span class="hash">${esc(t.backtestMethod?.commit || b.registeredCommit)}</span>) before any song list was collected or any number computed. Song lists come only from MusicBrainz soundtrack releases and Netflix Tudum; albums can differ from what is on screen. ${b.pairsScored} pairs had sequel artists in the pool who were not on the earlier title's list: ${b.positives} of them. Question: does the earlier title's Qloo audience rank those artists above the rest of the ${Number(b.pool).toLocaleString('en-US')}-artist pool? Intervals: 95%, resampling franchises.</p>
+    ${methodTable(b.overall)}
+    <p>Registered bar: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. <strong>${passed.length ? `Cleared by: ${passed.map(esc).join(', ')}` : 'No Qloo use cleared it'}.</strong> The card's own excess-affinity score did not. Four Qloo uses were tested without correcting for that, so treat a single pass as narrow.</p>
+    <table><tr><th>Pool third</th><th>Sequel artists</th><th>Popularity AUC</th><th>Excess affinity AUC</th><th>Excess minus popularity</th><th>Excess minus LLM, top-50 hits</th></tr>${tert}</table>
+    <p>In the middle and least popular thirds Qloo clearly beats popularity. In the least popular third an LLM shown only those names found as many sequel artists as Qloo. Titles released after the LLM's training cutoff (${b.afterCutoff.pairs} pairs) and the ${b.series.pairs} series did not show Qloo ahead of popularity.</p>
+    <p>Known biases, written down before scoring: ${(t.backtestMethod?.knownBiases || []).map(esc).join(' ')}</p>
+    ${sib}`
     : '<p>Not run yet.</p>';
 
   const p = t.premise;

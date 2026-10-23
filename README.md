@@ -57,9 +57,28 @@ Limits: page views measure reading attention, not listening, and lean English-sp
 
 ### Backtest on past sequels
 
-`npm run backtest` asks whether an earlier title's Qloo audience points to the artists its sequel actually licensed, compared with an LLM given both titles (`gpt-4.1-mini`, the same prompt as the sealed LLM baseline) and with plain popularity. The method was written to `seal/backtest-method.json` with its hash before anything was scored. Seven pairs (Sonic 2 to 3, Godzilla vs. Kong to The New Empire, Into to Across the Spider-Verse, F9 to Fast X, Angry Birds 1 to 2, Ice Age 4 to 5, GTA IV to V), using Tunefind lists already collected for the earlier-title baseline.
+`npm run backtest` asks whether an earlier title's Qloo audience ranks the artists its sequel newly used (artists not on the earlier title's list) above the rest of the 3,000-artist pool, compared with Qloo popularity, an LLM given both titles (`gpt-4.1-mini`, the sealed baseline's prompt), and "what similar titles used". The whole method, including the candidate list, the inclusion rules, two new Qloo uses (affinity x popularity, and a rank blend of affinity and popularity), popularity tertiles and an after-LLM-cutoff split, was committed in `seal/backtest-v2-method.json` (commit `034f21e`) before any list was collected or any number computed; the script refuses to run if that file changes.
 
-Result (Oct 23): **Qloo was not ahead.** 18 sequel artists were in the pool, across 4 pairs. In each method's top 50 of 3,000: Qloo 0, LLM 0, popularity 1. Mean AUC: Qloo beyond popularity 0.40, Qloo raw affinity 0.47, LLM 0.49, popularity 0.69. The sample is small and the lists are partial, and both sides have a known bias (Qloo's audience data is current; the LLM may remember soundtracks released before its cutoff). It is still the honest reading: on these past sequels, the earlier audience's taste did not pick the songs, and popularity did better. That fits what supervisors say about choosing by scene and budget, and it is why the letter leads with the song and the scene and uses audience data as a supporting reason.
+Answer keys come only from official or open sources: MusicBrainz soundtrack releases (open data, rate-limited lookups) and Netflix Tudum song lists (`npm run collect-lists`). Soundtrack albums are not the same as songs used on screen, and several Tudum lists are highlights, not every song. 36 candidates; 26 pairs scored (20 films and games, 6 series), 249 positives, 18 franchises. 10 were left out (no song list, no new pool artists, or the Qloo call budget).
+
+Result (Oct 23), pooled AUC (0.5 = chance) with 95% intervals from resampling franchises:
+
+| Method | AUC | Hits in top 50 |
+|---|---|---|
+| Popularity | 0.69 [0.62, 0.73] | 12 |
+| LLM only | 0.54 [0.52, 0.55] | 23 |
+| What similar titles used | 0.56 [0.53, 0.60] | 15 |
+| Qloo raw affinity | 0.76 [0.68, 0.83] | 37 |
+| Qloo excess affinity (the card's score) | 0.71 [0.64, 0.79] | 28 |
+| Qloo affinity x popularity | 0.76 [0.68, 0.83] | 37 |
+| Qloo affinity and popularity rank blend | 0.77 [0.70, 0.82] | 33 |
+
+- The registered bar was: a Qloo use beats popularity on AUC and the LLM on top-50 hits, both with the interval's lower end above zero. Only the rank blend clears it (AUC +0.08 [+0.04, +0.14] over popularity; +10 [+3, +19] hits over the LLM). Four Qloo uses were tested and the intervals are not corrected for that, so this is a narrow pass. The card's own score, excess affinity, does not clear it (+0.03 [-0.05, +0.14] over popularity).
+- By popularity tertile: in the middle and lower thirds of the pool, every Qloo use beats popularity clearly (AUC +0.21 to +0.25, lower ends above +0.10). In the lower third, an LLM given only those 1,000 names found as many sequel artists as Qloo (12 vs 12), so "Qloo beats the LLM in the less popular part" was not shown.
+- Titles released after the LLM's training cutoff (9 pairs, 84 positives) and the 6 series did not show Qloo ahead of popularity.
+- Known biases, written down first: Qloo's audience data is current (favours Qloo, strongly for series, whose signal includes the new season); the LLM may remember soundtracks released before its cutoff; a shortlist of 50 caps the LLM's AUC near 0.5, which is why top-50 hits is the LLM comparison.
+
+A second registered check (`seal/sibling-check-method.json`, commit `8893210`) asked whether close sibling titles (19 pairs, for example consecutive Twilight films, GTA V and Red Dead Redemption 2, Bridgerton and The Gilded Age) get more similar artist rankings than unrelated pairs. Qloo passed the bar set beforehand (3x random and p < 0.01): top-50 overlap 4.4x random for raw affinity and 4.6x for excess affinity (p < 0.001), and only a weak link to release-year distance. The LLM's sibling lists overlapped only 1.8x more than random ones, because it names the same famous artists for most titles.
 
 ### Sealed forecast, after judging moved to Nov 2–5
 
@@ -131,9 +150,9 @@ Any other host that runs a long-lived Node process works the same way. Qloo call
 - Qloo stops at the artist; a person picks the song.
 - Clearance categories help set priorities. They are not legal advice. Public rights data is incomplete; when in doubt the card says "Unconfirmed" and asks a person.
 - The quiet rule (1.5x, 24 and 36 months, 3 months) and the overlap threshold are our choices, shown in the Trust tab. Wikipedia page views are a proxy for attention, not plays.
-- The backtest did not favour Qloo (see above). Audience affinity is a supporting reason in the letter, not a prediction that the song will be picked.
+- In the backtest only one of four Qloo uses beat both popularity and the LLM, and narrowly; the card's excess-affinity score did not (see above). Audience affinity is a supporting reason in the letter, not a prediction that the song will be picked.
 - The pool is not the complete top 3,000 (Qloo paging skips some very popular artists).
-- Soundtrack lists come from public Tunefind pages and are partial for long soundtracks.
+- Song lists come from MusicBrainz soundtrack releases and Netflix Tudum articles. Albums can differ from what is used on screen; some Tudum lists are highlights. Tunefind is not used (its robots.txt blocks our crawler).
 - The sealed forecast cannot be scored during judging; results come after release.
 
 ## License

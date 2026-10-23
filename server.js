@@ -83,7 +83,7 @@ function sealFile(name) {
 
 function trustPayload() {
   const today = todayISO();
-  const method = sealFile('backtest-method.json');
+  const method = sealFile('backtest-v2-method.json');
   return {
     mode: { qloo: client.label },
     today,
@@ -104,8 +104,9 @@ function trustPayload() {
     seal: sealFile('hashes.json'),
     results: sealFile('results.json'),
     premise: sealFile('premise.json'),
-    backtest: sealFile('backtest.json'),
-    backtestMethod: method ? { registeredAt: method.registeredAt, sha256: method.sha256, knownBiases: method.method?.knownBiases || [] } : null,
+    backtest: sealFile('backtest-v2.json'),
+    backtestMethod: method ? { commit: '034f21e', knownBiases: method.knownBiases || [] } : null,
+    siblingCheck: sealFile('sibling-check.json'),
     trending: sealFile('trending-check.json'),
     quietCheck: sealFile('quiet-check.json'),
   };
