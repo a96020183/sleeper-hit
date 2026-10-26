@@ -8,11 +8,13 @@ Built for the Qloo Agentic Hackathon 2026.
 
 **What we can show:** on 26 sequels already out, the earlier title's Qloo audience rank, averaged with popularity, put the artists each sequel went on to use higher than popularity alone or an LLM did. Audience rank alone pointed the same way but did not clear our bar. Example: the soundtrack of *Guardians of the Galaxy Vol. 2* includes Fleetwood Mac; ranked from the first film's Qloo audience, Fleetwood Mac was in our top 50 of about 3,000 artists, and neither popularity's top 50 nor the LLM's 50 picks found any artist from that soundtrack. (Qloo's data is today's, so fans of the first film have also seen Vol. 2; that bias favours Qloo.) The method was committed before any song list was collected. The score was picked after the test, and series and titles newer than the LLM showed no clear edge. See [Does Qloo pick better?](#does-qloo-pick-better)
 
+**Live demo:** https://sleeper-hit.onrender.com (no login; if it was asleep, the first load takes a minute or two).
+
 **30 seconds:** open the app. The first screen is today's letter for The Clash, with the evidence beside it. Roster shows every open window: the five demo artists, the quiet catalogue artists from our scan that fit it best, and how many decisions would change on popularity alone. Switch the artist to The Verve to see the agent refuse (not quiet). Trust holds the backtest.
 
 ![First screen: today's pitch letter for The Clash, with the evidence card](docs/screenshots/1-first-screen.png)
 
-More in `docs/screenshots/`: Roster, a refused artist, the outbox, Trust and phone width. Screenshots were taken on Oct 24.
+More in `docs/screenshots/`: Roster, a refused artist, the outbox, Trust and phone width. Screenshots were taken from the live app on Oct 26.
 
 ## The problem
 
@@ -126,7 +128,7 @@ Inputs are committed: the method (`seal/backtest-v2-method.json`), the candidate
 
 ## What we learned about Qloo's data
 
-- Affinity depends on the signal, not on the other artists in the request: the same artist scored inside two different candidate lists got an identical value. So a large pool can be scored in chunks of 50 and stay on one scale (as the Taste Atlas team also reported).
+- Affinity depends on the signal, not on the other artists in the request: the same artist scored inside two different candidate lists got an identical value. So a large pool can be scored in chunks of 50 and stay on one scale.
 - Affinity is not popularity in disguise. On 3,000 artists and 12 titles, the median rank correlation between affinity and popularity was 0.16, and the median agreement between two titles' rankings was 0.20. The bar, set before the test, was 0.5.
 - `urn:tag` insights did not explain matches well enough for a letter. For the GTA V audience, music-genre tags (`filter.tag.types=urn:tag:genre:music`) came back empty, and unfiltered tags were mostly unrelated (hobbies, endorsements). For Yellowjackets the music genres were the broad popular ones (pop, hip hop, indie). The card shows ranks only. With one signal title, explainability would credit that one title, so we left it off.
 - The pool is the first 3,000 artists Qloo returns for `filter.popularity.min=0.9`, most popular first. It is not the complete top 3,000: the paging skips some very popular artists (Drake and Metro Boomin are missing).
