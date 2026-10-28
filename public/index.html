@@ -16,10 +16,6 @@
       <span class="mark" aria-hidden="true"></span>
       <span>Sleeper Hit</span>
     </div>
-    <label class="artist-pick">
-      <span class="sr">Artist</span>
-      <select id="artist"></select>
-    </label>
     <nav class="tabs" role="tablist">
       <button role="tab" data-tab="today" aria-selected="true">Today</button>
       <button role="tab" data-tab="roster" aria-selected="false">Roster</button>
@@ -34,8 +30,11 @@
   </header>
 
   <main>
-    <section id="tab-today" class="tab" aria-live="polite">
-      <p class="loading" id="loading">Scoring today's doors with Qloo…</p>
+    <section id="tab-today" class="tab">
+      <nav class="strip" id="artist-strip" aria-label="Demo artists"></nav>
+      <div id="today-body" aria-live="polite">
+        <p class="loading" id="loading">Scoring today's doors with Qloo…</p>
+      </div>
     </section>
     <section id="tab-roster" class="tab" hidden></section>
     <section id="tab-outbox" class="tab" hidden></section>

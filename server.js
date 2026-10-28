@@ -13,7 +13,7 @@ import { config, todayISO, ROOT } from './src/config.js';
 import { QlooClient } from './src/qloo/client.js';
 import { ARTISTS, DEFAULT_ARTIST } from './src/data/artists.js';
 import { WINDOWS, JUDGING } from './src/data/windows.js';
-import { scoreArtist, decideArtist, windowRanks, popularityOnly, normName } from './src/pipeline.js';
+import { decideArtist, windowRanks, popularityOnly, normName } from './src/pipeline.js';
 import { SCAN } from './src/data/sleepers.js';
 import { draftLetter, letterFacts, OVERLAP_STRONG } from './src/letter.js';
 import { evaluateTiming, TRAILER_LEAD_DAYS, MIN_DAYS, MAX_DAYS, SERIES_LOCK_DAYS } from './src/timing.js';
@@ -21,9 +21,10 @@ import { DAILY_CAP, MIN_PERCENTILE, AFFINITY_TOP_SHARE } from './src/agent.js';
 import { QUIET_RULE, CATALOGUE_RULE } from './src/quiet.js';
 import { TOP_K } from './src/evaluate.js';
 import { scoreWorks, parseWorksRequest, DailyLimiter, WORKS_MAX_ARTISTS } from './src/works.js';
+import { ScoreCache, summaryPayload, parseViewerContext } from './src/summary.js';
 
 const client = new QlooClient();
-const scores = new Map(); // `${artist}|${date}` -> Promise<scored>
+const scores = new ScoreCache(client); // per-artist, per-day runs shared by Today, Roster and the artist strip
 const drafts = new Map(); // draft cache
 const worksLimiter = new DailyLimiter(); // per-visitor and site-wide daily caps for Works scans
 
@@ -37,13 +38,7 @@ function clientIp(req) {
 }
 
 function getScore(artistKey, date) {
-  const k = `${artistKey}|${date}`;
-  if (!scores.has(k)) {
-    const p = scoreArtist(client, artistKey, date);
-    p.catch(() => scores.delete(k));
-    scores.set(k, p);
-  }
-  return scores.get(k);
+  return scores.get(artistKey, date);
 }
 
 const artistParam = (k) => (ARTISTS[k] ? k : DEFAULT_ARTIST);
@@ -223,6 +218,10 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/healthz') return send(res, 200, { ok: true });
     if (url.pathname === '/api/state' && req.method === 'GET') {
       return send(res, 200, await statePayload(artistParam(url.searchParams.get('artist')), viewerOptions(url.searchParams)));
+    }
+    // Artist strip on Today: a status per demo artist from runs already held; never waits on Qloo.
+    if (url.pathname === '/api/artists/summary' && req.method === 'GET') {
+      return send(res, 200, summaryPayload(scores, todayISO(), parseViewerContext(url.searchParams.get('ctx'))));
     }
     if (url.pathname === '/api/trust' && req.method === 'GET') return send(res, 200, trustPayload());
     if (url.pathname === '/api/roster' && req.method === 'GET') return send(res, 200, await rosterPayload());

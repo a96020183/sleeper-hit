@@ -40,31 +40,38 @@ export function weakAudience(d) {
   return d.blend.affinityRank > Math.ceil(d.blend.of * AFFINITY_TOP_SHARE);
 }
 
-export function skipReason(d) {
-  if (d.clearance.category === 'unconfirmed') return `Clearance unconfirmed. ${d.clearance.reason}`;
+// Why a door gets no letter, as { kind, reason }, or null. `kind` is a short code the artist strip uses.
+export function skipCheck(d) {
+  if (d.clearance.category === 'unconfirmed') return { kind: 'clearance', reason: `Clearance unconfirmed. ${d.clearance.reason}` };
   if (d.timing.bucket !== 'in-window') {
     const r = d.timing.reason || 'outside the window';
-    return r.charAt(0).toUpperCase() + r.slice(1) + '.';
+    return { kind: 'timing', reason: r.charAt(0).toUpperCase() + r.slice(1) + '.' };
   }
-  if (d.pct === null || d.pct === undefined) return 'Qloo has too little data on this audience to score the artist.';
-  if (d.pct < MIN_PERCENTILE) return `Card score too low: top ${topPercent(d.pct)}%. We knock only inside the top ${100 - MIN_PERCENTILE}%.`;
+  if (d.pct === null || d.pct === undefined) return { kind: 'no-data', reason: 'Qloo has too little data on this audience to score the artist.' };
+  if (d.pct < MIN_PERCENTILE) return { kind: 'low-score', reason: `Card score too low: top ${topPercent(d.pct)}%. We knock only inside the top ${100 - MIN_PERCENTILE}%.` };
   if (weakAudience(d)) {
     const who = d.window?.earlier?.label ? `${d.window.earlier.label} fans` : 'The audience';
-    return `Popularity carries this one: ${who} rank them only No. ${d.blend.affinityRank.toLocaleString('en-US')} of ${d.blend.of.toLocaleString('en-US')} by affinity. We knock only when the audience itself puts them in its top ${Math.round(AFFINITY_TOP_SHARE * 100)}%.`;
+    return { kind: 'weak-audience', reason: `Popularity carries this one: ${who} rank them only No. ${d.blend.affinityRank.toLocaleString('en-US')} of ${d.blend.of.toLocaleString('en-US')} by affinity. We knock only when the audience itself puts them in its top ${Math.round(AFFINITY_TOP_SHARE * 100)}%.` };
   }
   return null;
 }
 
+export function skipReason(d) {
+  return skipCheck(d)?.reason ?? null;
+}
+
 // doors: [{ id, clearance, timing, pct, overlap }]; overrides: Set of door ids a person flipped back.
-// block: a reason that stops every letter for this artist today (e.g. not quiet). It comes first, as in the README order.
+// block: a reason that stops every letter for this artist today (not quiet). It comes first, as in the README order.
+// Skipped doors carry `skip`, the kind of reason (not-quiet, clearance, timing, no-data, low-score, weak-audience, cap).
 export function decide(doors, { cap = DAILY_CAP, overrides = new Set(), block = null } = {}) {
   const ranked = [...doors].sort(compareDoors);
   let letters = 0;
   return ranked.map((d, i) => {
-    const reason = block || skipReason(d);
+    const check = block ? { kind: 'not-quiet', reason: block } : skipCheck(d);
+    const reason = check?.reason || null;
     if (overrides.has(d.id)) return { ...d, order: i + 1, action: 'letter', overridden: true, reason: reason || '' };
-    if (reason) return { ...d, order: i + 1, action: 'skip', reason };
-    if (letters >= cap) return { ...d, order: i + 1, action: 'skip', reason: `Already ${cap} letters today for this artist. First in line tomorrow.` };
+    if (reason) return { ...d, order: i + 1, action: 'skip', reason, skip: check.kind };
+    if (letters >= cap) return { ...d, order: i + 1, action: 'skip', reason: `Already ${cap} letters today for this artist. First in line tomorrow.`, skip: 'cap' };
     letters++;
     return { ...d, order: i + 1, action: 'letter', reason: '' };
   });

@@ -10,7 +10,7 @@ Built for the Qloo Agentic Hackathon 2026.
 
 **Live demo:** https://sleeper-hit.onrender.com (no login; if it was asleep, the first load takes a minute or two).
 
-**30 seconds:** open the app. The first screen is today's letter for The Clash, with the evidence beside it. Roster shows every open window: the five demo artists, the quiet catalogue artists from our scan that fit it best, and how many decisions would change on popularity alone. Switch the artist to The Verve to see the agent refuse (not quiet). Works scores your own list of artists with the same score and ranks the letters across it. Trust holds the backtest.
+**30 seconds:** open the app. The first screen is today's letter for The Clash, with the evidence beside it. Roster shows every open window: the five demo artists, the quiet catalogue artists from our scan that fit it best, and how many decisions would change on popularity alone. The artist strip at the top of Today shows each of the five demo artists with today's status (letters ready, sent, not quiet, clearance unconfirmed); click The Verve to see the agent refuse (not quiet). Works scores your own list of artists with the same score and ranks the letters across it. Trust holds the backtest.
 
 ![First screen: today's pitch letter for The Clash, with the evidence card](docs/screenshots/1-first-screen.png)
 
@@ -28,7 +28,7 @@ Recorded-music sync revenue was US$641 million worldwide in 2025 ([IFPI Global M
 
 ## What it does
 
-Pick an artist. The agent:
+Pick an artist in the strip at the top of Today. The strip shows every demo artist's status for today, so you can see who gets letters without switching: "Letters ready N" (N is the number of letters Today would draft), "Sent N" (counted from your own outbox), "Not quiet", "Clearance unconfirmed", or a short reason. For the chosen artist, the agent:
 
 1. **Checks that the artist is quiet**: flat English Wikipedia page views and no new studio album in 5 years (rules below). An artist that is not quiet gets no letters; a person can still knock anyway.
 2. **Lists open windows on sequels** and what each one pitches for. Games: the launch trailer and TV spots, because in-game music is licensed long before release. Films: the first trailer, estimated from the release date. Series: the episodes, treated as locked within 60 days of the premiere.
@@ -175,6 +175,7 @@ Qloo's developer guide says: "Do not store Qloo response data in a public reposi
 
 - All responses are cached privately on the server in `.private/` (git-ignored). The browser receives ranks, percentiles, overlap and categories only.
 - Works sends the server only artist names, plus the viewer's own share and song if given. The server scores them and keeps nothing; the list and the result stay in the viewer's browser (localStorage). The response holds ranks, percentiles, categories and reasons, never entity ids, raw affinity or popularity values, or tags (`test/works.test.js` checks this).
+- The artist strip (`GET /api/artists/summary`) reuses the per-artist runs Today already holds and makes no Qloo call of its own. An artist not scored yet comes back "pending" and is scored in the background with the same run Today would make. The response holds names, letter counts and short labels only (`test/summary.test.js` checks this).
 - Works limits: 10 artists per scan; 30 artist analyses per visitor and 300 for the whole site per day; 120 new Qloo calls a day for artists outside the cached 3,000-artist pool (one `/search` plus one scoring request per open window, 6 today). Pool artists cost no new Qloo call. Over a limit, the API answers with a plain error. Override with `WORKS_IP_DAILY`, `WORKS_SITE_DAILY` and `WORKS_QLOO_DAILY`.
 - The sealed forecast publishes only SHA-256 hashes. The files stay private, optionally encrypted.
 - `npm run check:public` scans the repo for entity ids, raw affinity or popularity values, raw responses, trending values and keys before publishing.

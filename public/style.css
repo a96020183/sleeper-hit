@@ -41,12 +41,6 @@ textarea, input { caret-color: var(--accent); }
   width: 18px; height: 18px; border-radius: 50%;
   background: radial-gradient(circle, var(--ground) 0 2px, var(--accent) 2.5px 5px, var(--ink) 5.5px);
 }
-.artist-pick select {
-  appearance: none; border: 1px solid var(--line); background: var(--paper);
-  padding: 6px 30px 6px 12px; border-radius: var(--r-ctl); font-weight: 500;
-  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-  background-position: calc(100% - 15px) 55%, calc(100% - 10px) 55%; background-size: 5px 5px; background-repeat: no-repeat;
-}
 .tabs { display: flex; gap: 4px; margin-left: 8px; }
 .tabs button {
   border: 0; background: none; padding: 6px 12px; border-radius: var(--r-ctl); cursor: pointer; color: var(--muted);
@@ -57,7 +51,6 @@ textarea, input { caret-color: var(--accent); }
 .header-run:hover { background: var(--accent-soft); }
 .header-run[hidden] { display: none; }
 .header-run:disabled { opacity: .65; cursor: wait; }
-body:not([data-tab="today"]) .artist-pick { display: none; }
 body:not([data-tab="works"]) .header-run { display: none; }
 .count { color: var(--accent); font-weight: 600; }
 .modes { display: flex; gap: 8px; font-size: 12.5px; color: var(--muted); }
@@ -123,6 +116,33 @@ main { max-width: 1180px; margin: 0 auto; padding: 32px 32px 48px; }
 .tag.estimated { background: var(--est-soft); color: var(--est); }
 .card details.notes summary { font-size: 12.5px; color: var(--accent); cursor: pointer; margin-top: 4px; }
 .card .note { color: var(--muted); font-size: 13px; margin-top: 18px; }
+
+/* Artist strip: the demo roster as a numbered run, like the track listing on a sleeve's spine */
+.strip { display: grid; grid-template-columns: auto minmax(0, 1fr); margin: 0 0 30px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); }
+.strip[hidden] { display: none; }
+.strip-side {
+  margin: 0; padding: 12px 8px 12px 0; writing-mode: vertical-rl; transform: rotate(180deg);
+  font: 600 9.5px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border-left: 1px solid var(--line);
+}
+.strip-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); min-width: 0; }
+.strip-list li { display: flex; min-width: 0; }
+.strip-list li + li { border-left: 1px solid var(--line); }
+.strip-item {
+  flex: 1; min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "no name" "no badges"; gap: 4px 10px; align-content: start;
+  padding: 14px 14px 16px; border: 0; background: transparent; text-align: left; cursor: pointer; color: var(--muted);
+  transition: background-color .18s cubic-bezier(.16, 1, .3, 1), box-shadow .18s cubic-bezier(.16, 1, .3, 1);
+}
+@media (hover: hover) { .strip-item:hover { background: color-mix(in srgb, var(--paper) 55%, transparent); } }
+.strip-item:focus-visible { outline-offset: -2px; }
+.strip-item[aria-pressed="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 0 var(--line), 0 14px 28px -22px rgba(22, 37, 42, .5); position: relative; }
+.sno { grid-area: no; font: 500 20px/1.15 var(--serif); font-variant-numeric: tabular-nums; color: var(--muted); }
+.strip-item[aria-pressed="true"] .sno { color: var(--accent); }
+.sname { grid-area: name; font: 500 17px/1.25 var(--serif); color: var(--ink); letter-spacing: -0.01em; }
+.sbadges { grid-area: badges; display: flex; flex-wrap: wrap; gap: 4px; }
+.badge { display: inline-block; white-space: nowrap; font-size: 12px; line-height: 1.3; padding: 1px 7px; border-radius: 99px; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
+.badge.go { background: #e3efe8; color: var(--ok); font-weight: 600; box-shadow: none; }
+.badge.sent { background: var(--accent-soft); color: var(--accent); box-shadow: none; }
+.badge.wait { box-shadow: none; border: 1px dashed var(--line); padding: 0 6px; }
 
 /* Skipped doors */
 .skipped { margin-top: 40px; }
@@ -286,6 +306,11 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: var(--r-ctl); font-size: 14px; }
 
 @media (max-width: 900px) {
+  .strip { grid-template-columns: minmax(0, 1fr); }
+  .strip-side { writing-mode: horizontal-tb; transform: none; border-left: 0; padding: 10px 0 6px; }
+  .strip-list { display: flex; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  .strip-list li { flex: 0 0 auto; width: 164px; scroll-snap-align: start; }
+  .sname { font-size: 16px; }
   .bar { padding: 12px 16px; gap: 12px; }
   .tabs { margin-left: 0; }
   main { padding: 20px 16px 40px; }

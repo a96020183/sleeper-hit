@@ -109,7 +109,7 @@ function quietLine(q, name) {
 }
 
 function renderToday() {
-  const el = $('#tab-today');
+  const el = $('#today-body');
   const { state, letters } = ui.data;
   const knock = state.doors.filter((d) => d.action === 'letter');
   const skip = state.doors.filter((d) => d.action === 'skip');
@@ -484,6 +484,71 @@ function addPickToOutbox(i) {
 function renderCount() {
   const open = outbox().filter((l) => l.status !== 'sent').length;
   $('#outbox-count').textContent = open ? String(open) : '';
+  renderStrip(); // "Sent N" comes from the outbox
+}
+
+// Artist strip, top of Today: every demo artist with today's status, so no switching is needed to see it.
+// Statuses come from /api/artists/summary (same rules as Today); "Sent N" is counted from this browser's outbox.
+function sentCount(a) { return outbox().filter((l) => l.status === 'sent' && (l.artistKey === a.key || sameName(l.artistName, a.name))).length; }
+
+function statusBadge(a) {
+  if (!a.status) return '<span class="badge wait">Checking…</span>';
+  if (a.status === 'ready') return `<span class="badge go">${esc(a.label)}</span>`;
+  if (a.status === 'pending' || a.status === 'unavailable') return `<span class="badge wait">${esc(a.label)}</span>`;
+  return `<span class="badge">${esc(a.label)}</span>`;
+}
+
+function renderStrip() {
+  const nav = $('#artist-strip');
+  if (!nav) return;
+  const list = ui.summary?.artists || ui.data?.artists || [];
+  if (!list.length) { nav.hidden = true; return; }
+  nav.hidden = false;
+  const focused = nav.contains(document.activeElement) ? document.activeElement.dataset.pickArtist : null;
+  nav.innerHTML = `<p class="strip-side" aria-hidden="true">Demo artists</p><ul class="strip-list">${list.map((a, i) => {
+    const sent = sentCount(a);
+    const on = a.key === ui.artist;
+    return `<li><button type="button" class="strip-item" data-pick-artist="${esc(a.key)}" aria-pressed="${on}"${on ? ' aria-current="true"' : ''}>
+      <span class="sno" aria-hidden="true">${i + 1}</span>
+      <span class="sname">${esc(a.name)}</span>
+      <span class="sbadges">${statusBadge(a)}${sent ? `<span class="badge sent">Sent ${sent}</span>` : ''}</span>
+    </button></li>`;
+  }).join('')}</ul>`;
+  nav.querySelectorAll('[data-pick-artist]').forEach((b) => b.addEventListener('click', () => pickArtist(b.dataset.pickArtist)));
+  if (focused) nav.querySelector(`[data-pick-artist="${CSS.escape(focused)}"]`)?.focus();
+}
+
+function pickArtist(key) {
+  if (key === ui.artist && ui.data) return;
+  ui.artist = key;
+  localSet('artist', key);
+  ui.selected = null; ui.edits = {}; ui.songs = {};
+  const u = new URL(location.href); u.searchParams.set('artist', key); history.replaceState(null, '', u);
+  renderStrip();
+  load();
+}
+
+// The viewer's own choices per artist (knock anyway, own share), so the strip matches what Today shows.
+function viewerContext() {
+  const date = ui.data?.state?.today || ui.summary?.today || new Date().toISOString().slice(0, 10);
+  const ctx = {};
+  for (const a of ui.summary?.artists || ui.data?.artists || []) {
+    const ov = overridesFor(a.key, date), m = manualFor(a.key);
+    if (ov.length || m) ctx[a.key] = { ...(ov.length ? { overrides: ov } : {}), ...(m ? { pub: m.pub, mas: m.mas } : {}) };
+  }
+  return ctx;
+}
+
+// Artists not scored yet come back "pending" and are scored in the background; ask again until done.
+async function loadSummary() {
+  clearTimeout(loadSummary.t);
+  try {
+    const ctx = viewerContext();
+    ui.summary = await api(`/api/artists/summary${Object.keys(ctx).length ? `?ctx=${encodeURIComponent(JSON.stringify(ctx))}` : ''}`);
+    renderStrip();
+    loadSummary.tries = (loadSummary.tries || 0) + 1;
+    if (ui.summary.pending && loadSummary.tries < 60) loadSummary.t = setTimeout(loadSummary, 4000);
+  } catch { /* the strip still switches artists; it just shows no statuses */ }
 }
 
 const OUTCOMES = [['unknown', 'No reply yet'], ['passed', 'Passed'], ['hold', 'On hold'], ['quote', 'Quote requested'], ['placed', 'Placed']];
@@ -740,9 +805,7 @@ function renderRoster() {
           <ol>${w.scan.byScore.map((x) => `<li><strong>${esc(x.name)}</strong> <span class="src">top ${x.topPct}%, No. ${num(x.affinityRank)} by ${esc(w.earlier)} fans' affinity${x.year ? `, last studio album ${esc(x.year)}` : ''}</span></li>`).join('')}</ol>
           <p class="src">By popularity alone the first five would be ${w.scan.byPop.map(esc).join(', ')}.</p></div>` : ''}
     </div>`).join('')}</div>`;
-  $('#tab-roster').querySelectorAll('[data-artist]').forEach((b) => b.addEventListener('click', () => {
-    ui.artist = b.dataset.artist; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; setTab('today'); load();
-  }));
+  $('#tab-roster').querySelectorAll('[data-artist]').forEach((b) => b.addEventListener('click', () => { setTab('today'); pickArtist(b.dataset.artist); }));
 }
 
 async function loadTrust() {
@@ -750,23 +813,22 @@ async function loadTrust() {
 }
 
 async function load() {
-  $('#tab-today').innerHTML = '<p class="loading">Scoring today\'s doors with Qloo… The first visit after the server wakes up can take about a minute.</p>';
+  $('#today-body').innerHTML = '<p class="loading">Scoring today\'s doors with Qloo… The first visit after the server wakes up can take about a minute.</p>';
   try {
     ui.data = await api(`/api/state?${viewerQuery()}`);
     ui.artist = ui.data.state.artist.key;
-    const sel = $('#artist');
-    if (sel) sel.innerHTML = ui.data.artists.map((a) => `<option value="${a.key}"${a.key === ui.artist ? ' selected' : ''}>${esc(a.name)}</option>`).join('');
     renderModes();
     renderCount();
     renderToday();
     if (ui.tab === 'outbox') renderOutbox();
+    loadSummary.tries = 0;
+    loadSummary();
   } catch (e) {
     const hint = location.protocol === 'file:' ? 'Run `npm start`, then open http://localhost:3000/ instead of opening public/index.html directly.' : e.message;
-    $('#tab-today').innerHTML = `<p class="error">Could not load today's doors: ${esc(hint)}</p>`;
+    $('#today-body').innerHTML = `<p class="error">Could not load today's doors: ${esc(hint)}</p>`;
   }
 }
 
-$('#artist')?.addEventListener('change', (e) => { ui.artist = e.target.value; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; load(); });
 document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
 $('#header-run')?.addEventListener('click', () => { setTab('works'); if (works().list.length) scanWorks(works().list); });
 renderWorksCount();
