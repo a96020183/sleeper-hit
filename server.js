@@ -27,6 +27,7 @@ const drafts = new Map(); // draft cache
 
 // Portfolio data is local app state. It is independent of the original Today/Roster workflow.
 const PORTFOLIO_FILE = path.join(config.privateDir, 'portfolio.json');
+const PORTFOLIO_SEED_FILE = path.join(ROOT, 'src', 'data', 'portfolio.json');
 const PORTFOLIO_DEFAULT = { works: [], matches: [], history: [], schedule: { enabled: false, frequency: 'weekly', time: '09:00', weekday: '1', categories: ['Competition', 'Film', 'TV', 'Game'], lastRunAt: null }, lastScanAt: null };
 function rosterPortfolioWorks() {
   return Object.values(ARTISTS).flatMap((artist) => artist.songs.map((title, index) => ({ id: `roster-${artist.key}-${index}`, title, artist: artist.name, kind: 'music', format: 'song', source: artist.sources?.[0] || '', year: '', status: 'pending', qloo: null, addedAt: new Date().toISOString(), updatedAt: new Date().toISOString() })));
@@ -34,7 +35,10 @@ function rosterPortfolioWorks() {
 function portfolioRead() {
   let data;
   try { data = JSON.parse(fs.readFileSync(PORTFOLIO_FILE, 'utf8')); } catch { data = structuredClone(PORTFOLIO_DEFAULT); }
-  if (!Array.isArray(data.works) || data.works.length === 0) { data.works = rosterPortfolioWorks(); portfolioWrite(data); }
+  if (!Array.isArray(data.works) || data.works.length === 0) {
+    try { data.works = JSON.parse(fs.readFileSync(PORTFOLIO_SEED_FILE, 'utf8')).works || []; } catch { data.works = rosterPortfolioWorks(); }
+    portfolioWrite(data);
+  }
   return data;
 }
 function portfolioWrite(data) { fs.mkdirSync(config.privateDir, { recursive: true }); fs.writeFileSync(PORTFOLIO_FILE, JSON.stringify(data, null, 2)); return data; }

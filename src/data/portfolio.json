@@ -1,0 +1,23 @@
+{
+  "works": [
+    { "id": "roster-the-clash-0", "title": "The Magnificent Seven", "artist": "The Clash", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/uk/Artists/T/The-Clash.aspx", "status": "pending", "qloo": null },
+    { "id": "roster-the-clash-1", "title": "Rock the Casbah", "artist": "The Clash", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/uk/Artists/T/The-Clash.aspx", "status": "pending", "qloo": null },
+    { "id": "roster-the-clash-2", "title": "London Calling", "artist": "The Clash", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/uk/Artists/T/The-Clash.aspx", "status": "pending", "qloo": null },
+    { "id": "roster-the-clash-3", "title": "Should I Stay or Should I Go", "artist": "The Clash", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/uk/Artists/T/The-Clash.aspx", "status": "pending", "qloo": null },
+    { "id": "roster-the-verve-0", "title": "Lucky Man", "artist": "The Verve", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/us/news/umpg-signs-richard-ashcroft-to-global-admin-deal", "status": "pending", "qloo": null },
+    { "id": "roster-the-verve-1", "title": "The Drugs Don't Work", "artist": "The Verve", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/us/news/umpg-signs-richard-ashcroft-to-global-admin-deal", "status": "pending", "qloo": null },
+    { "id": "roster-the-verve-2", "title": "Sonnet", "artist": "The Verve", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/us/news/umpg-signs-richard-ashcroft-to-global-admin-deal", "status": "pending", "qloo": null },
+    { "id": "roster-the-verve-3", "title": "Space and Time", "artist": "The Verve", "kind": "music", "format": "song", "source": "https://www.umusicpub.com/us/news/umpg-signs-richard-ashcroft-to-global-admin-deal", "status": "pending", "qloo": null },
+    { "id": "roster-iggy-pop-0", "title": "Lust for Life", "artist": "Iggy Pop", "kind": "music", "format": "song", "source": "https://americansongwriter.com/bug-music-closes-two-big-deals/", "status": "pending", "qloo": null },
+    { "id": "roster-iggy-pop-1", "title": "The Passenger", "artist": "Iggy Pop", "kind": "music", "format": "song", "source": "https://americansongwriter.com/bug-music-closes-two-big-deals/", "status": "pending", "qloo": null },
+    { "id": "roster-air-supply-0", "title": "All Out of Love", "artist": "Air Supply", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-air-supply-1", "title": "Making Love Out of Nothing at All", "artist": "Air Supply", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-air-supply-2", "title": "Lost in Love", "artist": "Air Supply", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-air-supply-3", "title": "Even the Nights Are Better", "artist": "Air Supply", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-air-supply-4", "title": "The One That You Love", "artist": "Air Supply", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-culture-club-0", "title": "Karma Chameleon", "artist": "Culture Club", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-culture-club-1", "title": "Do You Really Want to Hurt Me", "artist": "Culture Club", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-culture-club-2", "title": "Time (Clock of the Heart)", "artist": "Culture Club", "kind": "music", "format": "song", "status": "pending", "qloo": null },
+    { "id": "roster-culture-club-3", "title": "Church of the Poison Mind", "artist": "Culture Club", "kind": "music", "format": "song", "status": "pending", "qloo": null }
+  ]
+}
