@@ -2,6 +2,7 @@
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const params = new URLSearchParams(location.search);
+const API_BASE = location.protocol === 'file:' ? 'http://localhost:3000' : '';
 
 const ui = {
   artist: params.get('artist') || localGet('artist') || '',
@@ -17,7 +18,7 @@ function localGet(k) { try { return localStorage.getItem('sh.' + k); } catch { r
 function localSet(k, v) { try { localStorage.setItem('sh.' + k, v); } catch { /* private mode */ } }
 
 async function api(path, opts = {}) {
-  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  const res = await fetch(`${API_BASE}${path}`, { ...opts, headers: opts.body ? { 'Content-Type': 'application/json', ...(opts.headers || {}) } : opts.headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
   return body;
@@ -73,6 +74,7 @@ function scoreRows(d, state) {
 }
 
 function renderModes() {
+  if (!$('#modes')) return;
   const m = ui.data?.mode || ui.trust?.mode;
   if (!m) return;
   $('#modes').innerHTML = `<span class="pill ${m.qloo === 'MOCK' ? 'mock' : ''}">Qloo ${m.qloo === 'MOCK' ? 'MOCK data' : 'live'}</span>` +
@@ -495,8 +497,10 @@ function renderTrust() {
 
 function setTab(tab) {
   ui.tab = tab;
+  const nextUrl = new URL(location.href); nextUrl.searchParams.set('tab', tab); history.replaceState(null, '', nextUrl);
   document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
-  for (const name of ['today', 'roster', 'outbox', 'trust']) $(`#tab-${name}`).hidden = name !== tab;
+  for (const name of ['today', 'roster', 'outbox', 'trust', 'works']) $(`#tab-${name}`).hidden = name !== tab;
+  if (tab === 'works' || tab === 'roster') window.dispatchEvent(new CustomEvent('portfolio-tab', { detail: tab }));
   if (tab === 'outbox' && ui.data) renderOutbox();
   if (tab === 'roster') loadRoster();
   if (tab === 'trust') { renderTrust(); if (!ui.trust) loadTrust(); }
@@ -525,11 +529,11 @@ function renderRoster() {
           <p class="src">${r.scan.quiet} of the ${r.scan.famous} most popular artists in the pool were quiet catalogue acts. Clearance for these is not entered yet, so no letters.</p>
           <ol>${w.scan.byScore.map((x) => `<li><strong>${esc(x.name)}</strong> <span class="src">top ${x.topPct}%, No. ${num(x.affinityRank)} by ${esc(w.earlier)} fans' affinity${x.year ? `, last studio album ${esc(x.year)}` : ''}</span></li>`).join('')}</ol>
           <p class="src">By popularity alone the first five would be ${w.scan.byPop.map(esc).join(', ')}.</p></div>` : ''}
-      </div>`).join('')}
-    </div>`;
+    </div>`).join('')}</div><div id="roster-opportunities"></div>`;
   $('#tab-roster').querySelectorAll('[data-artist]').forEach((b) => b.addEventListener('click', () => {
     ui.artist = b.dataset.artist; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; setTab('today'); load();
   }));
+  window.dispatchEvent(new CustomEvent('roster-ready'));
 }
 
 async function loadTrust() {
@@ -542,17 +546,30 @@ async function load() {
     ui.data = await api(`/api/state?${viewerQuery()}`);
     ui.artist = ui.data.state.artist.key;
     const sel = $('#artist');
-    sel.innerHTML = ui.data.artists.map((a) => `<option value="${a.key}"${a.key === ui.artist ? ' selected' : ''}>${esc(a.name)}</option>`).join('');
+    if (sel) sel.innerHTML = ui.data.artists.map((a) => `<option value="${a.key}"${a.key === ui.artist ? ' selected' : ''}>${esc(a.name)}</option>`).join('');
     renderModes();
     renderCount();
     renderToday();
+    window.dispatchEvent(new CustomEvent('today-ready'));
     if (ui.tab === 'outbox') renderOutbox();
   } catch (e) {
-    $('#tab-today').innerHTML = `<p class="error">Could not load today's doors: ${esc(e.message)}</p>`;
+    const hint = location.protocol === 'file:' ? 'Run `npm start`, then open http://localhost:3000/ instead of opening public/index.html directly.' : e.message;
+    $('#tab-today').innerHTML = `<p class="error">Could not load today's doors: ${esc(hint)}</p>`;
   }
 }
 
-$('#artist').addEventListener('change', (e) => { ui.artist = e.target.value; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; load(); });
-document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
+window.addEventListener('portfolio-refresh', () => {
+  ui.roster = null;
+  load();
+});
+
+$('#artist')?.addEventListener('change', (e) => { ui.artist = e.target.value; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; load(); });
+document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
 setTab(ui.tab);
 load();
+
+const accountButton = $('#account');
+const accountMenu = $('#account-menu');
+if (accountButton && accountMenu) { $('#account-email').textContent = localGet('accountEmail') || 'you@example.com'; accountButton.addEventListener('click', () => { const open = accountMenu.hidden; accountMenu.hidden = !open; accountButton.setAttribute('aria-expanded', String(open)); }); document.addEventListener('click', (event) => { if (!event.target.closest('.account-control')) { accountMenu.hidden = true; accountButton.setAttribute('aria-expanded', 'false'); } }); }
+$('#header-run')?.addEventListener('click', async () => { const button = $('#header-run'); button.disabled = true; button.textContent = 'Running…'; try { const response = await fetch(`${API_BASE}/api/portfolio/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' } }); if (!response.ok) throw Error('Could not update opportunities'); window.dispatchEvent(new CustomEvent('portfolio-refresh')); toast('New opportunities and match scores updated'); } catch (error) { toast(error.message); } finally { button.disabled = false; button.textContent = 'Run'; } });
+$('#header-gear')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('schedule-settings')));

@@ -131,6 +131,12 @@ export function makeMockFetch(world = new MockWorld()) {
       const demographics = ids.map((id) => world.byId.get(id)).filter(Boolean).map((e) => ({ entity_id: e.entity_id, query: world.demographics(e) }));
       return wrap(json(200, { success: true, results: { demographics } }));
     }
+    if (u.pathname === '/v2/insights' && q['filter.type'] === 'urn:tag') {
+      const e = world.byId.get((q['signal.interests.entities'] || '').split(',')[0]);
+      const names = { e60: '1960s', e70: '1970s', e80: '1980s', e90: '1990s', e00: '2000s', e10: '2010s', e20: '2020s', soft_rock: 'Soft Rock', new_wave: 'New Wave', rock: 'Rock', hiphop: 'Hip-Hop', pop: 'Pop', indie: 'Indie', alt: 'Alternative', electronic: 'Electronic', rnb: 'R&B', country: 'Country' };
+      const tags = e ? FEATURES.map((feature, index) => ({ name: names[feature] || feature, affinity: e.v[index] || 0 })).filter((tag) => tag.affinity > 0).sort((a, b) => b.affinity - a.affinity).slice(0, take) : [];
+      return wrap(json(200, { success: true, results: { tags } }));
+    }
     if (u.pathname === '/v2/insights' && q['filter.type'] === 'urn:entity:artist') {
       const sig = world.byId.get((q['signal.interests.entities'] || '').split(',')[0]);
       const wanted = (q['filter.results.entities'] || '').split(',').filter(Boolean);
