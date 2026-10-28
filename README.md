@@ -10,11 +10,11 @@ Built for the Qloo Agentic Hackathon 2026.
 
 **Live demo:** https://sleeper-hit.onrender.com (no login; if it was asleep, the first load takes a minute or two).
 
-**30 seconds:** open the app. The first screen is today's letter for The Clash, with the evidence beside it. Roster shows every open window: the five demo artists, the quiet catalogue artists from our scan that fit it best, and how many decisions would change on popularity alone. Switch the artist to The Verve to see the agent refuse (not quiet). Trust holds the backtest.
+**30 seconds:** open the app. The first screen is today's letter for The Clash, with the evidence beside it. Roster shows every open window: the five demo artists, the quiet catalogue artists from our scan that fit it best, and how many decisions would change on popularity alone. Switch the artist to The Verve to see the agent refuse (not quiet). Works scores your own list of artists with the same score and ranks the letters across it. Trust holds the backtest.
 
 ![First screen: today's pitch letter for The Clash, with the evidence card](docs/screenshots/1-first-screen.png)
 
-More in `docs/screenshots/`: Roster, a refused artist, the outbox, Trust and phone width. Screenshots were taken from the live app on Oct 26.
+More in `docs/screenshots/`: Roster, a refused artist, the outbox, Trust and phone width (taken from the live app on Oct 26), and Works on desktop and phone (`7-works.png`, `8-works-phone.png`, taken from a local run with live Qloo data on Oct 28).
 
 ## The problem
 
@@ -32,15 +32,17 @@ Pick an artist. The agent:
 
 1. **Checks that the artist is quiet**: flat English Wikipedia page views and no new studio album in 5 years (rules below). An artist that is not quiet gets no letters; a person can still knock anyway.
 2. **Lists open windows on sequels** and what each one pitches for. Games: the launch trailer and TV spots, because in-game music is licensed long before release. Films: the first trailer, estimated from the release date. Series: the episodes, treated as locked within 60 days of the premiere.
-3. **Scores each window with Qloo.** The earlier title is the signal. Qloo ranks about 3,000 well-known artists by that audience's affinity; the card shows the artist's affinity rank and popularity rank ("Qloo says") and our score, the two ranks averaged, as "top X%" ("Our read"). The agent knocks only inside the top 20%.
+3. **Scores each window with Qloo.** The earlier title is the signal. Qloo ranks about 3,000 well-known artists by that audience's affinity; the card shows the artist's affinity rank and popularity rank ("Qloo says") and our score, the two ranks averaged, as "top X%" ("Our read"), plus the five artists that audience ranks highest by affinity, for context. The agent knocks only inside the top 20% on the card score, and only when the audience itself ranks the artist in its top 20% by affinity (so popularity cannot carry a letter alone).
 4. **Checks clearance** from public sources plus the user's own share: one-stop, cover clearable, needs another party's consent, or unconfirmed. Every category shows its source. Unconfirmed gets no letter.
 5. **Checks timing.** Every date is marked "announced" or "estimated".
-6. **Decides.** Clearance, then timing, then the card score, then age and gender overlap (Qloo demographics) to break ties. At most three letters a day, and every skipped window gets a one-line reason.
+6. **Decides.** Clearance, then timing, then the card score, then age and gender overlap (Qloo demographics) to break ties. At most three letters per artist a day, and every skipped window gets a one-line reason.
 7. **Drafts the letter.** The first line is the song and what it is pitched for, plus one sourced fact about how the title has used music so far. One line of audience data follows. Raw Qloo scores never appear.
 
 The **Roster** tab turns it around: for every open window, the demo artists ranked by the card score, with who gets a letter today and why the others do not; the five best-fitting of the 55 quiet catalogue artists from our Oct 23 scan (clearance not entered, so no letters); and how many of today's decisions would change on popularity alone. On Oct 24 that was 2 of 25: without Qloo, The Clash would also get letters for Sonic the Hedgehog 4 and Godzilla x Kong: Supernova, whose audiences rank it only in their top 34% and 31%.
 
-Nothing is emailed. "Copy and mark sent" puts the letter on the clipboard and moves it to the outbox, where the outcome (no reply, passed, on hold, quote requested, placed) is tracked.
+The **Works** tab does the same for a publisher's own catalogue. Paste up to 10 artist names, optionally with your share of the song and the recording and a song title (`The Clash, 100, 0, London Calling`). Each artist is scored with exactly the code Today uses (`scoreRecord` and `decideArtist` in `src/pipeline.js`): the same score we backtested, the top-20% bar, the quiet rule, clearance from your share, and timing. The result reads like a tracklist: Side A is every letter across the catalogue, best first by Today's ordering rules, each with its reason, the audience's top 5 artists for context and a drafted letter (OpenAI drafts the top 3, the template the rest); Side B is every artist that gets no letter today and why; the liner notes give each artist's quiet verdict, best window and clearance. A name without a share is scored but gets no letter, because clearance is unconfirmed. One difference from Today: Works skips the age-and-gender request, which only breaks exact ties, so that artists already in the pool need no new Qloo call. Works keeps no schedule; "Re-scan" runs it again on demand.
+
+Sleeper Hit never sends email itself. In the outbox, "Copy letter" puts the letter on the clipboard and "Mark sent" moves it to sent, where the outcome (no reply, passed, on hold, quote requested, placed) is tracked. "Open in email app" opens a `mailto:` draft in your own email program, with the subject and body filled in and the address you typed (or none), and you send it.
 
 ## How Qloo is used
 
@@ -125,6 +127,7 @@ Inputs are committed: the method (`seal/backtest-v2-method.json`), the candidate
 | Oct 23 | Demo artist: The Verve to The Clash, picked by hand (9th of 55) | The Verve is not quiet; The Clash's recordings have been licensed for the screen |
 | Oct 24 | Window rules per medium (game launch marketing, series locked within 60 days) and the top-20% knock bar | In-game and episode music is chosen long before release |
 | Oct 24 | Letters cite the audience (affinity) rank, not the blended score | The blend mixes in popularity, so it is not "the audience's" rank |
+| Oct 28 | Affinity floor: a letter also needs the audience's own top 20% by affinity (not backtested) | Reviewers found letters the blend gave on popularity alone (an artist ranked No. 1,095 by affinity for one title); the agent should not pitch those as audience fits |
 
 ## What we learned about Qloo's data
 
@@ -171,6 +174,8 @@ npm start                 # http://localhost:3000
 Qloo's developer guide says: "Do not store Qloo response data in a public repository." This repo holds no Qloo response data, entity ids or keys:
 
 - All responses are cached privately on the server in `.private/` (git-ignored). The browser receives ranks, percentiles, overlap and categories only.
+- Works sends the server only artist names, plus the viewer's own share and song if given. The server scores them and keeps nothing; the list and the result stay in the viewer's browser (localStorage). The response holds ranks, percentiles, categories and reasons, never entity ids, raw affinity or popularity values, or tags (`test/works.test.js` checks this).
+- Works limits: 10 artists per scan; 30 artist analyses per visitor and 300 for the whole site per day; 120 new Qloo calls a day for artists outside the cached 3,000-artist pool (one `/search` plus one scoring request per open window, 6 today). Pool artists cost no new Qloo call. Over a limit, the API answers with a plain error. Override with `WORKS_IP_DAILY`, `WORKS_SITE_DAILY` and `WORKS_QLOO_DAILY`.
 - The sealed forecast publishes only SHA-256 hashes. The files stay private, optionally encrypted.
 - `npm run check:public` scans the repo for entity ids, raw affinity or popularity values, raw responses, trending values and keys before publishing.
 
@@ -187,7 +192,7 @@ Qloo's developer guide says: "Do not store Qloo response data in a public reposi
 
 ### Quiet, from Wikipedia page views and the catalogue
 
-Rule, fixed before the demo artist was re-checked: in the 36 complete months before today, no month in the last 24 above 1.5 times the 36-month average (no recent wake-up), and the last 3 months at or below that average (not rising now). Months are compared as views per day. `npm run check:quiet` runs it on the demo artists and on known wake-ups: Kate Bush after Stranger Things (May 2022, caught at 9.6x) and Tom Petty after the first GTA VI trailer (Dec 2023, caught at 1.8x). The Pointer Sisters after GTA VI trailer 2 (May 2025) were flagged for a different month; the trailer month itself reached only 1.26x, so the rule can miss smaller wake-ups.
+Rule, fixed before the demo artist was re-checked: in the 36 complete months before today, no month in the last 24 above 1.5 times the 36-month average (no recent wake-up), and the last 3 months at or below that average (not rising now). Months are compared as views per day. `npm run check:quiet` runs it on the demo artists and on known wake-ups: Kate Bush after Stranger Things (May 2022, caught at 9.6x) and Tom Petty after the first GTA VI trailer (Dec 2023, caught at 1.8x). The Pointer Sisters after GTA VI trailer 2 (May 2025) were flagged for a different month; the trailer month itself reached only 1.26x, so the rule can miss smaller wake-ups. Ratios move as the 36-month window rolls forward: on Oct 28 the app showed May 2025 at 1.55x for them, because older, busier months had left the average.
 
 Catalogue condition, added after the rank-blend score let current stars through: a quiet artist must also have released no new studio album in the last 5 years. A studio album is a [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API) release group with primary type Album and no secondary type, leaving out groups that hold only bootlegs. The artist is found through the Wikidata id Qloo carries. Not found, or no dated studio album: unknown, not counted as quiet. A posthumous or reunion studio album counts as new. Release groups dated after the check date are ignored (not out yet, or bad data: on Oct 23 a Beatles album dated November 2026, found nowhere else, would otherwise have dropped them).
 
@@ -231,7 +236,7 @@ npm run check:public             # scan for anything that must not be public
 
 During judging, a plan that does not sleep avoids the cold start below.
 
-The free plan has a temporary disk and sleeps when idle. The server keeps no user data: the outbox, "knock anyway" choices and your own rights share are saved in your browser and sent with each request. The private Qloo cache is only a speed-up; after a restart the first request re-scores the pool (about 370 calls, throttled). The Trust tab reads only committed, public files under `seal/`.
+The free plan has a temporary disk and sleeps when idle. The server keeps no user data: the outbox, "knock anyway" choices, your own rights share and your Works list are saved in your browser and sent with each request. Works limits are counted in memory, so a restart resets them. The private Qloo cache is only a speed-up; after a restart the first request re-scores the pool (about 370 calls, throttled). The Trust tab reads only committed, public files under `seal/`.
 
 1. Push this repo to GitHub (`.env` and `.private/` are git-ignored).
 2. In Render, choose New > Blueprint and select the repo. `render.yaml` defines one free web service (`npm start`, health check `/healthz`, Node 22).

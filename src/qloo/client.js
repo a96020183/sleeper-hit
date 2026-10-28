@@ -35,12 +35,6 @@ export class QlooClient {
     }));
   }
 
-  async tasteTags(entityId, take = 5) {
-    const body = await this.http.get('/v2/insights', { 'filter.type': 'urn:tag', 'signal.interests.entities': entityId, take });
-    const rows = body?.results?.tags || body?.results?.entities || [];
-    return rows.map((tag) => ({ name: tag.name || tag.label || tag.entity_name, affinity: tag.query?.affinity ?? tag.affinity ?? null })).filter((tag) => tag.name).slice(0, take);
-  }
-
   // Resolve a title or artist by name. Only an exact (case-insensitive) name match, optionally with
   // the expected year in the disambiguation, is accepted. Anything else is reported, not guessed.
   async resolve({ query, type, name = query, year }) {

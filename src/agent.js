@@ -5,6 +5,8 @@
 //   3. Audience score: higher percentile on the affinity + popularity rank blend among the pool
 //      first (excess affinity until 2026-10-23); outside the top 20% = skip (was top 50% until
 //      2026-10-24; now the same bar as the find-sleepers selection rule)
+//      Since 2026-10-28 (after review, not backtested): the earlier title's audience must also rank
+//      the artist inside its top 20% by affinity alone, so popularity cannot carry a letter by itself
 //   0. An artist that is not quiet gets no letters (a person can still knock anyway)
 //   4. Tie-break: audience overlap (demographics)
 // Output: at most DAILY_CAP letters per artist per day; every other door gets a one-line reason.
@@ -13,6 +15,7 @@ import { topPercent } from './scoring.js';
 
 export const DAILY_CAP = 3;
 export const MIN_PERCENTILE = 80;
+export const AFFINITY_TOP_SHARE = 0.2; // affinity floor: affinity rank within the top 20% of the scored pool
 const TIMING_RANK = { 'in-window': 0, early: 1, 'too-late': 2, unknown: 3 };
 
 export function rankKey(d) {
@@ -31,6 +34,12 @@ export function compareDoors(a, b) {
   return 0;
 }
 
+// The affinity floor. Not applied to the "popularity alone" comparison (d.popularityOnly), which has no Qloo signal.
+export function weakAudience(d) {
+  if (d.popularityOnly || !d.blend || !d.blend.of) return false;
+  return d.blend.affinityRank > Math.ceil(d.blend.of * AFFINITY_TOP_SHARE);
+}
+
 export function skipReason(d) {
   if (d.clearance.category === 'unconfirmed') return `Clearance unconfirmed. ${d.clearance.reason}`;
   if (d.timing.bucket !== 'in-window') {
@@ -39,6 +48,10 @@ export function skipReason(d) {
   }
   if (d.pct === null || d.pct === undefined) return 'Qloo has too little data on this audience to score the artist.';
   if (d.pct < MIN_PERCENTILE) return `Card score too low: top ${topPercent(d.pct)}%. We knock only inside the top ${100 - MIN_PERCENTILE}%.`;
+  if (weakAudience(d)) {
+    const who = d.window?.earlier?.label ? `${d.window.earlier.label} fans` : 'The audience';
+    return `Popularity carries this one: ${who} rank them only No. ${d.blend.affinityRank.toLocaleString('en-US')} of ${d.blend.of.toLocaleString('en-US')} by affinity. We knock only when the audience itself puts them in its top ${Math.round(AFFINITY_TOP_SHARE * 100)}%.`;
+  }
   return null;
 }
 

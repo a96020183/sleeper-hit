@@ -1,4 +1,5 @@
 // Sleeper Hit front end. Plain modules, no build step.
+import { mailtoFor, parseCatalogue, catalogueText } from './lib.js';
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const params = new URLSearchParams(location.search);
@@ -68,8 +69,8 @@ function scoreRows(d, state) {
   if (!b) return `<div><dt>Audience score</dt><dd><span class="src">Qloo has too little data on ${esc(d.window.earlier.label)} fans to rank ${esc(state.artist.name)}.</span></dd></div>`;
   const tested = d.window.kind === 'series'
     ? 'Past series: not clearly ahead of popularity. Treat it as a lead.'
-    : 'Past film and game sequels: ahead of popularity; 23 sequel artists in the top 50 to the LLM’s 16 (difference +7, interval 0 to +16).';
-  return `<div><dt>Qloo says</dt><dd>${esc(d.window.earlier.label)} fans: No. ${num(b.affinityRank)} of ${num(b.of)} artists by affinity. No. ${num(b.popularityRank)} by popularity.</dd></div>
+    : 'Past film and game sequels: ahead of popularity (+0.10 AUC). Across all 26 sequels this score cleared our bar: +0.08 AUC over popularity and +10 top-50 hits over the LLM.';
+  return `<div><dt>Qloo says</dt><dd>${esc(d.window.earlier.label)} fans: No. ${num(b.affinityRank)} of ${num(b.of)} artists by affinity. No. ${num(b.popularityRank)} by popularity.${d.audienceTop?.length ? `<div class="src">Their top 5 by affinity: ${d.audienceTop.map(esc).join(', ')}.</div>` : ''}</dd></div>
     <div><dt>Our read</dt><dd><span class="big">Top ${d.topPct}%</span><div class="src">No. ${num(b.rank)} of ${num(b.of)} with the two ranks averaged, a score we chose after the backtest (Trust). ${tested}</div></dd></div>`;
 }
 
@@ -171,13 +172,15 @@ function renderToday() {
       <button class="btn quiet">Save my share</button>
     </form>` : '';
 
+  const oneReason = skip.length > 1 && skip.every((d) => d.reason === skip[0].reason) ? (allUnconfirmed ? 'Clearance unconfirmed.' : skip[0].reason) : null;
   const skips = skip.length ? `
     <div class="skipped">
       <h3>${door ? 'Not pitching today' : 'Open windows, and why not today'}</h3>
+      ${oneReason ? `<p class="onereason">${esc(oneReason)}</p>` : ''}
       <div class="skips">${skip.map((d) => `
         <div class="skip">
           <strong>${esc(titleOf(d.window))}</strong>
-          <p>${esc(allUnconfirmed ? 'Clearance unconfirmed.' : d.reason)}</p>
+          ${oneReason ? '' : `<p>${esc(allUnconfirmed ? 'Clearance unconfirmed.' : d.reason)}</p>`}
           ${d.topPct ? `<span class="meta">Card score: top ${d.topPct}% for ${esc(d.window.earlier.label)} fans</span>` : ''}
           <span class="meta">${esc(d.timing.event)} ${fmtDate(d.timing.date)}, ${esc(d.timing.dateStatus)}</span>
           ${d.clearance.category !== 'unconfirmed' ? `<button class="btn link" data-override="${d.id}">Knock anyway</button>` : ''}
@@ -247,9 +250,16 @@ async function redraft(door) {
   } catch (e) { toast(e.message); }
 }
 
+// One pitch per artist and window, wherever it was added (Today or Works).
+const sameName = (a, b) => String(a || '').toLowerCase().trim() === String(b || '').toLowerCase().trim();
+const pitchFor = (artistName, doorId) => outbox().find((l) => sameName(l.artistName, artistName) && l.doorId === doorId && l.status === 'sent');
+const sentDay = (l) => new Date(l.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
 function addToOutbox(door) {
   const text = ui.edits[door.id] ?? ui.data.letters[door.id]?.text ?? '';
   const today = ui.data.state.today;
+  const sent = pitchFor(ui.data.state.artist.name, door.id);
+  if (sent) { toast(`Already pitched ${sent.artistName} for ${sent.title} on ${sentDay(sent)}. Not added again.`); return; }
   const list = outbox();
   const existing = list.find((l) => l.artistKey === ui.artist && l.doorId === door.id && l.status !== 'sent');
   if (existing) {
@@ -287,6 +297,190 @@ function saveManual(ev) {
   load().then(() => toast('Saved in this browser. Clearance now uses your share (Manual).'));
 }
 
+// Works: the viewer's own catalogue. The list and the last result live in this browser; the server
+// receives only the names (plus the viewer's own share and song), scores them and keeps nothing.
+const WORKS_PER_DAY = 30; // matches the server's default per-visitor cap
+const EXAMPLE = ['The Clash, 100, 0, London Calling', 'The Smiths, 100, 0, There Is a Light That Never Goes Out', "The Pointer Sisters, 100, 0, I'm So Excited", 'Fleetwood Mac'].join('\n');
+const works = () => store.read('works', { list: [], result: null });
+const saveWorks = (w) => { store.write('works', w); renderWorksCount(); };
+function renderWorksCount() {
+  const n = works().list.length;
+  $('#works-count').textContent = n ? String(n) : '';
+  $('#header-run').hidden = !n; // only useful once a catalogue is saved
+}
+const fmtTime = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+const shareLine = (a) => (a.share ? `Your share: ${a.share.pub}% of the song, ${a.share.mas}% of the recording` : 'No share entered');
+
+function worksQuiet(a) {
+  const q = a.quiet || {};
+  const year = q.catalogue?.latest?.date ? q.catalogue.latest.date.slice(0, 4) : '';
+  if (q.quiet === true) return `<span class="st go">Quiet</span> <span class="src">views ${q.ratio}x their 3-year average${year ? `, last studio album ${esc(year)}` : ''}</span>`;
+  if (q.quiet === false) {
+    if (q.pageviewsQuiet && q.catalogue?.old === false) return `<span class="st">Not quiet</span> <span class="src">new studio album in ${esc(year)}</span>`;
+    return `<span class="st">Not quiet</span> <span class="src">${q.noWake === false ? `${monthLabel(q.peakMonth)} reached ${q.peakRatio}x on Wikipedia` : `views rising, ${q.ratio}x`}</span>`;
+  }
+  return `<span class="st">Unknown</span> <span class="src">${esc(q.detail || 'quiet check incomplete')}</span>`;
+}
+
+function worksForm(list, open) {
+  const example = !list.length;
+  return `<form class="works-form" id="works-form" novalidate>
+      <label for="works-input"><strong>Your artists</strong>, one per line, up to 10</label>
+      <p class="hint" id="works-hint">${example ? '<strong>Filled in with an example; the shares are made up.</strong> Replace it with your own. ' : ''}Format: <span class="fmt">Name, song %, recording %, song</span>. Your share of the song and the recording is what clears a letter; a name alone is scored but gets no letter.</p>
+      <textarea id="works-input" rows="5" spellcheck="false" aria-describedby="works-hint works-error">${esc(example ? EXAMPLE : catalogueText(list))}</textarea>
+      <p class="field-error" id="works-error" role="alert"></p>
+      <div class="works-actions">
+        <button class="btn primary" id="works-go">${open ? 'Re-score this list' : 'Score my catalogue'}</button>
+        ${example ? '<button class="btn quiet" type="button" id="works-clear">Clear the example</button>' : ''}
+      </div>
+      <p class="fine">Saved in this browser only; the server scores the names and keeps nothing. Artists outside our 3,000-artist pool cost Qloo calls, so each visitor gets ${WORKS_PER_DAY} artist analyses a day.</p>
+    </form>`;
+}
+
+// A small record, drawn here (no images): grooves, label, spindle hole.
+const DISC = `<svg class="disc" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+  <circle cx="60" cy="60" r="59" fill="var(--ink)"/>
+  ${[54, 49, 44, 39, 34, 29].map((r) => `<circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--ground)" stroke-opacity=".16" stroke-width=".7"/>`).join('')}
+  <path d="M60 9 A51 51 0 0 1 104 34" fill="none" stroke="var(--ground)" stroke-opacity=".38" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M60 111 A51 51 0 0 1 16 86" fill="none" stroke="var(--ground)" stroke-opacity=".18" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="60" cy="60" r="21" fill="var(--accent)"/>
+  <circle cx="60" cy="60" r="2.6" fill="var(--ground)"/>
+</svg>`;
+
+const sideLabel = (scannedAt) => `Cat. no. SH-${new Date(scannedAt).toISOString().slice(2, 10).replace(/-/g, '')}`;
+
+function renderWorks() {
+  const el = $('#tab-works');
+  const w = works();
+  const r = w.result;
+  if (!r) {
+    el.innerHTML = `<div class="sleeve">
+      <div class="sleeve-head"><div>
+        <h1 class="headline display">Which of your artists to pitch, and for what</h1>
+        <p class="what">Paste your artists. Sleeper Hit scores each one against every open sequel window with the same score we backtested, keeps the quiet ones whose sequel audience ranks them in its top 20%, checks your share, and drafts the letters, best first.</p>
+      </div>${DISC}</div>
+      ${worksForm(w.list, false)}<div id="works-status" aria-live="polite"></div></div>`;
+    bindWorksForm();
+    return;
+  }
+  const picks = r.picks || [];
+  const lead = picks.find((p) => !pitchFor(p.artist, p.id)) || null;
+  const sideB = r.artists.filter((a) => !a.letters);
+  const title = lead ? `Pitch ${esc(lead.artist)} for ${esc(lead.title)} ${lead === picks[0] ? 'first' : 'next'}` : picks.length ? 'Every letter on this list is pitched' : 'No pitch from this list today';
+  const summary = `${picks.length} letter${picks.length === 1 ? '' : 's'} ready from ${r.artists.length} artist${r.artists.length === 1 ? '' : 's'}, ranked with the same score we backtested and Today’s rules: quiet artists only, top 20% on the card score and in the audience’s own top 20% by affinity, your share confirmed, timing, at most 3 letters per artist a day.`;
+
+  const sideA = picks.length ? `<h2 class="side">Side A · ready to pitch, best first</h2><ol class="tracks">${picks.map((p, i) => `
+      <li class="track${i === 0 ? ' lead' : ''}">
+        <span class="tno">A${i + 1}</span>
+        <div class="tmain">
+          <h3>${esc(p.artist)} <em>for</em> ${esc(p.title)}</h3>
+          <p class="twhy"><b class="tpct">Top ${p.topPct}%.</b> ${esc(p.earlier)} fans rank them No. ${num(p.affinityRank)} by affinity and No. ${num(p.popularityRank)} by popularity, of ${num(p.of)}. ${esc(p.use)}</p>
+          ${p.audienceTop?.length ? `<p class="tmeta">${esc(p.earlier)} fans’ top 5 by affinity: ${p.audienceTop.map(esc).join(', ')}</p>` : ''}
+          <p class="tmeta">${esc(p.clearance.label)} · ${esc(p.event)} ${fmtDate(p.date)}, ${esc(p.dateStatus)}${p.song ? ` · “${esc(p.song)}”` : ' · no song given, the letter says [Song]'}</p>
+          <details class="tletter"><summary>Letter ready${p.letter.engine === 'openai' ? ', drafted with OpenAI' : p.letter.error ? ', from the template (the OpenAI call failed)' : i >= 3 ? ', from the template (OpenAI drafts the top 3)' : ', from the template'}</summary>
+            <label class="sr" for="pick-${i}">Letter for ${esc(p.artist)} and ${esc(p.title)}</label>
+            <textarea id="pick-${i}" data-pick="${i}" rows="12">${esc(p.letter.text)}</textarea>
+            <div class="works-actions">${pitchFor(p.artist, p.id) ? `<span class="st go">Pitched ${sentDay(pitchFor(p.artist, p.id))}</span>` : `<button class="btn primary" data-add-pick="${i}">Add to outbox</button>`}<a class="btn quiet" data-mail-pick="${i}" href="${esc(mailtoFor(p.letter.text))}">Open in email app</a></div>
+          </details>
+        </div>
+        <span class="tscore"><b>Top ${p.topPct}%</b><span>card score</span></span>
+      </li>`).join('')}</ol>` : `<p class="empty-side">No letters today. Side B says why for each artist.</p>`;
+
+  const bTracks = sideB.length ? `<h2 class="side">Side B · not pitching today</h2><ol class="tracks b">${sideB.map((a, i) => `
+      <li class="track">
+        <span class="tno">B${i + 1}</span>
+        <div class="tmain"><h3>${esc(a.name)}</h3><p class="twhy">${esc(a.status === 'scored' ? a.why : a.why)}</p></div>
+        <span class="tscore">${a.best ? `<b>Top ${a.best.topPct}%</b><span>best window</span>` : '<span>not ranked</span>'}</span>
+      </li>`).join('')}</ol>` : '';
+
+  const notes = `<h2 class="side">Liner notes · every artist you added</h2><div class="notes-grid">${r.artists.map((a) => `
+      <section class="lnote" aria-label="${esc(a.name)}">
+        <h4>${esc(a.name)} <span>${a.status !== 'scored' ? '' : a.inPool ? 'in our 3,000-artist pool' : 'scored on request'}</span></h4>
+        ${a.status !== 'scored' ? `<p class="twhy">${esc(a.why)}</p>` : `
+        <dl>
+          <dt>Quiet</dt><dd>${worksQuiet(a)}</dd>
+          <dt>Best window</dt><dd>${a.best ? `${esc(a.best.title)}, top ${a.best.topPct}% <span class="src">(No. ${num(a.best.affinityRank)} by ${esc(a.best.earlier)} fans’ affinity)</span>` : '<span class="src">Qloo has too little data</span>'}</dd>
+          <dt>Clearance</dt><dd>${a.clearance.category === 'unconfirmed' ? 'Unconfirmed' : esc(a.clearance.label)} <span class="src">${esc(shareLine(a))}</span></dd>
+          <dt>Today</dt><dd>${a.letters ? `<span class="st go">${a.letters} letter${a.letters === 1 ? '' : 's'}</span>` : esc(a.why)}</dd>
+        </dl>
+        <details class="wdoors"><summary>All ${a.doors.length} windows</summary><ul>${a.doors.map((d) => `<li><strong>${esc(d.title)}</strong> ${d.topPct ? `top ${d.topPct}%` : 'not ranked'}: ${d.action === 'letter' ? '<span class="st go">letter</span>' : esc(d.reason)}</li>`).join('')}</ul></details>`}
+      </section>`).join('')}</div>`;
+
+  el.innerHTML = `<div class="sleeve">
+    <div class="sleeve-head"><div>
+      <h1 class="headline display">${title}</h1>
+      <p class="what">${summary}</p>
+      <p class="scanline"><span class="catno">${sideLabel(r.scannedAt)} · last scanned ${fmtTime(r.scannedAt)}</span><button class="btn link" id="works-edit" aria-expanded="false" aria-controls="works-editor">Edit the list</button></p>
+    </div>${DISC}</div>
+    <div id="works-status" aria-live="polite"></div>
+    <div id="works-editor" hidden>${worksForm(w.list, true)}</div>
+    ${sideA}${bTracks}${notes}</div>`;
+  el.querySelectorAll('[data-add-pick]').forEach((b) => b.addEventListener('click', () => addPickToOutbox(Number(b.dataset.addPick))));
+  el.querySelectorAll('textarea[data-pick]').forEach((ta) => ta.addEventListener('input', () => {
+    const i = Number(ta.dataset.pick); const cur = works(); cur.result.picks[i].letter.text = ta.value; saveWorks(cur);
+    el.querySelector(`[data-mail-pick="${i}"]`).href = mailtoFor(ta.value);
+  }));
+  el.querySelectorAll('[data-mail-pick]').forEach((a) => a.addEventListener('click', () => toast('Opening your email app. Sleeper Hit does not send anything itself.')));
+  $('#works-edit').addEventListener('click', (e) => { const ed = $('#works-editor'); ed.hidden = !ed.hidden; e.target.setAttribute('aria-expanded', String(!ed.hidden)); if (!ed.hidden) $('#works-input').focus(); });
+  bindWorksForm();
+}
+
+function bindWorksForm() {
+  const err = (m) => { const e = $('#works-error'); if (e) e.textContent = m; if (m) $('#works-input')?.setAttribute('aria-invalid', 'true'); else $('#works-input')?.removeAttribute('aria-invalid'); };
+  $('#works-clear')?.addEventListener('click', (e) => { $('#works-input').value = ''; err(''); e.target.remove(); $('#works-input').focus(); });
+  $('#works-form')?.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const list = parseCatalogue($('#works-input').value);
+    if (!list.length) { err('Add at least one artist name, one per line.'); $('#works-input').focus(); return; }
+    if (list.length > 10) { err(`Up to 10 artists per scan. This list has ${list.length}; remove ${list.length - 10}.`); $('#works-input').focus(); return; }
+    err('');
+    scanWorks(list);
+  });
+}
+
+async function scanWorks(list) {
+  const status = $('#works-status');
+  const btn = $('#header-run');
+  if (btn) { btn.disabled = true; btn.textContent = 'Scanning…'; }
+  const go = $('#works-go');
+  if (go) { go.disabled = true; go.textContent = 'Scoring…'; }
+  $('#tab-works .disc')?.classList.add('spinning');
+  if (status) status.innerHTML = `<p class="progress">Scoring ${list.length} artist${list.length === 1 ? '' : 's'} against every open window. Checking Wikipedia and MusicBrainz for each one can take up to a minute.</p>`;
+  try {
+    const result = await api('/api/works/scan', { method: 'POST', body: { artists: list } });
+    saveWorks({ list, result });
+    renderWorks();
+    toast(`Scanned. ${result.left.visitor} artist analyses left today.`);
+  } catch (e) {
+    saveWorks({ ...works(), list });
+    if ($('#works-status')) $('#works-status').innerHTML = `<p class="error" role="alert">${esc(e.message)}</p>`;
+    else toast(e.message);
+    if (go) { go.disabled = false; go.textContent = 'Score my catalogue'; }
+    $('#tab-works .disc')?.classList.remove('spinning');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Re-scan works'; }
+  }
+}
+
+function addPickToOutbox(i) {
+  const w = works();
+  const p = w.result.picks[i];
+  const key = 'works:' + p.artist.toLowerCase();
+  const sent = pitchFor(p.artist, p.id);
+  if (sent) { toast(`Already pitched ${p.artist} for ${p.title} on ${sentDay(sent)}. Not added again.`); return; }
+  const list = outbox();
+  const existing = list.find((l) => sameName(l.artistName, p.artist) && l.doorId === p.id && l.status !== 'sent');
+  if (existing) Object.assign(existing, { text: p.letter.text });
+  else list.push({
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), artistKey: key, artistName: p.artist,
+    doorId: p.id, title: p.title, recipient: p.recipient, text: p.letter.text, song: p.song || null,
+    deadline: p.date, addedOn: w.result.today, status: 'ready', sentAt: null, used: 'unknown',
+  });
+  saveOutbox(list);
+  renderCount();
+  toast(`${existing ? 'Updated in' : 'Added to'} outbox: ${p.artist} for ${p.title}.`);
+}
+
 function renderCount() {
   const open = outbox().filter((l) => l.status !== 'sent').length;
   $('#outbox-count').textContent = open ? String(open) : '';
@@ -296,7 +490,7 @@ const OUTCOMES = [['unknown', 'No reply yet'], ['passed', 'Passed'], ['hold', 'O
 
 function renderOutbox() {
   const el = $('#tab-outbox');
-  const note = '<p class="note-store">Saved in this browser only. Nothing is emailed, and the server keeps no copy.</p>';
+  const note = '<p class="note-store">Saved in this browser only; the server keeps no copy. Sleeper Hit never sends email itself: “Open in email app” opens a filled-in draft in your own email program, and you send it.</p>';
   const list = [...outbox()].sort((a, b) => (a.status === 'sent') - (b.status === 'sent') || String(a.deadline).localeCompare(String(b.deadline)));
   if (!list.length) { el.innerHTML = '<p class="empty">No letters yet. Add one from Today. Up to three a day per artist.</p>' + note; return; }
   const sent = list.filter((l) => l.status === 'sent');
@@ -310,9 +504,10 @@ function renderOutbox() {
         ${l.status === 'sent'
           ? `<span class="status-sent">Sent ${new Date(l.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
              <label class="used">Outcome <select data-used>${OUTCOMES.map(([v, t]) => `<option value="${v}"${l.used === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label>`
-          : `<button class="btn primary" data-send>Copy and mark sent</button><button class="btn quiet" data-remove>Remove</button>`}
+          : `<button class="btn quiet" data-copy>Copy letter</button><button class="btn quiet" data-send>Mark sent</button><button class="btn link" data-remove>Remove</button>`}
       </div>
       <div class="sub">${l.deadline ? `Window date ${fmtDate(l.deadline)}${l.deadline.length === 10 ? `, ${days(l.deadline)} days left` : ''}` : ''}</div>
+      <div class="mailrow"><label>Send to <input type="email" data-to value="${esc(l.to || '')}" placeholder="Their address (optional)" autocomplete="off"></label><a class="btn quiet" data-mail href="${esc(mailtoFor(l.text, l.to))}">Open in email app</a></div>
       <details><summary>Edit letter</summary><textarea data-text>${esc(l.text)}</textarea></details>
     </div>`).join('')}</div>`;
   el.querySelectorAll('.row').forEach((row) => {
@@ -327,14 +522,23 @@ function renderOutbox() {
       renderOutbox();
       if (msg) toast(msg);
     };
-    row.querySelector('[data-send]')?.addEventListener('click', async () => {
-      const text = row.querySelector('[data-text]').value;
-      try { await navigator.clipboard.writeText(text); } catch { /* clipboard may be blocked */ }
-      patch({ status: 'sent', sentAt: new Date().toISOString(), text }, 'Copied. Marked as sent.');
+    row.querySelector('[data-copy]')?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(row.querySelector('[data-text]').value); toast('Copied. Mark it sent once you have sent it.'); } catch { toast('Copy was blocked by the browser. Open "Edit letter" and copy it there.'); }
+    });
+    row.querySelector('[data-send]')?.addEventListener('click', () => {
+      patch({ status: 'sent', sentAt: new Date().toISOString(), text: row.querySelector('[data-text]').value }, 'Marked as sent. Track the outcome here.');
     });
     row.querySelector('[data-remove]')?.addEventListener('click', () => { saveOutbox(outbox().filter((x) => x.id !== id)); renderCount(); renderOutbox(); });
     row.querySelector('[data-used]')?.addEventListener('change', (e) => patch({ used: e.target.value }, 'Saved.'));
     row.querySelector('[data-text]')?.addEventListener('change', (e) => patch({ text: e.target.value }, 'Letter saved.'));
+    const mail = row.querySelector('[data-mail]');
+    const syncMail = () => { mail.href = mailtoFor(row.querySelector('[data-text]').value, row.querySelector('[data-to]').value); };
+    row.querySelector('[data-to]').addEventListener('input', syncMail);
+    row.querySelector('[data-text]').addEventListener('input', syncMail);
+    row.querySelector('[data-to]').addEventListener('change', (e) => {
+      const all = outbox(); const l = all.find((x) => x.id === id); if (l) { l.to = e.target.value.trim(); saveOutbox(all); }
+    });
+    mail.addEventListener('click', () => toast(`Opening your email app. Mark it sent here once you send it.`));
   });
 }
 
@@ -387,7 +591,7 @@ function renderTrust() {
   const ci = (o, f = sgn) => (o ? `${f(o.value)} [${f(o.lo)}, ${f(o.hi)}]` : '–');
   const sch = t.scoreChange;
   const bars = b ? (() => {
-    const rows = [['qlooBlend', 'Qloo card score'], ['llm', 'LLM only'], ['similarTitles', 'What similar titles used'], ['popularity', 'Popularity']];
+    const rows = [['qlooBlend', 'Qloo card score'], ['qlooRaw', 'Qloo raw affinity (did not clear)'], ['qlooTimesPop', 'Qloo affinity x popularity (did not clear)'], ['llm', 'LLM only'], ['similarTitles', 'What similar titles used'], ['popularity', 'Popularity']].filter(([k]) => ov.hits[k]);
     const max = Math.max(...rows.map(([k]) => ov.hits[k].value));
     return `<div class="bars" role="img" aria-label="Sequel artists found in the top 50">${rows.map(([k, label]) => `<div class="barrow${k === 'qlooBlend' ? ' lead' : ''}"><span class="barlabel">${label}</span><span class="bartrack"><span class="barfill" style="width:${(ov.hits[k].value / max) * 100}%"></span></span><span class="barval">${n0(ov.hits[k].value)} <span class="of">of ${b.positives}</span></span></div>`).join('')}</div>`;
   })() : '';
@@ -395,7 +599,7 @@ function renderTrust() {
   const backtest = b ? `
     <p class="claim">On ${b.pairsScored} sequels already out, the earlier title's Qloo audience rank, averaged with popularity, put the artists each sequel went on to use higher than popularity alone or an LLM did. Audience rank alone pointed the same way but did not clear our bar.</p>
 <p class="story">One of 12 sequels where the card score found an artist that neither popularity nor the LLM did: the soundtrack of <em>Guardians of the Galaxy Vol. 2</em> includes Fleetwood Mac, and ranked from the first film's Qloo audience, Fleetwood Mac was in our top 50 of about 3,000 artists. Qloo's data is today's, so fans of the first film have also seen Vol. 2. That bias favours Qloo; the sealed forecast is the clean test.</p>
-    <p class="sub">Sequel artists found in each method's top 50, summed over ${b.pairsScored} sequels (${b.positives} to find).</p>
+    <p class="sub">Sequel artists found in each method's top 50, summed over ${b.pairsScored} sequels (${b.positives} to find). Raw affinity and affinity x popularity found more (${n0(ov.hits.qlooRaw?.value)} each) but did not clear the registered bar: raw affinity missed both parts, and affinity x popularity cleared the AUC part but not the hits-over-the-LLM part. The card score is the only Qloo use that cleared both (table below).</p>
     ${bars}
     <ul class="wins">
       <li><strong>Famous artists, the ones this tool pitches.</strong> Every top-50 hit of the card score and of the LLM was in the most popular third of the pool, which holds the 500 artists the selection rule picks from (The Clash is No. 109). Within that third, the card score also beat popularity by ${ci(hi?.aucMinusPopularity)} AUC.</li>
@@ -484,7 +688,7 @@ function renderTrust() {
     <details class="sec"><summary>Does Qloo add something popularity cannot? (key-day check)</summary>${premise}</details>
     <details class="sec"><summary>Rules</summary>
       <p>Pool: ${esc(t.pool.rule)} N = ${Number(t.pool.n).toLocaleString('en-US')}.</p>
-      <p>Card score (since Oct 23, after the backtest): with the earlier title as the Qloo signal, rank the pool by affinity and by popularity, average the two ranks, break ties by affinity. Cards show the result as "top X%" of the pool. The agent knocks only inside the top ${100 - rr.minPercentile}% (top 50% until Oct 24; now the same bar as the artist selection rule). Until Oct 23 the card showed excess affinity, the affinity percentile among the 100 artists closest in popularity.</p>
+      <p>Card score (since Oct 23, after the backtest): with the earlier title as the Qloo signal, rank the pool by affinity and by popularity, average the two ranks, break ties by affinity. Cards show the result as "top X%" of the pool. The agent knocks only inside the top ${100 - rr.minPercentile}% (top 50% until Oct 24; now the same bar as the artist selection rule). Since Oct 28 it also needs the audience's own top ${Math.round((rr.affinityTopShare || 0.2) * 100)}% by affinity, so popularity cannot carry a letter alone; that floor was added after review and is not part of the backtest. Until Oct 23 the card showed excess affinity, the affinity percentile among the 100 artists closest in popularity.</p>
       <p>What each window pitches for: games, the launch trailer and TV spots (in-game music is licensed long before release); films, the first trailer, estimated ${rr.trailerLead.live} days before release for live action and ${rr.trailerLead.animation} for animation (Stephen Follows' averages); series, the episodes, treated as locked within ${rr.seriesLockDays} days of the premiere. ${rr.minDays} to ${rr.maxDays} days out is the best window for trailers and launches.</p>
       <p>Order: an artist that is not quiet gets no letters. Then clearance, then timing (announced dates before estimates), then the card score, then audience overlap. At most ${rr.dailyCap} letters a day per artist. Letters mention audience overlap only at ${Math.round(rr.overlapStrong * 100)}% or more. A person can knock anyway on any skipped window; that choice is logged.</p>
     </details>
@@ -496,14 +700,18 @@ function renderTrust() {
 }
 
 function setTab(tab) {
+  if (!['today', 'roster', 'works', 'outbox', 'trust'].includes(tab)) tab = 'today';
   ui.tab = tab;
+  document.body.dataset.tab = tab;
   const nextUrl = new URL(location.href); nextUrl.searchParams.set('tab', tab); history.replaceState(null, '', nextUrl);
   document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
-  for (const name of ['today', 'roster', 'outbox', 'trust', 'works']) $(`#tab-${name}`).hidden = name !== tab;
-  if (tab === 'works' || tab === 'roster') window.dispatchEvent(new CustomEvent('portfolio-tab', { detail: tab }));
-  if (tab === 'outbox' && ui.data) renderOutbox();
+  for (const name of ['today', 'roster', 'works', 'outbox', 'trust']) $(`#tab-${name}`).hidden = name !== tab;
+  if (tab === 'outbox') renderOutbox();
   if (tab === 'roster') loadRoster();
+  if (tab === 'works') renderWorks();
   if (tab === 'trust') { renderTrust(); if (!ui.trust) loadTrust(); }
+  window.scrollTo({ top: 0 });
+  $('#toast').hidden = true;
 }
 
 async function loadRoster() {
@@ -518,7 +726,9 @@ function renderRoster() {
   $('#tab-roster').innerHTML = `
     <h1 class="headline">Your roster, window by window</h1>
     <p class="what">Each open window ranks artists by the card score: the earlier title's Qloo audience rank averaged with popularity. Only quiet artists with confirmed clearance get letters. ${r.letters} letter${r.letters === 1 ? '' : 's'} today for the ${r.artists} demo artists.</p>
-    <p class="quietline">Without Qloo's audience signal (popularity alone), ${r.withoutQloo.changed} of ${r.withoutQloo.decisions} decisions today would change${r.withoutQloo.changes.length ? `: ${r.withoutQloo.changes.map(esc).join('; ')}` : ''}.</p>
+    <p class="pull">Without Qloo’s audience signal, ${r.withoutQloo.changed} of today’s ${r.withoutQloo.decisions} decisions would change.</p>
+    <p class="quietline">Most of the ${r.withoutQloo.decisions} are settled before Qloo counts, because 4 of the 5 demo artists are not quiet. The ones that change, on popularity alone:</p>
+    ${r.withoutQloo.changes.length ? `<ul class="changes">${r.withoutQloo.changes.map((c) => `<li>${esc(c.replace(': no letter with Qloo, letter on popularity alone', ''))}: <span class="src">a letter on popularity alone, none with Qloo</span></li>`).join('')}</ul>` : ''}
     <div class="windows">${r.windows.map((w) => `
       <div class="win">
         <div class="win-head"><h2>${esc(w.title)}</h2><span class="src">${esc(w.use)} ${esc(w.timing.event)} ${fmtDate(w.timing.date)}, ${esc(w.timing.dateStatus)}.${w.timing.bucket !== 'in-window' ? ` ${esc(w.timing.reason.charAt(0).toUpperCase() + w.timing.reason.slice(1))}.` : ''}</span></div>
@@ -529,11 +739,10 @@ function renderRoster() {
           <p class="src">${r.scan.quiet} of the ${r.scan.famous} most popular artists in the pool were quiet catalogue acts. Clearance for these is not entered yet, so no letters.</p>
           <ol>${w.scan.byScore.map((x) => `<li><strong>${esc(x.name)}</strong> <span class="src">top ${x.topPct}%, No. ${num(x.affinityRank)} by ${esc(w.earlier)} fans' affinity${x.year ? `, last studio album ${esc(x.year)}` : ''}</span></li>`).join('')}</ol>
           <p class="src">By popularity alone the first five would be ${w.scan.byPop.map(esc).join(', ')}.</p></div>` : ''}
-    </div>`).join('')}</div><div id="roster-opportunities"></div>`;
+    </div>`).join('')}</div>`;
   $('#tab-roster').querySelectorAll('[data-artist]').forEach((b) => b.addEventListener('click', () => {
     ui.artist = b.dataset.artist; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; setTab('today'); load();
   }));
-  window.dispatchEvent(new CustomEvent('roster-ready'));
 }
 
 async function loadTrust() {
@@ -550,7 +759,6 @@ async function load() {
     renderModes();
     renderCount();
     renderToday();
-    window.dispatchEvent(new CustomEvent('today-ready'));
     if (ui.tab === 'outbox') renderOutbox();
   } catch (e) {
     const hint = location.protocol === 'file:' ? 'Run `npm start`, then open http://localhost:3000/ instead of opening public/index.html directly.' : e.message;
@@ -558,18 +766,9 @@ async function load() {
   }
 }
 
-window.addEventListener('portfolio-refresh', () => {
-  ui.roster = null;
-  load();
-});
-
 $('#artist')?.addEventListener('change', (e) => { ui.artist = e.target.value; localSet('artist', ui.artist); ui.selected = null; ui.edits = {}; ui.songs = {}; load(); });
 document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
+$('#header-run')?.addEventListener('click', () => { setTab('works'); if (works().list.length) scanWorks(works().list); });
+renderWorksCount();
 setTab(ui.tab);
 load();
-
-const accountButton = $('#account');
-const accountMenu = $('#account-menu');
-if (accountButton && accountMenu) { $('#account-email').textContent = localGet('accountEmail') || 'you@example.com'; accountButton.addEventListener('click', () => { const open = accountMenu.hidden; accountMenu.hidden = !open; accountButton.setAttribute('aria-expanded', String(open)); }); document.addEventListener('click', (event) => { if (!event.target.closest('.account-control')) { accountMenu.hidden = true; accountButton.setAttribute('aria-expanded', 'false'); } }); }
-$('#header-run')?.addEventListener('click', async () => { const button = $('#header-run'); button.disabled = true; button.textContent = 'Running…'; try { const response = await fetch(`${API_BASE}/api/portfolio/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' } }); if (!response.ok) throw Error('Could not update opportunities'); window.dispatchEvent(new CustomEvent('portfolio-refresh')); toast('New opportunities and match scores updated'); } catch (error) { toast(error.message); } finally { button.disabled = false; button.textContent = 'Run'; } });
-$('#header-gear')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('schedule-settings')));

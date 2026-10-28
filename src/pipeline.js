@@ -33,7 +33,7 @@ async function poolAffinity(client, signalId, pool) {
   return client.poolAffinity.get(signalId);
 }
 
-async function sharedPool(client) {
+export async function sharedPool(client) {
   client.pool ??= client.buildPool(config.poolN);
   client.pool.catch(() => { client.pool = null; });
   return client.pool;
@@ -45,7 +45,18 @@ async function sharedPool(client) {
 export async function scoreArtist(client, artistKey, today) {
   const artist = ARTISTS[artistKey];
   if (!artist) throw new Error(`Unknown artist ${artistKey}`);
-  const entity = await client.resolve({ query: artist.name, type: ARTIST });
+  return scoreRecord(client, artist, today);
+}
+
+// The same scoring for any artist record ({ key, name, wikipedia?, songs, clearance, royaltyStatements? }).
+// Today uses it for the demo artists; Works uses it for a viewer's own catalogue. Options:
+//   entity        an already-resolved Qloo artist ({ id, name, popularity, wikidata }), e.g. a pool member,
+//                 so no /search call is made
+//   demographics  false skips the age-and-gender request (a tie-break only); Works sets it to false
+//                 so artists in the cached pool need no new Qloo call
+export async function scoreRecord(client, artist, today, { entity = null, demographics = true } = {}) {
+  const artistKey = artist.key;
+  entity ??= await client.resolve({ query: artist.name, type: ARTIST });
   const pool = await sharedPool(client);
   const inPool = pool.some((a) => a.id === entity.id);
   const universe = inPool ? pool : [...pool, { id: entity.id, name: entity.name, popularity: entity.popularity }];
@@ -56,7 +67,7 @@ export async function scoreArtist(client, artistKey, today) {
   const signals = [];
   for (const w of WINDOWS.filter((x) => x.card)) {
     const timing = evaluateTiming(w, today);
-    let pct = null, signalId = null, blend = null;
+    let pct = null, signalId = null, blend = null, audienceTop = [];
     try {
       const sig = await client.resolve({ query: w.earlier.query, type: w.earlier.type, name: w.earlier.name || w.earlier.query, year: w.earlier.year });
       signalId = sig.id;
@@ -69,15 +80,17 @@ export async function scoreArtist(client, artistKey, today) {
       }
       const b = blendRanks(universe, aff).get(entity.id);
       if (b) { pct = b.pct; blend = { rank: b.rank, affinityRank: b.affinityRank, popularityRank: b.popularityRank, of: b.n }; }
+      // Who else this audience ranks highest (names only), to put the rank in context.
+      audienceTop = universe.filter((a) => aff.has(a.id)).sort((x, y) => aff.get(y.id) - aff.get(x.id)).slice(0, 5).map((a) => a.name);
     } catch (e) {
       warnings.push(`${w.title}: ${e.message}`);
     }
-    doors.push({ id: w.id, window: publicWindow(w), signalId, recipient: RECIPIENTS[w.kind], timing, clearance, pct, topPct: topPercent(pct), blend, overlap: null });
+    doors.push({ id: w.id, window: publicWindow(w), signalId, recipient: RECIPIENTS[w.kind], timing, clearance, pct, topPct: topPercent(pct), blend, audienceTop, overlap: null });
   }
 
   // Second signal: demographics of each earlier title vs the artist (one request).
   let demographicsOk = false;
-  try {
+  if (demographics) try {
     const demo = await client.demographics([entity.id, ...new Set(signals)]);
     const mine = demo.get(entity.id);
     for (const d of doors) {
@@ -110,6 +123,7 @@ export async function scoreArtist(client, artistKey, today) {
 
   return {
     artistKey,
+    record: artist,
     today,
     poolSize: universe.length,
     quiet: { quiet: quiet.quiet, basis: quiet.basis, detail: quiet.detail, page: quiet.page || null, ratio: quiet.ratio ?? null, peakRatio: quiet.peakRatio ?? null, peakMonth: quiet.peakMonth || null, window: quiet.window || null, noWake: quiet.noWake ?? null, notRising: quiet.notRising ?? null, pageviewsQuiet: quiet.pageviewsQuiet ?? null, catalogue: quiet.catalogue || null },
@@ -170,7 +184,7 @@ export function manualRecord(artist, manual) {
 }
 
 export function decideArtist(scored, { overrides = new Set(), manual = null } = {}) {
-  const artist = ARTISTS[scored.artistKey];
+  const artist = scored.record || ARTISTS[scored.artistKey];
   const record = manualRecord(artist, manual);
   const clearance = classifyClearance(record);
   const q = scored.quiet;
@@ -182,7 +196,7 @@ export function decideArtist(scored, { overrides = new Set(), manual = null } = 
     poolSize: scored.poolSize,
     quiet: scored.quiet,
     demographicsOk: scored.demographicsOk,
-    doors: decided.map(({ signalId, pct, ...d }) => ({ ...d, pctRounded: pct === null ? null : Math.round(pct) })),
+    doors: decided.map(({ signalId, pct, popularityOnly: _p, ...d }) => ({ ...d, pctRounded: pct === null ? null : Math.round(pct) })),
     warnings: scored.warnings,
   };
 }
@@ -208,7 +222,7 @@ export const normName = (s) => String(s).toLowerCase().normalize('NFKD').replace
 export function popularityOnly(scored) {
   return {
     ...scored,
-    doors: scored.doors.map((d) => (d.blend ? { ...d, pct: (100 * (d.blend.of - (d.blend.popularityRank - 1) - 0.5)) / d.blend.of } : d)),
+    doors: scored.doors.map((d) => (d.blend ? { ...d, popularityOnly: true, pct: (100 * (d.blend.of - (d.blend.popularityRank - 1) - 0.5)) / d.blend.of } : d)),
   };
 }
 

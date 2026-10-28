@@ -172,3 +172,18 @@ test('timing: a final season does not suggest a next season', () => {
   assert.equal(t.bucket, 'too-late');
   assert.doesNotMatch(t.reason, /next season/);
 });
+
+test('affinity floor: a letter also needs the audience’s own top 20% by affinity; the popularity-only comparison has no floor', async () => {
+  const { AFFINITY_TOP_SHARE } = await import('../src/agent.js');
+  assert.equal(AFFINITY_TOP_SHARE, 0.2);
+  const strong = { ...door('a', 'cover', 'in-window', 95), blend: { rank: 30, affinityRank: 1, popularityRank: 109, of: 2992 } };
+  const weak = { ...door('b', 'cover', 'in-window', 93), blend: { rank: 200, affinityRank: 1095, popularityRank: 47, of: 2992 }, window: { earlier: { label: 'Sonic the Hedgehog 3' } } };
+  const out = decide([strong, weak]);
+  assert.equal(out.find((d) => d.id === 'a').action, 'letter');
+  const b = out.find((d) => d.id === 'b');
+  assert.equal(b.action, 'skip');
+  assert.match(b.reason, /Popularity carries this one: Sonic the Hedgehog 3 fans rank them only No\. 1,095 of 2,992 by affinity/);
+  const edge = { ...door('c', 'cover', 'in-window', 90), blend: { rank: 100, affinityRank: Math.ceil(2992 * 0.2), popularityRank: 10, of: 2992 } };
+  assert.equal(decide([edge])[0].action, 'letter', 'exactly at the floor still knocks');
+  assert.equal(decide([{ ...weak, popularityOnly: true }])[0].action, 'letter', 'popularity-only comparison is not floored');
+});

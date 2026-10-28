@@ -17,67 +17,24 @@ import { scoreArtist, decideArtist, windowRanks, popularityOnly, normName } from
 import { SCAN } from './src/data/sleepers.js';
 import { draftLetter, letterFacts, OVERLAP_STRONG } from './src/letter.js';
 import { evaluateTiming, TRAILER_LEAD_DAYS, MIN_DAYS, MAX_DAYS, SERIES_LOCK_DAYS } from './src/timing.js';
-import { DAILY_CAP, MIN_PERCENTILE } from './src/agent.js';
+import { DAILY_CAP, MIN_PERCENTILE, AFFINITY_TOP_SHARE } from './src/agent.js';
 import { QUIET_RULE, CATALOGUE_RULE } from './src/quiet.js';
 import { TOP_K } from './src/evaluate.js';
+import { scoreWorks, parseWorksRequest, DailyLimiter, WORKS_MAX_ARTISTS } from './src/works.js';
 
 const client = new QlooClient();
 const scores = new Map(); // `${artist}|${date}` -> Promise<scored>
 const drafts = new Map(); // draft cache
+const worksLimiter = new DailyLimiter(); // per-visitor and site-wide daily caps for Works scans
 
-// Portfolio data is local app state. It is independent of the original Today/Roster workflow.
-const PORTFOLIO_FILE = path.join(config.privateDir, 'portfolio.json');
-const PORTFOLIO_DEFAULT = { works: [], matches: [], history: [], schedule: { enabled: false, frequency: 'weekly', time: '09:00', weekday: '1', categories: ['Competition', 'Film', 'TV', 'Game'], lastRunAt: null }, lastScanAt: null };
-function rosterPortfolioWorks() {
-  return Object.values(ARTISTS).flatMap((artist) => artist.songs.map((title, index) => ({ id: `roster-${artist.key}-${index}`, title, artist: artist.name, kind: 'music', format: 'song', source: artist.sources?.[0] || '', year: '', status: 'pending', qloo: null, addedAt: new Date().toISOString(), updatedAt: new Date().toISOString() })));
+// The visitor's address: a CDN-set header if present, else the first X-Forwarded-For entry (hosts like
+// Render put the app behind a proxy). A forged header only moves a visitor to another per-visitor
+// bucket; the site-wide daily cap still holds.
+function clientIp(req) {
+  const h = req.headers;
+  const ip = h['cf-connecting-ip'] || h['true-client-ip'] || String(h['x-forwarded-for'] || '').split(',')[0];
+  return String(ip || req.socket.remoteAddress || 'unknown').trim();
 }
-function portfolioRead() {
-  let data;
-  try { data = JSON.parse(fs.readFileSync(PORTFOLIO_FILE, 'utf8')); } catch { data = structuredClone(PORTFOLIO_DEFAULT); }
-  if (!Array.isArray(data.works) || data.works.length === 0) { data.works = rosterPortfolioWorks(); portfolioWrite(data); }
-  return data;
-}
-function portfolioWrite(data) { fs.mkdirSync(config.privateDir, { recursive: true }); fs.writeFileSync(PORTFOLIO_FILE, JSON.stringify(data, null, 2)); return data; }
-const portfolioKind = (kind) => ({ music: 'music', film: 'film', tv: 'tv', game: 'game' }[kind] || 'music');
-const qlooTypeForWork = (work) => work.kind === 'film' ? 'urn:entity:movie' : work.kind === 'tv' ? 'urn:entity:tv_show' : work.kind === 'game' ? 'urn:entity:videogame' : 'urn:entity:artist';
-const opportunityType = (kind) => kind === 'film' ? 'Film' : kind === 'series' ? 'TV' : kind === 'game' ? 'Game' : kind;
-function portfolioOpportunities(categories = ['Competition', 'Film', 'TV', 'Game']) {
-  return [...WINDOWS.filter((w) => w.release || w.releaseMonth).map((w) => ({ id: w.id, title: `${w.title}${w.season ? ` ${w.season}` : ''}`, type: opportunityType(w.kind), deadline: w.release || `${w.releaseMonth}-01`, source: w.sources?.[0] || '', note: w.note || w.sceneHint || '' })), { id: 'competition-open-call', title: 'Open Call / Music Competition', type: 'Competition', deadline: '', source: '', note: 'Add a source URL or feed when you connect a competition provider.' }].filter((opportunity) => categories.includes(opportunity.type));
-}
-async function analyzePortfolio() {
-  const data = portfolioRead();
-  for (const work of data.works) {
-    try {
-      const query = work.kind === 'music' ? (work.artist || work.title) : work.title;
-      const hit = (await client.search(query, qlooTypeForWork(work), 5))[0];
-      const category = work.kind === 'music' ? 'Music' : work.kind === 'film' ? 'Film' : work.kind === 'tv' ? 'TV' : work.kind === 'game' ? 'Game' : 'Other';
-      const tags = hit ? await client.tasteTags(hit.id, 5).catch(() => []) : [];
-      work.qloo = { matchedName: hit?.name || null, entityId: hit?.id || null, confidence: hit ? 0.86 : 0.25, dimensions: { category, audience: tags.map((tag) => tag.name), taste: tags.map((tag) => tag.name), eraMood: tags.map((tag) => tag.name) } };
-      work.status = hit ? 'analyzed' : 'needs-review'; work.updatedAt = new Date().toISOString();
-    } catch (error) { work.status = 'needs-review'; work.qloo = { error: error.message, confidence: 0, dimensions: { category: work.kind || 'Other' } }; }
-  }
-  data.lastScanAt = new Date().toISOString();
-  const opportunities = portfolioOpportunities(data.schedule?.categories);
-  for (const opportunity of opportunities) {
-    const source = WINDOWS.find((window) => window.id === opportunity.id);
-    const type = source?.earlier?.type || (opportunity.type === 'Film' ? 'urn:entity:movie' : opportunity.type === 'TV' ? 'urn:entity:tv_show' : opportunity.type === 'Game' ? 'urn:entity:videogame' : null);
-    const hit = type ? (await client.search(source?.earlier?.query || opportunity.title, type, 5).catch(() => []))[0] : null;
-    const tags = hit ? await client.tasteTags(hit.id, 5).catch(() => []) : [];
-    opportunity.qloo = { matchedName: hit?.name || null, entityId: hit?.id || null, tags: tags.map((tag) => tag.name), confidence: hit ? 0.86 : 0 };
-  }
-  const allMatches = opportunities.flatMap((opportunity) => data.works.map((work) => {
-    const workTags = new Set(work.qloo?.dimensions?.taste || []);
-    const opportunityTags = opportunity.qloo?.tags || [];
-    const overlap = opportunityTags.filter((tag) => workTags.has(tag));
-    const score = Math.round(Math.min(99, 55 + overlap.length * 8 + (work.qloo?.confidence || 0) * 10));
-    return { id: `${opportunity.id}:${work.id}`, opportunityId: opportunity.id, workId: work.id, score, reason: overlap.length ? `Qloo tag overlap: ${overlap.join(', ')}` : 'Qloo audience lead', qlooTags: opportunityTags, matchedTags: overlap };
-  }).filter((match) => match.score >= 60));
-  data.matches = opportunities.flatMap((opportunity) => allMatches.filter((match) => match.opportunityId === opportunity.id).sort((a, b) => b.score - a.score).slice(0, 5));
-  data.opportunities = opportunities;
-  data.recommendations = [...(data.recommendations || []), ...data.matches.map((match) => ({ ...match, recommendedAt: data.lastScanAt }))].slice(-500);
-  return portfolioWrite(data);
-}
-function portfolioDue(schedule) { const now = new Date(); const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`; if (!schedule.enabled) return false; if (schedule.frequency === 'hourly') return now.getMinutes() === 0; if (schedule.frequency === 'weekly') return String(now.getDay() || 7) === String(schedule.weekday) && hhmm === schedule.time; return hhmm === schedule.time; }
 
 function getScore(artistKey, date) {
   const k = `${artistKey}|${date}`;
@@ -230,7 +187,7 @@ function trustPayload() {
     pool: { n: config.poolN, bands: config.poolBands, rule: 'The first N artists Qloo returns for popularity 0.9 or higher, most popular first, split into 10 equal popularity bands. Qloo paging skips some very popular artists (Drake, for one), so this is not the complete top N.' },
     rules: {
       trailerLead: TRAILER_LEAD_DAYS, minDays: MIN_DAYS, maxDays: MAX_DAYS, seriesLockDays: SERIES_LOCK_DAYS, dailyCap: DAILY_CAP,
-      minPercentile: MIN_PERCENTILE, quiet: QUIET_RULE, catalogue: CATALOGUE_RULE, overlapStrong: OVERLAP_STRONG, topK: TOP_K,
+      minPercentile: MIN_PERCENTILE, affinityTopShare: AFFINITY_TOP_SHARE, quiet: QUIET_RULE, catalogue: CATALOGUE_RULE, overlapStrong: OVERLAP_STRONG, topK: TOP_K,
     },
     seal: sealFile('hashes.json'),
     results: sealFile('results.json'),
@@ -250,7 +207,7 @@ function trustPayload() {
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
 
 function send(res, status, body, type = 'application/json; charset=utf-8') {
-  res.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' });
+  res.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   res.end(typeof body === 'string' || Buffer.isBuffer(body) ? body : JSON.stringify(body));
 }
 
@@ -263,7 +220,6 @@ async function readJSON(req) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   try {
-    if (req.method === 'OPTIONS') return send(res, 204, '');
     if (url.pathname === '/healthz') return send(res, 200, { ok: true });
     if (url.pathname === '/api/state' && req.method === 'GET') {
       return send(res, 200, await statePayload(artistParam(url.searchParams.get('artist')), viewerOptions(url.searchParams)));
@@ -278,18 +234,15 @@ const server = http.createServer(async (req, res) => {
       if (door.clearance.category === 'unconfirmed') return send(res, 409, { error: 'Clearance is unconfirmed. Confirm who controls the song and recording first.' });
       return send(res, 200, await draftFor(state, door, b.song || null));
     }
-    if (url.pathname === '/api/portfolio' && req.method === 'GET') return send(res, 200, { ...portfolioRead(), opportunities: portfolioRead().opportunities || portfolioOpportunities() });
-    if (url.pathname === '/api/portfolio/import' && req.method === 'POST') {
-      const b = await readJSON(req); const data = portfolioRead(); const items = Array.isArray(b.items) ? b.items : [b];
-      for (const item of items) {
-        if (!item.title && !item.artist) continue;
-        data.works.push({ id: `work-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, title: String(item.title || item.artist).trim(), artist: String(item.artist || '').trim(), kind: portfolioKind(item.kind), format: item.format || 'link', source: item.source || '', year: item.year || '', status: 'pending', qloo: null, addedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
-      }
-      return send(res, 200, portfolioWrite(data));
+    if (url.pathname === '/api/works/scan' && req.method === 'POST') {
+      const parsed = parseWorksRequest(await readJSON(req));
+      if (parsed.error) return send(res, 400, { error: parsed.error });
+      const ip = clientIp(req);
+      const refused = worksLimiter.take(ip, parsed.artists.length);
+      if (refused) return send(res, 429, { error: refused, left: worksLimiter.left(ip) });
+      const out = await scoreWorks(client, parsed.artists, todayISO(), { limiter: worksLimiter });
+      return send(res, 200, { ...out, scannedAt: new Date().toISOString(), mode: { qloo: client.label, letters: config.openaiKey ? 'OpenAI' : 'Template' }, left: worksLimiter.left(ip), limits: { perScan: WORKS_MAX_ARTISTS, perVisitorPerDay: worksLimiter.limits.perIpPerDay } });
     }
-    if (url.pathname === '/api/portfolio/analyze' && req.method === 'POST') return send(res, 200, await analyzePortfolio());
-    if (url.pathname === '/api/portfolio/schedule' && req.method === 'POST') { const b = await readJSON(req); const data = portfolioRead(); data.schedule = { ...data.schedule, ...b }; return send(res, 200, portfolioWrite(data)); }
-    if (url.pathname === '/api/portfolio/history' && req.method === 'POST') { const b = await readJSON(req); const data = portfolioRead(); data.history.unshift({ ...b, id: `submission-${Date.now()}`, updatedAt: new Date().toISOString() }); return send(res, 200, portfolioWrite(data)); }
     if (url.pathname.startsWith('/api/')) return send(res, 404, { error: 'Not found.' });
 
     const rel = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname).replace(/^\/+/, '');
@@ -308,10 +261,3 @@ server.listen(config.port, () => {
   getScore(DEFAULT_ARTIST, todayISO()).then(() => console.log('Warm-up done.')).catch((e) => console.error('Warm-up failed:', e.message));
 });
 
-setInterval(() => {
-  const data = portfolioRead(); const last = data.schedule?.lastRunAt ? new Date(data.schedule.lastRunAt) : null;
-  if (portfolioDue(data.schedule || {}) && (!last || Date.now() - last.getTime() > 55 * 60 * 1000)) {
-    data.schedule.lastRunAt = new Date().toISOString(); portfolioWrite(data);
-    analyzePortfolio().then(() => console.log('Portfolio schedule complete.')).catch((e) => console.error('Portfolio schedule failed:', e.message));
-  }
-}, 60 * 1000);

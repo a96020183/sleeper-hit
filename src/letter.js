@@ -65,6 +65,8 @@ export function templateLetter(f) {
     '',
     f.clearanceLine + ' We can confirm terms within [time frame].',
     '',
+    'Listen: [link]. Instrumental and stems: [available / on request].',
+    '',
     'Best,',
     '[Your name]',
     '[Company]',
@@ -78,6 +80,7 @@ Rules:
 - First line after the greeting: the song and what it is pitched for (pitchFor), then the scene hint if given. Do not invent scenes, trailer contents or past uses beyond the scene hint. If no song is given, write [Song].
 - Second paragraph: one short data reason exactly as given, in plain words. Never add numbers that are not given. Never say the artist will be chosen.
 - Third paragraph: the clearance line as given, plus "We can confirm terms within [time frame]." Do not add any rights claim beyond the clearance line.
+- After the third paragraph keep the line "Listen: [link]. Instrumental and stems: [available / on request]." exactly as given.
 - Keep the "To:" and "Subject:" lines, the greeting "Hi [Name]," and sign off with "Best," then "[Your name]" and "[Company]".`;
 
 export async function draftLetter(facts, { fetchImpl = fetch } = {}) {
