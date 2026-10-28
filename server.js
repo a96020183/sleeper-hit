@@ -40,6 +40,16 @@ function portfolioRead() {
 function portfolioWrite(data) { fs.mkdirSync(config.privateDir, { recursive: true }); fs.writeFileSync(PORTFOLIO_FILE, JSON.stringify(data, null, 2)); return data; }
 const portfolioKind = (kind) => ({ music: 'music', film: 'film', tv: 'tv', game: 'game' }[kind] || 'music');
 const qlooTypeForWork = (work) => work.kind === 'film' ? 'urn:entity:movie' : work.kind === 'tv' ? 'urn:entity:tv_show' : work.kind === 'game' ? 'urn:entity:videogame' : 'urn:entity:artist';
+async function qlooWorkMatch(work) {
+  const type = qlooTypeForWork(work);
+  const workHit = (await client.search(work.title, type, 5).catch(() => []))[0];
+  if (workHit) return { hit: workHit, basis: 'work', confidence: 0.86 };
+  if (work.kind === 'music' && work.artist) {
+    const artistHit = (await client.search(work.artist, type, 5).catch(() => []))[0];
+    if (artistHit) return { hit: artistHit, basis: 'artist-fallback', confidence: 0.55 };
+  }
+  return { hit: null, basis: 'unmatched', confidence: 0 };
+}
 const opportunityType = (kind) => kind === 'film' ? 'Film' : kind === 'series' ? 'TV' : kind === 'game' ? 'Game' : kind;
 function portfolioOpportunities(categories = ['Competition', 'Film', 'TV', 'Game']) {
   return [...WINDOWS.filter((w) => w.release || w.releaseMonth).map((w) => ({ id: w.id, title: `${w.title}${w.season ? ` ${w.season}` : ''}`, type: opportunityType(w.kind), deadline: w.release || `${w.releaseMonth}-01`, source: w.sources?.[0] || '', note: w.note || w.sceneHint || '' })), { id: 'competition-open-call', title: 'Open Call / Music Competition', type: 'Competition', deadline: '', source: '', note: 'Add a source URL or feed when you connect a competition provider.' }].filter((opportunity) => categories.includes(opportunity.type));
@@ -48,11 +58,10 @@ async function analyzePortfolio() {
   const data = portfolioRead();
   for (const work of data.works) {
     try {
-      const query = work.kind === 'music' ? (work.artist || work.title) : work.title;
-      const hit = (await client.search(query, qlooTypeForWork(work), 5))[0];
+      const { hit, basis, confidence } = await qlooWorkMatch(work);
       const category = work.kind === 'music' ? 'Music' : work.kind === 'film' ? 'Film' : work.kind === 'tv' ? 'TV' : work.kind === 'game' ? 'Game' : 'Other';
       const tags = hit ? await client.tasteTags(hit.id, 5).catch(() => []) : [];
-      work.qloo = { matchedName: hit?.name || null, entityId: hit?.id || null, confidence: hit ? 0.86 : 0.25, dimensions: { category, audience: tags.map((tag) => tag.name), taste: tags.map((tag) => tag.name), eraMood: tags.map((tag) => tag.name) } };
+      work.qloo = { matchedName: hit?.name || null, entityId: hit?.id || null, basis, confidence, dimensions: { category, audience: tags.map((tag) => tag.name), taste: tags.map((tag) => tag.name), eraMood: tags.map((tag) => tag.name) } };
       work.status = hit ? 'analyzed' : 'needs-review'; work.updatedAt = new Date().toISOString();
     } catch (error) { work.status = 'needs-review'; work.qloo = { error: error.message, confidence: 0, dimensions: { category: work.kind || 'Other' } }; }
   }

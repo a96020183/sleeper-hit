@@ -23,6 +23,15 @@ const NAMED_ARTISTS = {
   'The Verve': [{ e90: 1, alt: 0.8, rock: 0.6, indie: 0.5 }, 0.9992],
   'Iggy Pop': [{ e70: 1, rock: 1, alt: 0.5 }, 0.9989],
 };
+// Work-level entities keep the portfolio demo honest: a song is queried by its own title first,
+// then falls back to its artist only when no work entity exists in the mock catalogue.
+const MUSIC_WORK_ARTISTS = {
+  'The Magnificent Seven': 'The Clash', 'Rock the Casbah': 'The Clash', 'London Calling': 'The Clash', 'Should I Stay or Should I Go': 'The Clash',
+  'Lucky Man': 'The Verve', "The Drugs Don't Work": 'The Verve', 'Sonnet': 'The Verve', 'Space and Time': 'The Verve',
+  'Lust for Life': 'Iggy Pop', 'The Passenger': 'Iggy Pop',
+  'All Out of Love': 'Air Supply', 'Making Love Out of Nothing at All': 'Air Supply', 'Lost in Love': 'Air Supply', 'Even the Nights Are Better': 'Air Supply', 'The One That You Love': 'Air Supply',
+  'Karma Chameleon': 'Culture Club', 'Do You Really Want to Hurt Me': 'Culture Club', 'Time (Clock of the Heart)': 'Culture Club', 'Church of the Poison Mind': 'Culture Club',
+};
 const TITLES = {
   'Grand Theft Auto V': ['urn:entity:videogame', { e80: 0.8, e70: 0.5, e90: 0.4, hiphop: 0.7, rock: 0.6, soft_rock: 0.5, pop: 0.5, new_wave: 0.4 }, 0.958, '2014-11-18, Rockstar North'],
   'Black Doves': ['urn:entity:tv_show', { e10: 0.6, e20: 0.7, e80: 0.3, indie: 0.8, alt: 0.5, electronic: 0.4, new_wave: 0.3 }, 0.485, '2024'],
@@ -59,6 +68,12 @@ export class MockWorld {
       this.add(name, 'urn:entity:artist', vec(v), pop, name);
     }
     for (const [name, [v, pop]] of Object.entries(NAMED_ARTISTS)) this.add(name, 'urn:entity:artist', vec(v), pop, name);
+    for (const [title, artist] of Object.entries(MUSIC_WORK_ARTISTS)) {
+      const base = { ...(NAMED_ARTISTS[artist]?.[0] || {}) };
+      const workFeature = FEATURES[7 + Math.floor(h(title, 'work') * 10)];
+      base[workFeature] = Math.max(base[workFeature] || 0, 0.85);
+      this.add(title, 'urn:entity:artist', vec(base), 0.75, `${artist} song`);
+    }
     for (const [name, [type, v, pop, dis]] of Object.entries(TITLES)) this.add(name, type, vec(v), pop, dis);
   }
 
