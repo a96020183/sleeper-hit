@@ -177,7 +177,7 @@ Qloo's developer guide says: "Do not store Qloo response data in a public reposi
 - Works sends the server only artist names, plus the viewer's own share and song if given. The server scores them and keeps nothing; the list and the result stay in the viewer's browser (localStorage). The response holds ranks, percentiles, categories and reasons, never entity ids, raw affinity or popularity values, or tags (`test/works.test.js` checks this).
 - The artist strip (`GET /api/artists/summary`) reuses the per-artist runs Today already holds and makes no Qloo call of its own. An artist not scored yet comes back "pending" and is scored in the background with the same run Today would make. The response holds names, letter counts and short labels only (`test/summary.test.js` checks this).
 - Works limits: 10 artists per scan; 30 artist analyses per visitor and 300 for the whole site per day; 120 new Qloo calls a day for artists outside the cached 3,000-artist pool (one `/search` plus one scoring request per open window, 6 today). Pool artists cost no new Qloo call. Over a limit, the API answers with a plain error. Override with `WORKS_IP_DAILY`, `WORKS_SITE_DAILY` and `WORKS_QLOO_DAILY`.
-- The sealed forecast publishes only SHA-256 hashes. The files stay private, optionally encrypted.
+- The sealed forecast publishes only SHA-256 hashes (`seal/hashes.json`). The files stay private and encrypted in `.private/`.
 - `npm run check:public` scans the repo for entity ids, raw affinity or popularity values, raw responses, trending values and keys before publishing.
 
 | File in `seal/` | Holds |
@@ -188,6 +188,7 @@ Qloo's developer guide says: "Do not store Qloo response data in a public reposi
 | `premise.json` | Median correlations and the verdict |
 | `trending-check.json` | Counts of trending series that answered or changed, and dates |
 | `quiet-check.json` | Wikipedia page-view ratios (Wikimedia data, not Qloo) |
+| `hashes.json` | The sealed forecast: seal time, three SHA-256 hashes and the settlement rules (no ranks) |
 
 ## Details
 
@@ -207,7 +208,15 @@ The default demo, **The Clash**, is 9th of the 55 and our pick, not the rule's. 
 
 ### Sealed forecast
 
-- **By Oct 30:** seal. Three SHA-256 hashes (pool list, per-title ranks, baseline predictions) go in `seal/hashes.json` and the submission text, with the settlement rules. The sealed ranking is the card score; `seal/hashes.json` states that this score was chosen after the backtest, why, and what the original score scored.
+- **Sealed Oct 28, 2026, 16:19:33 UTC** (live Qloo data, 3,000-artist pool, 12 titles, all baselines ready). The files stay private and encrypted; the SHA-256 hashes and the settlement rules are public in `seal/hashes.json` and on the Trust tab:
+
+  | File | SHA-256 |
+  |---|---|
+  | Pool list (`pool.json`) | `ace1faf500641079ca9ab4692a555753bdf3b0c39326360074555545001bc5ae` |
+  | Per-title ranks (`ranks.json`) | `1e8f4510c233ad0cc60b5e73766197f3dd91bd3d5df5007f24028f601e356bca` |
+  | Baseline predictions (`baselines.json`) | `db7e2014f5176e06cd0c177c113addfbf005fed5cbb77377bac2112d93cee7b2` |
+
+  The sealed ranking is the card score; `seal/hashes.json` states that this score was chosen after the backtest, why, and what the original score scored.
 - **Judging, Nov 2–5:** almost nothing can be checked. Black Doves season 2 is the only sealed title out (Nov 5), and its first season's list suggests about one new pool artist, too few to count.
 - **After release:** a person adds each released title's public song list to `src/data/new_soundtracks.js`; `npm run settle` checks the hashes and scores the forecast with the backtest's scorer. Pass: pooled AUC 0.65 or higher and above popularity, the LLM and similar titles; fail: 0.55 or lower, or not above popularity or the LLM. The original excess-affinity ranking is reported next to it. Names and ranks are unsealed at the first settlement.
 - **Jan 31, 2027:** final settlement. Fewer than 10 new artists by then means no result.

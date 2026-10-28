@@ -624,7 +624,7 @@ function renderTrust() {
     : `<p>No title has been settled yet.</p>`;
   const timeline = `
     <ol class="steps">
-      <li><strong>By Oct 30.</strong> Seal and publish the hashes.</li>
+      <li>${t.seal ? `<strong>${fmtDate(t.seal.sealedAt.slice(0, 10))} (UTC).</strong> Sealed; the hashes are above and in the submission text.` : '<strong>By Oct 30.</strong> Seal and publish the hashes.'}</li>
       <li><strong>Judging, ${fmtDate(j.start)} to ${fmtDate(j.end)}.</strong> Almost nothing can be checked yet. Black Doves season 2 is the only sealed title out by then (Nov 5, the last judging day), and its first season's list suggests about one new pool artist. That is too few to count, and we say so instead of reporting a number. What you can check now is the backtest below and the code that will do the settling.</li>
       <li><strong>After release.</strong> Each title is settled as its songs become public: a person adds the public list, <code>npm run settle</code> checks the hashes and scores the forecast with the same scorer as the backtest. Sonic 4's first trailer (estimated mid-November), GTA VI's launch (Nov 19) and Yellowjackets season 4 (Nov 20) come next. Names and ranks are unsealed at the first settlement.</li>
       <li><strong>${fmtDate(j.finalSettle)}.</strong> Final settlement. Fewer than 10 new artists by then means no result, reported as such.</li>
