@@ -14,7 +14,7 @@ Built for the Qloo Agentic Hackathon 2026.
 
 ![First screen: today's pitch letter for The Clash, with the evidence card](docs/screenshots/1-first-screen.png)
 
-More in `docs/screenshots/`: Roster, a refused artist, the outbox, Trust and phone width (taken from the live app on Oct 26), and Works on desktop and phone (`7-works.png`, `8-works-phone.png`, taken from a local run with live Qloo data on Oct 28).
+More in `docs/screenshots/`, all taken from the live app on Oct 29: Roster, a refused artist (The Verve), the outbox, Trust, phone width, and Works on desktop and phone (`7-works.png`, `8-works-phone.png`).
 
 ## The problem
 
