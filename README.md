@@ -225,7 +225,7 @@ The default demo, **The Clash**, is 9th of the 55 and our pick, not the rule's. 
 
 - **[Netflix Tudum](https://www.netflix.com/tudum):** song lists for the 6 series in the backtest and for Black Doves season 1 in the seal (12 articles), each read once, 3 seconds apart. netflix.com/robots.txt allows our crawler. Only artist names are kept.
 - **[MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API):** soundtrack albums for the 20 films and games in the backtest and the earlier titles' lists for the seal (about 300 lookups), and each artist's latest studio album for the quiet check (about 830 lookups). Official `/ws/2` web service, one request every 1.1 seconds with a descriptive User-Agent, as the API documentation asks. Core data is CC0.
-- **[Wikimedia Pageviews](https://wikimedia.org/api/rest_v1/) and Wikidata:** monthly English Wikipedia views for the quiet check, one request per artist, cached.
+- **[Wikimedia Pageviews](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/reference/page-views.html) and Wikidata:** monthly English Wikipedia views for the quiet check, one request per artist, cached.
 - **Not used:** Tunefind (its robots.txt blocks our crawler) and the iTunes Search API (robots.txt disallows `/search`).
 
 ### Other commands
