@@ -557,7 +557,17 @@ function renderOutbox() {
   const el = $('#tab-outbox');
   const note = '<p class="note-store">Saved in this browser only; the server keeps no copy. Sleeper Hit never sends email itself: “Open in email app” opens a filled-in draft in your own email program, and you send it.</p>';
   const list = [...outbox()].sort((a, b) => (a.status === 'sent') - (b.status === 'sent') || String(a.deadline).localeCompare(String(b.deadline)));
-  if (!list.length) { el.innerHTML = '<p class="empty">No letters yet. Add one from Today. Up to three a day per artist.</p>' + note; return; }
+  if (!list.length) {
+    // Offer today's real letters for the chosen artist, so a first visit can try the outbox in one click.
+    const ready = (ui.data?.state?.doors || []).filter((d) => d.action === 'letter' && ui.data.letters?.[d.id]);
+    const offer = ready.length ? `<div class="empty-offer">${ready.map((d) => `<button class="btn primary" data-offer="${esc(d.id)}">Add today's letter: ${esc(ui.data.state.artist.name)} for ${esc(titleOf(d.window))}</button>`).join('')}</div>` : '';
+    el.innerHTML = `<p class="empty">No letters yet. ${ready.length ? 'Add today’s letter below, or add one' : 'Add one'} from Today or Works. Up to three a day per artist.</p>` + offer + note;
+    el.querySelectorAll('[data-offer]').forEach((b) => b.addEventListener('click', () => {
+      const door = ui.data.state.doors.find((d) => d.id === b.dataset.offer);
+      if (door) { addToOutbox(door); renderOutbox(); }
+    }));
+    return;
+  }
   const sent = list.filter((l) => l.status === 'sent');
   const tally = sent.length ? `<p class="tally">${sent.length} sent. ${OUTCOMES.map(([v, t]) => `${t}: ${sent.filter((l) => l.used === v).length}`).join('. ')}.</p>` : '';
   const today = ui.data?.state?.today || new Date().toISOString().slice(0, 10);
