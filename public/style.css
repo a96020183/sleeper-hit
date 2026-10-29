@@ -59,6 +59,7 @@ body:not([data-tab="works"]) .header-run { display: none; }
 
 main { max-width: 1180px; margin: 0 auto; padding: 32px 32px 48px; }
 .loading, .empty { color: var(--muted); font-size: 16px; padding: 48px 0; }
+.empty-offer { display: flex; flex-wrap: wrap; gap: 8px; margin: -24px 0 32px; }
 
 /* Today */
 .kicker { margin: 0 0 6px; font-size: 13px; color: var(--muted); letter-spacing: 0.01em; }
